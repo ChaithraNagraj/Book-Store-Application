@@ -1,4 +1,6 @@
-# <img src="https://user-images.githubusercontent.com/50637297/83942236-6b83d880-a80f-11ea-9dfc-b730b56245b0.png" alt="BLZ LOGO" width="200" height="100"> BookStore <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="200" height="100">
+# BookStore Application  <img src="https://user-images.githubusercontent.com/50637297/83944429-1486ff00-a821-11ea-8aea-0714d852214d.png" alt="BookStore LOGO" width="185" height="100"> 
+
+# ![BridgeLabz](https://bridgelabz.com/) <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="150" height="75">
 
 
 
