@@ -1,4 +1,6 @@
-# BookStore Application  <img src="https://user-images.githubusercontent.com/50637297/83944429-1486ff00-a821-11ea-8aea-0714d852214d.png" alt="BookStore LOGO" width="185" height="100"> 
+# BookStore Application  <img src="https://user-images.githubusercontent.com/50637297/83944429-1486ff00-a821-11ea-8aea-0714d852214d.png" alt="BookStore LOGO" width="100" height="40">
+
+## ![BridgeLabz](https://bridgelabz.com/) <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="100" height="50">
 
 
 ## Abstract:
@@ -6,7 +8,7 @@
 The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is the most visible business use of the ***World Wide Web***. The primary goal of an e-commerce site is to ***sell books*** and ***services online*** and the project deals with developing an e-commerce website for **Online Book Store**. It provides the user with a catalog of different books available for purchase in the store. In order to facilitate online purchase a shopping cart is provided to the user.
 
 
-# ![BridgeLabz](https://bridgelabz.com/) <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="150" height="75">
+
 
 
 ### Development Team
