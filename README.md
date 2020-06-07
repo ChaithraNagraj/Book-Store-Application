@@ -122,6 +122,13 @@ If an item is not in stock, then we provide information that is **"Out of Stock"
 
 ### Data Flow Diagram(DFD)
 
+#### Context Level DFD(DFD- Level 0)
+
+![](https://user-images.githubusercontent.com/50637297/83981249-d6313300-a939-11ea-9de2-819b041d532b.jpg)
+
+#### DFD for USER(DFD- Level 1)
+
+![](https://user-images.githubusercontent.com/50637297/83981250-d7faf680-a939-11ea-8949-0e0003925830.jpg)
 
 
 ### Conclusion:
