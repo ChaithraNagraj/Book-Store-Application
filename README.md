@@ -48,6 +48,11 @@ The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is
 - **Review for Books:** Users can give reviews for books.
 
 
+### Risk Analysis:
+
+If an item is not in stock, then we provide information that is **"Out of Stock"**, so members can add that item in the recommended item.
+
+
 ### Advantages:
 - Cost saving
 - Time saving
@@ -73,6 +78,50 @@ The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is
 ```
 - Mysql - version ()
 ```
+
+
+### Modules:
+
+- Home
+- Admin
+- Vendor
+- User
+- Shopping Cart
+
+#### 1. Home:
+ - Search
+ - Most popular Subjects
+ - Top Authors
+ - Top New Releases
+ - Complete Collections
+ - Customer Reviews
+
+#### 2. Admin:
+  - Login Form
+  - Product management
+
+#### 3. Vendor
+  - Login Form
+  - Manage Book
+  - Manage Quantity
+  - Manage price
+
+#### 4. User:
+  - Login FormBooks in my wish list
+  - Items in my shopping cart
+  - My Order
+
+#### 5. Shipping Cart
+  - Number of items
+  - List of books with price
+  - Total Amount
+  - Address
+  - Remove from cart
+  - Payments
+
+
+### Data Flow Diagram(DFD)
+
 
 
 ### Conclusion:
