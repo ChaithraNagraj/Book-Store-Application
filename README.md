@@ -1,11 +1,12 @@
 # BookStore Application  <img src="https://user-images.githubusercontent.com/50637297/83944429-1486ff00-a821-11ea-8aea-0714d852214d.png" alt="BookStore LOGO" width="185" height="100"> 
 
+
 ## Abstract:
 
 The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is the most visible business use of the ***World Wide Web***. The primary goal of an e-commerce site is to ***sell books*** and ***services online*** and the project deals with developing an e-commerce website for **Online Book Store**. It provides the user with a catalog of different books available for purchase in the store. In order to facilitate online purchase a shopping cart is provided to the user.
 
-# ![BridgeLabz](https://bridgelabz.com/) <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="150" height="75">
 
+# ![BridgeLabz](https://bridgelabz.com/) <img src="https://user-images.githubusercontent.com/50637297/83942283-d1706000-a80f-11ea-99fb-6c26326a7602.png" alt="BLZ LOGO" width="150" height="75">
 
 
 ### Development Team
@@ -18,7 +19,6 @@ The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is
 6. Ramesh A
 7. Venkata Ganapathi k
 8. Vinod Kumar
-
 
 
 ### Overview of Online Book Store Application:
@@ -34,22 +34,19 @@ The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is
 
 - The project has been designed to simulate the working of an actual online book store.
 
+
 ### Functional Requirements:
 
 - Browse Books:
-
 An user logging into the site can browse through the boks both by category or in a random manner.
 
 - View Details:
-
 An user can also view the details of the books(eg:price, athor, title).
 
 - Add to cart
-
 The user can add the books of his choice to the shopping cart.
 
 - Make payments:
-
 The user ultimately visits his cart and makes the payments
 
 - Review for Books
