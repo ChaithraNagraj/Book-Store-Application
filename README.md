@@ -34,6 +34,28 @@ The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is
 
 - The project has been designed to simulate the working of an actual online book store.
 
+### Functional Requirements:
+
+- Browse Books:
+
+An user logging into the site can browse through the boks both by category or in a random manner.
+
+- View Details:
+
+An user can also view the details of the books(eg:price, athor, title).
+
+- Add to cart
+
+The user can add the books of his choice to the shopping cart.
+
+- Make payments:
+
+The user ultimately visits his cart and makes the payments
+
+- Review for Books
+Users can give reviews for books.
+
+
 
 ### Advantages:
 
