@@ -1,0 +1,10 @@
+spring:
+  profiles: dev
+  mail:
+    username: ${emailId}
+    password: ${emailPass}
+
+url: jdbc:mysql://localhost:${port}/${dbName}?useSSL=false
+dbUserName: ${dbUserName}
+dbPassword: ${dbUserPass}
+driverClassName: com.mysql.cj.jdbc.Driver
