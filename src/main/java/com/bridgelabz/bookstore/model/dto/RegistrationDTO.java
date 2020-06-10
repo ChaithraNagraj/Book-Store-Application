@@ -28,7 +28,9 @@ public class RegistrationDTO {
 	private Long moblieNumber;
 
 	public RegistrationDTO() {
+		super();
 	}
+	
 
 	public String getFirstName() {
 		return firstName;

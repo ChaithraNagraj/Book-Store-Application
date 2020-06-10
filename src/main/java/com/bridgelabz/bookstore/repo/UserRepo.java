@@ -2,9 +2,10 @@ package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
+
 import com.bridgelabz.bookstore.model.User;
 
-public interface UserRepo {
+public interface UserRepo   {
 	public void addUser(User user);
 
 	public User findByUserId(Long id);
@@ -17,5 +18,8 @@ public interface UserRepo {
 
 	public List<User> findByEmail(String email);
 
+
 	public void verify(Long id);
+	
+	public User getusersByemail(String email);
 }
