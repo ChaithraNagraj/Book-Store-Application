@@ -52,8 +52,8 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/login", headers = "Accept=application/json")
-	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO logindto) throws UserNotFoundException {
-		return userService.login(logindto);
+	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserNotFoundException {
+		return userService.login(loginDto);
 	}
 
 	@PutMapping("/forgotpassword")

@@ -53,7 +53,7 @@ public class RabbitMQProvider {
 			mimeMessage.addHeader("Content-type", "text/HTML; charset=UTF-8");
 			mimeMessage.addHeader("format", "flowed");
 			mimeMessage.addHeader("Content-Transfer-Encoding", "8bit");
-			mimeMessage.setFrom(new InternetAddress(Constant.SENDER_EMAIL_ID, "Fundoo Note Application"));
+			mimeMessage.setFrom(new InternetAddress(Constant.SENDER_EMAIL_ID, " Online BookStore Application"));
 			mimeMessage.setReplyTo(InternetAddress.parse(Constant.SENDER_EMAIL_ID, false));
 			mimeMessage.setSubject(subject, "UTF-8");
 			mimeMessage.setText(body, "UTF-8");

@@ -11,7 +11,9 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.utils.DateUtility;
 
 @Repository
 @Transactional
@@ -19,9 +21,12 @@ public class UserDaoImp implements UserRepo {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	@Autowired
 	private EntityManager entityManager;
+
+	@Autowired
+	private WebSecurityConfig encrypt;
 
 	public void addUser(User user) {
 		sessionFactory.getCurrentSession().save(user);
@@ -30,10 +35,6 @@ public class UserDaoImp implements UserRepo {
 	public User findByUserId(Long id) {
 		return sessionFactory.getCurrentSession().get(User.class, id);
 	}
-
-//	public User findEmail(String email) {
-//		return sessionFactory.getCurrentSession().get(User.class, email);
-//	}
 
 	public User getusersByemail(String email) {
 		Session session = entityManager.unwrap(Session.class);
@@ -71,14 +72,31 @@ public class UserDaoImp implements UserRepo {
 		String hql = "FROM User E WHERE E.email = :email";
 		Query query = session.createQuery(hql);
 		query.setParameter("email", email);
-		List results = query.list();
-		return results;
+		return query.list();
+		
+	}
+
+	@Override
+	public void updatePassword(Long id, String password) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setPassword((encrypt.bCryptPasswordEncoder().encode(password)));
+		session.update(user);
+	}
+
+	@Override
+	public void updateDateTime(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		session.update(user);
 	}
 
 	@Override
 	public void verify(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		User user = (User) session.get(User.class, id);
+		User user = session.get(User.class, id);
 		user.setVerify(true);
 		session.update(user);
 	}

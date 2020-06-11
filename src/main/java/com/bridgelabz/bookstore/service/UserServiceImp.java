@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +34,6 @@ public class UserServiceImp implements UserService {
 	private UserRepo userRepository;
 
 	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	@Autowired
 	private RabbitMqSender rabbitMqSender;
 
 	@Autowired
@@ -53,13 +49,13 @@ public class UserServiceImp implements UserService {
 	@Override
 	public boolean registerUser(RegistrationDTO user) {
 		User maybeUser = userRepository.getusersByemail(user.getEmail());
-		logger.info("UserDetails: "+maybeUser);
+		logger.info("UserDetails: " + maybeUser);
 		if (maybeUser != null) {
 			return false;
 		}
 		userRepository.addUser(new User(user.setPassword(encrypt.bCryptPasswordEncoder().encode(user.getPassword()))));
 		User isUser = userRepository.getusersByemail(user.getEmail());
-		logger.info("UserDetails: "+isUser);
+		logger.info("UserDetails: " + isUser);
 		String response = Constant.VERIFY_ADDRESS + JwtValidate.createJWT(isUser.getId(), Constant.REGISTER_EXP);
 		rabbitMqSender.send(new MailResponse(isUser.getEmail(), Constant.VERIFICATION, response));
 		return true;
@@ -107,8 +103,10 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
-		if (bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+		logger.info("given: " + encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()));
+		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
 			logger.info("Token: " + token);
 			redis.putMap(redisKey, user.getEmail(), token);
@@ -141,9 +139,7 @@ public class UserServiceImp implements UserService {
 			long id = JwtValidate.decodeJWT(token);
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
-				user.setPassword(bCryptPasswordEncoder.encode((resetPassword.getPassword())));
-				user.setUpdateDateTime(DateUtility.today());
-				userRepository.addUser(user);
+				userRepository.updatePassword(user.getId(), resetPassword.getPassword());
 				String getToken = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 				redis.putMap(redisKey, user.getEmail(), getToken);
 				return ResponseEntity.status(HttpStatus.OK).body(

@@ -36,7 +36,7 @@ public class Constant {
 	public static final String MESSAGEING_RESPONSE = "No-Reply";
 	public static final String VERIFICATION = "Verification";
 	public static final long REGISTER_EXP = (long) 3 * 60 * 60 * 1000;
-	public static final String RESET_PASSWORD = "Reset Password";
+	public static final String RESET_PASSWORD = "http://localhost:8080/user/resetpassword/";
 	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
 	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
 	public static final String SENDER_EMAIL_ID = "rameshaanji535@gmail.com";
