@@ -1,3 +1,4 @@
+
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
@@ -27,13 +28,9 @@ public class User {
 	@Id
 	private Long id;
 
-	@Column(name = "first_name", nullable = false)
+	@Column(name = "name", nullable = false)
 	@Size(min = 3)
-	private String firstName;
-
-	@Column(name = "last_name", nullable = false)
-	@Size(min = 3)
-	private String lastName;
+	private String name;
 
 	@Column
 	private String userName;
@@ -45,10 +42,6 @@ public class User {
 	@Column(name = "password", nullable = false)
 	@Size(min = 3)
 	private String password;
-
-	@Column(name = "city", nullable = false)
-	@Size(min = 3)
-	private String city;
 
 	@Column(name = "mobile_number", length = 10, unique = true)
 	@NotNull
@@ -70,44 +63,71 @@ public class User {
 	@NotNull
 	private LocalDateTime updateDateTime;
 
+	@Column(name = "role_name", nullable = false)
+	@Size(min = 3)
+	private String role;
+
 	public User() {
 	}
 
 	public User(RegistrationDTO req) {
-		this.firstName = req.getFirstName();
-		this.lastName = req.getLastName();
+		this.name = req.getName();
+		this.userName = req.getUserName();
 		this.email = req.getEmail();
 		this.password = req.getPassword();
-		this.city = req.getCity();
 		this.mobileNumber = req.getMoblieNumber();
 		this.isVerify = false;
 		this.isDeleted = false;
 		this.registrationDateTime = DateUtility.today();
 		this.updateDateTime = DateUtility.today();
+		this.role = req.getRole();
 	}
 
+//	@JsonIgnore
+//	@ManyToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "role_id")
+//	private List<Role> role;
+
+	// Role roleV=new Role();
+
+//
+//	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+////    @JoinTable(name="userData", joinColumns={@JoinColumn(name="id", referencedColumnName="id")}
+////    , inverseJoinColumns={@JoinColumn(name="role", referencedColumnName="role")})
+// @JsonBackReference
+//	@JsonIgnore
+//   private Role roleV;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+//	public List<Role> getRole() {
+//		return role;
+//	}
+//
+//	public void setRole(List<Role> role) {
+//		this.role = role;
+//	}
+
+	/*
+	 * @Override public String toString() { return "User [id=" + id + ", firstName="
+	 * + firstName + ", lastName=" + lastName + ", userName=" + userName +
+	 * ", email=" + email + ", password=" + password + ", city=" + city +
+	 * ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", isDeleted="
+	 * + isDeleted + ", registrationDateTime=" + registrationDateTime +
+	 * ", updateDateTime=" + updateDateTime + ", role=" + role + "]"; }
+	 */
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
 	}
 
 	public String getUserName() {
@@ -132,14 +152,6 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
 	}
 
 	public Long getMobileNumber() {
@@ -182,4 +194,11 @@ public class User {
 		this.updateDateTime = updateDateTime;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 }

@@ -32,5 +32,6 @@ public class UserNotFoundException extends Exception {
 	public int getStatus() {
 		return status;
 	}
+	
 
 }

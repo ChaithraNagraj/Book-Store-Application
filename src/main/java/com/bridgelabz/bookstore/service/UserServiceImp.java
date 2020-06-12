@@ -13,9 +13,11 @@ import org.springframework.stereotype.Service;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
+import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
+import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.JwtValidate;
@@ -39,12 +41,37 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean registerUser(RegistrationDTO user) {
-		List<User> maybeUser = userRepo.findByEmail(user.getEmail());
-		if (maybeUser == null) {
+		User maybeUser = userRepo.getusersByemail(user.getEmail());
+		System.out.println("regDto" + user);
+		Role role = new Role();
+		role.setRole(user.getRole());
+
+		logger.info("UserDetails: " + maybeUser);
+		if (maybeUser != null) {
+			System.out.println("hi null");
 			return false;
 		}
-		userRepo.addUser(new User(user.setPassword(encrypt.bCryptPasswordEncoder().encode(user.getPassword()))));
+		System.out.println("hi not null");
+
+		// userRepo.addUser(new
+		// User(user.setPassword(encrypt.bCryptPasswordEncoder().encode(user.getPassword()))));
+//		userRepo.addUser(new User(user));
+		User u = new User(user);
+		u.setPassword(encrypt.bCryptPasswordEncoder().encode(user.getPassword()));
+		Role r = getRoleName(user.getRole());
+		u.setRole(r.getRole());
+		userRepo.addUser(u);
+		// User isUser = userRepo.getusersByemail(user.getEmail());
+		// logger.info("UserDetails: " + isUser);
+		// String response = Constant.VERIFY_ADDRESS +
+		// JwtValidate.createJWT(isUser.getId(), Constant.REGISTER_EXP);
+		// rabbitMqSender.send(new MailResponse(isUser.getEmail(),
+		// Constant.VERIFICATION, response));
 		return true;
+	}
+
+	private Role getRoleName(String role) {
+		return userRepo.findByRoleId(Long.parseLong(role));
 	}
 
 	@Override
@@ -90,6 +117,13 @@ public class UserServiceImp implements UserService {
 	public ResponseEntity<Response> login(LoginDTO logindto) throws UserNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean addRole(RoleDTO request) {
+		request.setRole(request.getRole().toUpperCase());
+		userRepo.saveRoles(new Role(request));
+		return true;
 	}
 
 }

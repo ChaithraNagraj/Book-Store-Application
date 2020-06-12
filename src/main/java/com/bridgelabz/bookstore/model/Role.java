@@ -1,36 +1,49 @@
 package com.bridgelabz.bookstore.model;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.bridgelabz.bookstore.model.dto.RoleDTO;
 
 @Entity
 @Table(name = "role")
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "role_id")
-	private long roleId;
+	@Column(name = "roleId")
+	private Long roleId;
+
+	@Column(name = "role_name")
 	private String role;
 
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<User> user;
-
-	public long getRoleId() {
-		return roleId;
+	public Role() {
 	}
 
-	public void setRoleId(long roleId) {
-		this.roleId = roleId;
+	public Role(RoleDTO req) {
+		this.role = req.getRole();
 	}
+	/*
+	 * @OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	 * 
+	 * @JoinTable(name="userData", joinColumns={@JoinColumn(name="roleId")} ,
+	 * inverseJoinColumns={@JoinColumn(name="id")})
+	 * 
+	 * @JsonBackReference
+	 * 
+	 * @JsonIgnore
+	 */
+
+	/*
+	 * @JsonIgnore
+	 * 
+	 * @OneToMany(cascade = CascadeType.ALL)
+	 * 
+	 * @JoinColumn(name = "role_id") private List<User> user;
+	 */
 
 	public String getRole() {
 		return role;
@@ -40,18 +53,27 @@ public class Role {
 		this.role = role;
 	}
 
-	public List<User> getUser() {
-		return user;
+	public long getRoleId() {
+		return roleId;
 	}
 
-	public void setUser(List<User> user) {
-		this.user = user;
+	public void setRoleId(long roleId) {
+		this.roleId = roleId;
 	}
 
+	/*
+	 * public List<User> getUser() { return user; }
+	 * 
+	 * public void setUser(List<User> user) { this.user = user; }
+	 */
 	@Override
 	public String toString() {
-		return "Role [roleId=" + roleId + ", role=" + role + ", user=" + user + "]";
+		return "Role [roleId=" + ", role=" + role + "]";
+	}
 
+	public String getRole(String role) {
+
+		return role;
 	}
 
 }

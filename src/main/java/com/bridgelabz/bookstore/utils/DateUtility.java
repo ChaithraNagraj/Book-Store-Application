@@ -9,4 +9,6 @@ public class DateUtility {
 	public static LocalDateTime today() {
 		return LocalDateTime.now();
 	}
+	
+	
 }

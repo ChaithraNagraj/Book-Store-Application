@@ -7,11 +7,11 @@ import javax.validation.constraints.Size;
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 	@Size(min = 3)
-	private String firstName;
+	private String name;
 
-	@NotEmpty(message = "Enter Last Name - Registration DTO")
+	@NotEmpty(message = "Enter User Name - Registration DTO")
 	@Size(min = 3)
-	private String lastName;
+	private String userName;
 
 	@NotEmpty(message = "Enter Email ID - Registration DTO")
 	@Email
@@ -22,28 +22,12 @@ public class RegistrationDTO {
 	private String password;
 
 	@NotEmpty(message = "Enter City - Registration DTO")
-	private String city;
-
-	@NotEmpty(message = "Enter City - Registration DTO")
 	private Long moblieNumber;
 
+	@NotEmpty(message = "Enter Role - Registration DTO")
+	private String role;
+
 	public RegistrationDTO() {
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
 	}
 
 	public String getEmail() {
@@ -63,14 +47,6 @@ public class RegistrationDTO {
 		return this;
 	}
 
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
 	public Long getMoblieNumber() {
 		return moblieNumber;
 	}
@@ -78,5 +54,42 @@ public class RegistrationDTO {
 	public void setMoblieNumber(Long moblieNumber) {
 		this.moblieNumber = moblieNumber;
 	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Override
+	public String toString() {
+		return "RegistrationDTO [name=" + name + ", userName=" + userName + ", email=" + email + ", password="
+				+ password + ", moblieNumber=" + moblieNumber + ", role=" + role + "]";
+	}
+
+	/*
+	 * @Override public String toString() { return "RegistrationDTO [firstName=" +
+	 * firstName + ", lastName=" + lastName + ", userName=" + userName + ", email="
+	 * + email + ", password=" + password + ", city=" + city + ", moblieNumber=" +
+	 * moblieNumber + ", role=" + role + "]"; }
+	 */
 
 }

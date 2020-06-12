@@ -21,6 +21,7 @@ import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
+import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 
@@ -85,6 +86,14 @@ public class UserController {
 		}
 		userService.deleteUserById(id);
 		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+	}
+
+	@PostMapping(value = "/roles", headers = "Accept=application/json")
+	public ResponseEntity<Void> addRole(@RequestBody RoleDTO request) {
+		HttpHeaders headers = new HttpHeaders();
+		if (userService.addRole(request))
+			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+		return new ResponseEntity<Void>(headers, HttpStatus.ALREADY_REPORTED);
 	}
 
 }

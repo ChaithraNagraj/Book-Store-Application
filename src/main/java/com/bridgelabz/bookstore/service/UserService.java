@@ -8,6 +8,7 @@ import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
+import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.response.Response;
 
 public interface UserService {
@@ -24,4 +25,6 @@ public interface UserService {
 	public User update(User user, Long id);
 
 	public void deleteUserById(Long id);
+
+	boolean addRole(RoleDTO request);
 }
