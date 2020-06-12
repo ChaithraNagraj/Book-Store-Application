@@ -39,6 +39,5 @@ public class Constant {
 	public static final String RESET_PASSWORD = "http://localhost:8080/user/resetpassword/";
 	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
 	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
-	public static final String SENDER_EMAIL_ID = "rameshaanji535@gmail.com";
-	public static final String SENDER_PASSWORD = "aanji2097";
+	public static final String PATH = "E:\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
 }

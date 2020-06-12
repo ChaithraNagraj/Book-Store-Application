@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -39,7 +40,7 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Void> register(@RequestBody RegistrationDTO request) {
+	public ResponseEntity<Void> register(@RequestBody @Valid RegistrationDTO request) throws IOException {
 		HttpHeaders headers = new HttpHeaders();
 		if (userService.registerUser(request))
 			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);

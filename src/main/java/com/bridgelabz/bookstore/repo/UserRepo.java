@@ -15,11 +15,9 @@ public interface UserRepo {
 
 	public void delete(Long id);
 
-	public List<User> findByEmail(String email);
-
 	public void updateDateTime(Long id);
 
-	public void updatePassword(Long id,String password);
+	public void updatePassword(Long id, String password);
 
 	public void verify(Long id);
 

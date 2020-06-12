@@ -1,9 +1,11 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ import com.bridgelabz.bookstore.response.MailResponse;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
-import com.bridgelabz.bookstore.utils.RabbitMqSender;
+import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RedisCache;
 
 @Service
@@ -34,7 +36,7 @@ public class UserServiceImp implements UserService {
 	private UserRepo userRepository;
 
 	@Autowired
-	private RabbitMqSender rabbitMqSender;
+	private MailTempletService templeteService;
 
 	@Autowired
 	private WebSecurityConfig encrypt;
@@ -47,7 +49,7 @@ public class UserServiceImp implements UserService {
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
 	@Override
-	public boolean registerUser(RegistrationDTO user) {
+	public boolean registerUser(RegistrationDTO user) throws IOException {
 		User maybeUser = userRepository.getusersByemail(user.getEmail());
 		logger.info("UserDetails: " + maybeUser);
 		if (maybeUser != null) {
@@ -57,7 +59,9 @@ public class UserServiceImp implements UserService {
 		User isUser = userRepository.getusersByemail(user.getEmail());
 		logger.info("UserDetails: " + isUser);
 		String response = Constant.VERIFY_ADDRESS + JwtValidate.createJWT(isUser.getId(), Constant.REGISTER_EXP);
-		rabbitMqSender.send(new MailResponse(isUser.getEmail(), Constant.VERIFICATION, response));
+		templeteService.getTemplate(user);
+		// rabbitMqSender.send(new MailResponse(isUser.getEmail(),
+		// Constant.VERIFICATION, response));
 		return true;
 	}
 
@@ -124,7 +128,8 @@ public class UserServiceImp implements UserService {
 		if (isIdAvailable != null && isIdAvailable.isVerify()) {
 			String response = Constant.RESET_PASSWORD
 					+ JwtValidate.createJWT(isIdAvailable.getId(), Constant.LOGIN_EXP);
-			rabbitMqSender.send(new MailResponse(isIdAvailable.getEmail(), Constant.PASSWORD_UPDATE_MESSAGE, response));
+			// rabbitMqSender.send(new MailResponse(isIdAvailable.getEmail(),
+			// Constant.PASSWORD_UPDATE_MESSAGE, response));
 
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
@@ -139,7 +144,8 @@ public class UserServiceImp implements UserService {
 			long id = JwtValidate.decodeJWT(token);
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
-				userRepository.updatePassword(user.getId(), resetPassword.getPassword());
+				userRepository.updatePassword(user.getId(),
+						encrypt.bCryptPasswordEncoder().encode(resetPassword.getConfirmpassword()));
 				String getToken = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 				redis.putMap(redisKey, user.getEmail(), getToken);
 				return ResponseEntity.status(HttpStatus.OK).body(

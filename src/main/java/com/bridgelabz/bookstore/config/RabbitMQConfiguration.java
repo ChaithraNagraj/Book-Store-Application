@@ -1,43 +1,45 @@
 package com.bridgelabz.bookstore.config;
-
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfiguration {
 
-	@Autowired
-	private ConnectionFactory rabbitConnectionFactory;
+	@Value("rmq.rube.queue")
+	String queueName;
+
+	@Value("rmq.rube.exchange")
+	String exchange;
+
+	@Value("rmq.rube.routingkey")
+	private String routingkey;
 
 	@Bean
-	public DirectExchange rubeExchange() {
-		return new DirectExchange("rmq.rube.exchange", true, false);
+	Queue queue() {
+		return new Queue(queueName, true);
 	}
 
 	@Bean
-	public Queue rubeQueue() {
-		return new Queue("rmq.rube.queue", true);
+	DirectExchange directExchange() {
+		return new DirectExchange(exchange);
 	}
 
 	@Bean
-	public Binding rubeExchangeBinding(DirectExchange rubeExchange, Queue rubeQueue) {
-		return BindingBuilder.bind(rubeQueue).to(rubeExchange).with("rube.key");
+	Binding binding(Queue queue, DirectExchange exchange) {
+		return BindingBuilder.bind(queue).to(exchange).with(routingkey);
 	}
 
 	@Bean
-	public RabbitTemplate rubeExchangeTemplate() {
-		RabbitTemplate rabbitTemplet = new RabbitTemplate(rabbitConnectionFactory);
-		rabbitTemplet.setConnectionFactory(rabbitConnectionFactory);
-		rabbitTemplet.setExchange("rmq.rube.exchange");
-		rabbitTemplet.setRoutingKey("rube.key");
-		return rabbitTemplet;
+	public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+		RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+		rabbitTemplate.setConnectionFactory(connectionFactory);
+		return rabbitTemplate;
 	}
-
 }

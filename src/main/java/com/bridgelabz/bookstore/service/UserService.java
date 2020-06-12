@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public interface UserService {
 
 	ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException;
 	
-	public boolean registerUser(RegistrationDTO user);
+	public boolean registerUser(RegistrationDTO user) throws IOException;
 
 	public User findById(Long id);
 

@@ -4,25 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.bridgelabz.bookstore.response.MailResponse;
-
+import com.bridgelabz.bookstore.model.Mail;
 
 
 @Component
-public class RabbitMqSender {
-	
+public class RabbitMQSender {
+
 	@Autowired
 	private RabbitTemplate rabbitTemplate;
 
 	@Value("rmq.rube.exchange")
 	private String exchange;
 
-	@Value("rube.key")
-	private String routingkey;
+	@Value("rmq.rube.routingkey")
+	private String routingKey;
 
-	public boolean send(MailResponse message) {
-		rabbitTemplate.convertAndSend(exchange, routingkey, message);
-		return true;
+	public void send(Mail mail) {
+		rabbitTemplate.convertAndSend(exchange, routingKey, mail);
 	}
-
 }

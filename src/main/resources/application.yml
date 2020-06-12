@@ -1,10 +1,13 @@
 spring:
-  profiles: dev
+  profiles: development
   mail:
     username: ${emailId}
     password: ${emailPass}
 
-url: jdbc:mysql://localhost:${port}/${dbName}?useSSL=false
-dbUserName: ${dbUserName}
-dbPassword: ${dbUserPass}
-driverClassName: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/${dbName}?useSSL=false
+  dbUserName: ${dbUser}
+  dbPassword: ${dbPass}
+  driverClassName: com.mysql.cj.jdbc.Driver
+  rabbitmq:
+    username: ${rabbitUser}
+    password: ${rabbitPass}
