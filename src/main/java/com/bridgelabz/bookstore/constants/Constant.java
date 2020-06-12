@@ -1,8 +1,6 @@
 package com.bridgelabz.bookstore.constants;
 
-import java.time.LocalDateTime;
 
-import com.bridgelabz.bookstore.utils.DateUtility;
 
 public class Constant {
 
@@ -16,7 +14,7 @@ public class Constant {
 	public static final String VERIFY_ADDRESS = "http://localhost:8080/user/verify?token=";
 	public static final String ISSUER = "Bridgelabz";
 	public static final String SUBJECT = "authentication";
-	public static final long LOGIN_EXP = 24 * 60 * 60 * 10000000;
+	public static final long LOGIN_EXP = (long) 24 * 60 * 60 * 10000000;
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
 	public static final int ALREADY_EXIST_EXCEPTION_STATUS = 208;
@@ -32,12 +30,14 @@ public class Constant {
 	public static final String USER_VERIFIED_SUCCESSFULLY_MEAASGE = "User Verified Successfully";
 	public static final String USER_NOT_FOUND_EXCEPTION_MESSAGE = "User not found!";
 	public static final String USER_ALREADY_VERIFIED_MESSAGE = "User Already Verified";
-	public static final LocalDateTime LOCAL_DATE_TIME = DateUtility.today();
 	public static final String USER_ALREADY_REGISTER_MESSAGE = "User Already register";
 	public static final String REGISTRATION_SUCCESSFULL_MESSAGE = "Registration Sucessfull";
 	public static final String REPLAY_MAILID = "no_replay@gmail.com";
 	public static final String MESSAGEING_RESPONSE = "No-Reply";
 	public static final String VERIFICATION = "Verification";
-	public static final long REGISTER_EXP = 3 * 60 * 60 * 1000;
-
+	public static final long REGISTER_EXP = (long) 3 * 60 * 60 * 1000;
+	public static final String RESET_PASSWORD = "http://localhost:8080/user/resetpassword/";
+	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
+	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
+	public static final String PATH = "E:\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
 }

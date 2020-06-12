@@ -44,7 +44,7 @@ public class User {
 	private String password;
 
 	@Column(name = "mobile_number", length = 10, unique = true)
-	@NotNull
+//	@NotNull(message = "Not empty")
 	private Long mobileNumber;
 
 	@Column(name = "is_verify")

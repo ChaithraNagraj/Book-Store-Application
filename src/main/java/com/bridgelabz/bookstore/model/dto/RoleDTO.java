@@ -1,5 +1,8 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RoleDTO {
 
 	private String role;

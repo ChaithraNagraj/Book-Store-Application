@@ -13,9 +13,11 @@ import org.springframework.stereotype.Repository;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.utils.DateUtility;
 
 @Repository
 @Transactional
+@SuppressWarnings("unchecked")
 public class UserDaoImp implements UserRepo {
 
 	@Autowired
@@ -35,9 +37,8 @@ public class UserDaoImp implements UserRepo {
 	public List<User> getUser() {
 		Session session = sessionFactory.getCurrentSession();
 		String hql = "FROM User";
-		Query query = session.createQuery(hql);
-		List results = query.list();
-		return results;
+		Query<User> query = session.createQuery(hql);
+		return query.list();
 	}
 
 	public User update(User val, Long id) {
@@ -56,19 +57,26 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
-	public List<User> findByEmail(String email) {
+	public void updatePassword(Long id, String password) {
 		Session session = sessionFactory.getCurrentSession();
-		String hql = "FROM User E WHERE E.email = :email";
-		Query query = session.createQuery(hql);
-		query.setParameter("email", email);
-		List results = query.list();
-		return results;
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setPassword(password);
+		session.update(user);
+	}
+
+	@Override
+	public void updateDateTime(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		session.update(user);
 	}
 
 	@Override
 	public void verify(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		User user = (User) session.get(User.class, id);
+		User user = session.get(User.class, id);
 		user.setVerify(true);
 		session.update(user);
 	}
