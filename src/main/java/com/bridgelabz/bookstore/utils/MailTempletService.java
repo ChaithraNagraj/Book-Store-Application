@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bridgelabz.bookstore.model.Mail;
-import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
+import com.bridgelabz.bookstore.model.User;
 
 @Component
 public class MailTempletService {
@@ -22,7 +22,7 @@ public class MailTempletService {
 
 	private String RegistrationTemplate = "";
 
-	public void getTemplate(RegistrationDTO request) throws IOException {
+	public void getTemplate(User request) throws IOException {
 		if (RegistrationTemplate.equals("")) {
 			RegistrationTemplate = Template.readContentFromTemplet();
 		}

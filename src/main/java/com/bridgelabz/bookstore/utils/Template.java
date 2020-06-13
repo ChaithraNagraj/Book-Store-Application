@@ -5,15 +5,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.bridgelabz.bookstore.constants.Constant;
-
 public class Template {
 
 	private Template() {
 	}
 
+	private static final String PATH = "C:\\Users\\admin\\Desktop\\Project Data\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
+
 	public static String readContentFromTemplet() throws IOException {
-		Path filePath = FileSystems.getDefault().getPath(Constant.PATH).normalize();
+		Path filePath = FileSystems.getDefault().getPath(PATH).normalize();
 		byte[] fileBytes = Files.readAllBytes(filePath);
 		return new String(fileBytes);
 	}

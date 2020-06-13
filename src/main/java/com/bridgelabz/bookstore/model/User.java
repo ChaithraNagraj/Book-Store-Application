@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "user")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-
 public class User {
 	@GenericGenerator(name = "user_id", strategy = "increment")
 	@GeneratedValue(generator = "userid")
@@ -35,7 +34,7 @@ public class User {
 	@Column
 	private String userName;
 
-	@Column(name = "email", unique = true, nullable = false)
+	@Column(name = "email", nullable = false)
 	@Email
 	private String email;
 
@@ -43,8 +42,8 @@ public class User {
 	@Size(min = 3)
 	private String password;
 
-	@Column(name = "mobile_number", length = 10, unique = true)
-//	@NotNull(message = "Not empty")
+	@Column(name = "mobile_number", unique = true, length = 10)
+	@NotNull
 	private Long mobileNumber;
 
 	@Column(name = "is_verify")
@@ -83,21 +82,6 @@ public class User {
 		this.role = req.getRole();
 	}
 
-//	@JsonIgnore
-//	@ManyToOne(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "role_id")
-//	private List<Role> role;
-
-	// Role roleV=new Role();
-
-//
-//	@ManyToOne(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-////    @JoinTable(name="userData", joinColumns={@JoinColumn(name="id", referencedColumnName="id")}
-////    , inverseJoinColumns={@JoinColumn(name="role", referencedColumnName="role")})
-// @JsonBackReference
-//	@JsonIgnore
-//   private Role roleV;
-
 	public String getName() {
 		return name;
 	}
@@ -106,22 +90,6 @@ public class User {
 		this.name = name;
 	}
 
-//	public List<Role> getRole() {
-//		return role;
-//	}
-//
-//	public void setRole(List<Role> role) {
-//		this.role = role;
-//	}
-
-	/*
-	 * @Override public String toString() { return "User [id=" + id + ", firstName="
-	 * + firstName + ", lastName=" + lastName + ", userName=" + userName +
-	 * ", email=" + email + ", password=" + password + ", city=" + city +
-	 * ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", isDeleted="
-	 * + isDeleted + ", registrationDateTime=" + registrationDateTime +
-	 * ", updateDateTime=" + updateDateTime + ", role=" + role + "]"; }
-	 */
 	public Long getId() {
 		return id;
 	}

@@ -27,6 +27,8 @@ public class UserDaoImp implements UserRepo {
 	private EntityManager entityManager;
 
 	public void addUser(User user) {
+		System.out.println("3");
+
 		sessionFactory.getCurrentSession().save(user);
 	}
 
@@ -97,6 +99,16 @@ public class UserDaoImp implements UserRepo {
 	@Override
 	public void saveRoles(Role role) {
 		sessionFactory.getCurrentSession().save(role);
+	}
+
+	@Override
+	public List<User> findByEmail(String email) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "FROM User E WHERE E.email = :email";
+		Query query = session.createQuery(hql);
+		query.setParameter("email", email);
+		List results = query.list();
+		return results;
 	}
 
 }

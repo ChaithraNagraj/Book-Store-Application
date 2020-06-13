@@ -1,19 +1,18 @@
 package com.bridgelabz.bookstore.response;
+
 import java.io.Serializable;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class MailResponse implements Serializable{
+public class MailResponse implements Serializable {
 
-private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;
+
 	String email;
-    String subject;
+	String subject;
 	String message;
-	
-	
-	
+
 	public MailResponse() {
 		super();
 	}
@@ -48,7 +47,5 @@ private static final long serialVersionUID = 1L;
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	
 
 }

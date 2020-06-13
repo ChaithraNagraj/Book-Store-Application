@@ -8,18 +8,16 @@ import javax.validation.constraints.Size;
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 	@Size(min = 3)
-
+	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
 	private String name;
 
-	@NotEmpty(message = "Enter User Name - Registration DTO")
 	@Size(min = 3)
+	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName")
 	private String userName;
 
-	@NotEmpty(message = "Enter Email ID - Registration DTO")
 	@Email
 	private String email;
 
-	@NotEmpty(message = "Enter Password - Registration DTO")
 	@Size(min = 3)
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
@@ -27,12 +25,11 @@ public class RegistrationDTO {
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
-//	@NotEmpty(message = "Enter MMobile Number - Registration DTO")
-//	@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
+	//@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
 	private Long moblieNumber;
 
 	public RegistrationDTO() {
-
+		super();
 	}
 
 	public String getEmail() {
@@ -90,11 +87,6 @@ public class RegistrationDTO {
 				+ password + ", moblieNumber=" + moblieNumber + ", role=" + role + "]";
 	}
 
-	/*
-	 * @Override public String toString() { return "RegistrationDTO [firstName=" +
-	 * firstName + ", lastName=" + lastName + ", userName=" + userName + ", email="
-	 * + email + ", password=" + password + ", city=" + city + ", moblieNumber=" +
-	 * moblieNumber + ", role=" + role + "]"; }
-	 */
+
 
 }

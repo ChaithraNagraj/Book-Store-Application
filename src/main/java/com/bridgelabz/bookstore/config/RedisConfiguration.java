@@ -20,6 +20,7 @@ public class RedisConfiguration extends CachingConfigurerSupport {
 
 	@Value("${spring.redis.host}")
 	private String redisHostName;
+
 	@Value("${spring.redis.port}")
 	private int redisPort;
 
@@ -30,7 +31,6 @@ public class RedisConfiguration extends CachingConfigurerSupport {
 		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().usePooling().build();
 		JedisConnectionFactory factory = new JedisConnectionFactory(configuration, jedisClientConfiguration);
 		factory.getPoolConfig().setMaxIdle(30);
-		;
 		factory.getPoolConfig().setMinIdle(10);
 		factory.afterPropertiesSet();
 		return factory;

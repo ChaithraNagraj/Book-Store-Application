@@ -1,4 +1,5 @@
 package com.bridgelabz.bookstore.config;
+
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -12,13 +13,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfiguration {
 
-	@Value("rmq.rube.queue")
+	@Value("${rmq.rube.queue}")
 	String queueName;
 
-	@Value("rmq.rube.exchange")
+	@Value("${rmq.rube.exchange}")
 	String exchange;
 
-	@Value("rmq.rube.routingkey")
+	@Value("${rmq.rube.routingkey}")
 	private String routingkey;
 
 	@Bean

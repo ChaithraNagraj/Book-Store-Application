@@ -44,11 +44,9 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Void> register(@RequestBody @Valid RegistrationDTO request) throws IOException {
-		HttpHeaders headers = new HttpHeaders();
-		if (userService.registerUser(request))
-			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
-		return new ResponseEntity<Void>(headers, HttpStatus.ALREADY_REPORTED);
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
+			throws IOException, UserException {
+		return userService.registerUser(request);
 	}
 
 	@GetMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,11 +65,11 @@ public class UserController {
 	}
 
 	@PutMapping("/resetpassword")
-	public ResponseEntity<Response> resetPassword( @Valid @RequestBody ResetPasswordDto resetPassword,
+	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPassword,
 			@RequestParam("token") String token) throws UserException {
 		return userService.resetPassword(resetPassword, token);
 	}
-	
+
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
 		User user = userService.findById(id);

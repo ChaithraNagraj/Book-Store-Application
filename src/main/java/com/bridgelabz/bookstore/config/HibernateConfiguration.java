@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 public class HibernateConfiguration {
+
+	@Autowired
+	private YAMLConfig ymlConfig;
 
 	@Value("${hibernate.dialect}")
 	private String HIBERNATE_DIALECT;
@@ -44,10 +48,10 @@ public class HibernateConfiguration {
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3305/bookstore");
-		dataSource.setUsername("root");
-		dataSource.setPassword("root");
+		dataSource.setDriverClassName(ymlConfig.getDriverClassName());
+		dataSource.setUrl(ymlConfig.getUrl());
+		dataSource.setUsername(ymlConfig.getDbUserName());
+		dataSource.setPassword(ymlConfig.getDbPassword());
 		return dataSource;
 	}
 

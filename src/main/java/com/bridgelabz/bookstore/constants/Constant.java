@@ -40,4 +40,5 @@ public class Constant {
 	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
 	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
 	public static final String PATH = "E:\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
+	public static final String USER_REGISTER_SUCESSFULLY = "User Registration Sucessfully Done.";
 }
