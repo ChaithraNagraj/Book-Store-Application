@@ -10,10 +10,8 @@ public class Template {
 	private Template() {
 	}
 
-	private static final String PATH = "C:\\Users\\admin\\Desktop\\Project Data\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
-
-	public static String readContentFromTemplet() throws IOException {
-		Path filePath = FileSystems.getDefault().getPath(PATH).normalize();
+	public static String readContentFromTemplet(String path) throws IOException {
+		Path filePath = FileSystems.getDefault().getPath(path).normalize();
 		byte[] fileBytes = Files.readAllBytes(filePath);
 		return new String(fileBytes);
 	}

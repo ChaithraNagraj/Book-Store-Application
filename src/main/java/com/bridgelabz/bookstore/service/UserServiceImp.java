@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -7,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,8 @@ import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
-import com.bridgelabz.bookstore.utils.RabbitMQSender;
 import com.bridgelabz.bookstore.utils.RedisCache;
+import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
 @Component
@@ -40,9 +40,6 @@ public class UserServiceImp implements UserService {
 	private MailTempletService mailTempletService;
 
 	@Autowired
-	private RabbitMQSender rabbitMqSender;
-
-	@Autowired
 	private WebSecurityConfig encrypt;
 
 	@Autowired
@@ -53,32 +50,38 @@ public class UserServiceImp implements UserService {
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
 	@Override
-	public ResponseEntity<Response> registerUser(RegistrationDTO user) throws UserException {
-		List<User> maybeUser = userRepository.findByEmail(user.getEmail());
+	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
+		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
 		logger.info("UserDetails: " + maybeUser);
 		if (maybeUser != null) {
-			User u = new User(user);
-			logger.info("UserDetails: " + u.getEmail());
-			u.setPassword(encrypt.bCryptPasswordEncoder().encode(user.getPassword()));
-			Role r = getRoleName(user.getRole());
-			u.setRole(r.getRole());
-			userRepository.addUser(u);
-//			try {
-//				mailTempletService.getTemplate(u);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-
-//			String response = Constant.VERIFY_ADDRESS + JwtValidate.createJWT(u.getId(), Constant.REGISTER_EXP);
-//			rabbitMqSender.send(new MailResponse(u.getEmail(), Constant.VERIFICATION, response));
+			User user = new User(registerRequest);
+			logger.info("UserDetails: " + user.getEmail());
+			user.setPassword(encrypt.bCryptPasswordEncoder().encode(registerRequest.getPassword()));
+			Role userRole = getRoleName(registerRequest.getRole());
+			user.setRole(userRole.getRole());
+			userRepository.addUser(user);
+			registerMail(user, Constant.REGISTRATION_TEMPLET);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
 		}
 		throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
-	private Role getRoleName(String role) {
-		return userRepository.findByRoleId(Long.parseLong(role));
+	private Role getRoleName(String userRole) {
+		return userRepository.findByRoleId(Long.parseLong(userRole));
+	}
+
+	private void registerMail(User user, String templet) {
+		String token = TokenUtility.verifyResponse(user.getId());
+		sendMail(user, token, templet);
+	}
+
+	private void sendMail(User user, String token, String templet) {
+		try {
+			mailTempletService.getTemplate(user, token, templet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -112,6 +115,7 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
+				registerMail(user, Constant.LOGIN_TEMPLET);
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -145,14 +149,13 @@ public class UserServiceImp implements UserService {
 	}
 
 	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
-
-		User isIdAvailable = userRepository.getusersByemail(email);
-		if (isIdAvailable != null && isIdAvailable.isVerify()) {
-			String response = Constant.RESET_PASSWORD
-					+ JwtValidate.createJWT(isIdAvailable.getId(), Constant.LOGIN_EXP);
+		User maybeUser = userRepository.getusersByemail(email);
+		if (maybeUser != null && maybeUser.isVerify()) {
+//			String response = Constant.RESET_PASSWORD
+//					+ JwtValidate.createJWT(isIdAvailable.getId(), Constant.LOGIN_EXP);
 			// rabbitMqSender.send(new MailResponse(isIdAvailable.getEmail(),
 			// Constant.PASSWORD_UPDATE_MESSAGE, response));
-
+			registerMail(maybeUser, Constant.FORGOT_PASSWORD_TEMPLET);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
 		}

@@ -20,19 +20,26 @@ public class MailTempletService {
 	@Autowired
 	private Mail mail;
 
-	private String RegistrationTemplate = "";
+	private String templateMSG = "";
 
-	public void getTemplate(User request) throws IOException {
-		if (RegistrationTemplate.equals("")) {
-			RegistrationTemplate = Template.readContentFromTemplet();
+	public void getTemplate(User request, String token, String path) throws IOException {
+		
+		if (templateMSG.equals("")) {
+			templateMSG = Template.readContentFromTemplet(path);
 		}
-		RegistrationTemplate = RegistrationTemplate.replaceAll(Pattern.quote("$%name%"), request.getName());
+
+		templateMSG = templateMSG.replaceAll(Pattern.quote("$%name%"), request.getName());
+		templateMSG = templateMSG.replaceAll(Pattern.quote("$%token%"), token);
+
 		mail.setTo(request.getEmail());
 		mail.setFrom(EmailService.SENDER_EMAIL_ID);
-		mail.setSubject(request.getName() + ", Registration Successful");
-		mail.setContent(RegistrationTemplate);
+		mail.setSubject(request.getName());
+		mail.setContent(templateMSG);
 		mail.setSentDate(Date.from(DateUtility.today().atZone(ZoneId.systemDefault()).toInstant()));
+		
 		rabbitMQSender.send(mail);
+		
+		templateMSG="";
 	}
 
 }
