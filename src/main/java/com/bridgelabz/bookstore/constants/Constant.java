@@ -6,10 +6,9 @@ public class Constant {
 
 	}
 
-	public static final String LOGIN_TEMPLET = "C:\\Users\\admin\\Desktop\\Project Data\\Book-Store-Application\\src\\main\\resources\\templates\\Login-template.html";
-	public static final String FORGOT_PASSWORD_TEMPLET = "C:\\Users\\admin\\Desktop\\Project Data\\Book-Store-Application\\src\\main\\resources\\templates\\Forgot-Password-template.html";
-	public static final String REGISTRATION_TEMPLET = "C:\\Users\\admin\\Desktop\\Project Data\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
-//	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
+	public static final String LOGIN_TEMPLET = "/home/admin1/Desktop/project/Book-Store-Application/src/main/resources/templates/Login-template.html";
+	public static final String FORGOT_PASSWORD_TEMPLET = "/home/admin1/Desktop/project/Book-Store-Application/src/main/resources/templates/Forgot-Password-template.html";
+	public static final String REGISTRATION_TEMPLET = "/home/admin1/Desktop/project/Book-Store-Application/src/main/resources/templates/Registration-template.html";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
 	public static final String VERIFY_ADDRESS = "http://localhost:8080/user/verify?token=";
