@@ -7,19 +7,19 @@ import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
+	//@Size(min = 3)
+	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
 	private String name;
 
-	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName")
+	//@Size(min = 3)
+	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName")
 	private String userName;
 
 	@Email
 	private String email;
 
-	@Size(min = 3)
-	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
+//	@Size(min = 3)
+//	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
 
 	@NotEmpty(message = "Enter Role - Registration DTO")
