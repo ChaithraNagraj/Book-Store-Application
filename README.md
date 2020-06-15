@@ -129,20 +129,34 @@ If an item is not in stock, then we provide information that is **"Out of Stock"
 ![](https://user-images.githubusercontent.com/50637297/83981249-d6313300-a939-11ea-9de2-819b041d532b.jpg)
 
 
+```
 
 profile = development
-port = Your_DB_Port
-dbName = Your_DB_Name
-dbUser = Your_DB_User
-dbPass = Your_DB_Pass
-emailId = Your_Email_Address
-emailPass = Your_Email_Password
-rabbitUser = Your_RabbitMQ_User(guest)
-rabbitPass = Your_RabbitMQ_Pass(guest)
+
+emailId = {Your_Email_ID}
+emailPass = {Your_Email_Password}
+
+rabbitUser = guest
+rabbitPass = guest
+
+port = {Your_DB_PORT}
+dbName = {Your_DB_Name
+dbUser = {Your_DB_User_Name}
+dbPass = {Your_DB_User_Password}
+
 exchange = obs-exchange
 queue = obs-queue
 routingkey = obs-routingkey
 
+accesskey = {Ask_To_Owner}
+endpointUrl = {Ask_To_Owner}
+bucketname = {Ask_To_Owner}
+secretkey = {Ask_To_Owner}
+
+registration-template-path = {In_Your_System_Templet_Path_For_Registration_Templet}
+login-template-path = {In_Your_System_Templet_Path_For_Login_Templet}
+forgot-password-template-path = {In_Your_System_Templet_Path_For_Forgot_Password_Templet}
+```
 #### DFD for USER(DFD- Level 1)
 
 ![](https://user-images.githubusercontent.com/50637297/83981250-d7faf680-a939-11ea-8949-0e0003925830.jpg)
