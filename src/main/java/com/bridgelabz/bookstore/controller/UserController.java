@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.bridgelabz.bookstore.config.AmazonClient;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.User;
@@ -42,6 +44,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private AmazonClient amazonClient;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
@@ -74,43 +79,52 @@ public class UserController {
 	public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
 		User user = userService.findById(id);
 		if (user == null) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/get", headers = "Accept=application/json")
 	public List<User> getAllUser() {
-		List<User> tasks = userService.getUser();
-		return tasks;
+		return userService.getUser();
 	}
 
 	@PutMapping(value = "/update", headers = "Accept=application/json")
 	public ResponseEntity<String> updateUser(@RequestBody User currentUser) {
 		User user = userService.findById(currentUser.getId());
 		if (user == null) {
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		userService.update(currentUser, currentUser.getId());
-		return new ResponseEntity<String>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "/{id}", headers = "Accept=application/json")
 	public ResponseEntity<User> deleteUser(@PathVariable("id") Long id) {
 		User user = userService.findById(id);
 		if (user == null) {
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		userService.deleteUserById(id);
-		return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@PostMapping(value = "/roles", headers = "Accept=application/json")
 	public ResponseEntity<Void> addRole(@RequestBody RoleDTO request) {
 		HttpHeaders headers = new HttpHeaders();
 		if (userService.addRole(request))
-			return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
-		return new ResponseEntity<Void>(headers, HttpStatus.ALREADY_REPORTED);
+			return new ResponseEntity<>(headers, HttpStatus.CREATED);
+		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
+	}
+
+	@PostMapping("/uploadimage")
+	public ResponseEntity<Response> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+		return this.amazonClient.uploadFile(file);
+	}
+
+	@DeleteMapping("/deleteimage")
+	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl) {
+		return this.amazonClient.deleteFileFromS3Bucket(fileUrl);
 	}
 
 }
