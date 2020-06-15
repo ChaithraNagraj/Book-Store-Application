@@ -80,7 +80,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 	}
 
@@ -115,7 +115,7 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-				registerMail(user, Constant.LOGIN_TEMPLET);
+				registerMail(idAvailable, Constant.LOGIN_TEMPLET);
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -127,8 +127,7 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
-		logger.info("given: " + encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()));
-		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
+		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
@@ -151,10 +150,6 @@ public class UserServiceImp implements UserService {
 	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-//			String response = Constant.RESET_PASSWORD
-//					+ JwtValidate.createJWT(isIdAvailable.getId(), Constant.LOGIN_EXP);
-			// rabbitMqSender.send(new MailResponse(isIdAvailable.getEmail(),
-			// Constant.PASSWORD_UPDATE_MESSAGE, response));
 			registerMail(maybeUser, Constant.FORGOT_PASSWORD_TEMPLET);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));

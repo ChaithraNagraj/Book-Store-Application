@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class Response {
 	private int status;
 	private String message;
+	private String data;
 	private LocalDateTime now;
 
 	public LocalDateTime getNow() {
@@ -27,6 +28,12 @@ public class Response {
 	public Response(String message, int status) {
 		this.message = message;
 		this.status = status;
+	}
+
+	public Response(String message, int status, String data) {
+		this.message = message;
+		this.status = status;
+		this.data = data;
 	}
 
 	public Response(int status, String message) {
@@ -55,6 +62,14 @@ public class Response {
 
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 
 	@Override
