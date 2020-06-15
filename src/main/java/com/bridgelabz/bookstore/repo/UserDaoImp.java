@@ -2,7 +2,6 @@ package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
@@ -23,9 +22,6 @@ public class UserDaoImp implements UserRepo {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	@Autowired
-	private EntityManager entityManager;
-
 	public void addUser(User user) {
 		System.out.println("3");
 
@@ -45,9 +41,7 @@ public class UserDaoImp implements UserRepo {
 
 	public User update(User val, Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		User user = (User) session.get(User.class, id);
-//		user.setCity(val.getCity());
-		// user.setName(val.getName());
+		User user = session.get(User.class, id);
 		session.update(user);
 		return user;
 	}
@@ -85,7 +79,7 @@ public class UserDaoImp implements UserRepo {
 
 	@Override
 	public User getusersByemail(String email) {
-		Session session = entityManager.unwrap(Session.class);
+		Session session = sessionFactory.getCurrentSession();
 		Query<?> q = session.createQuery("from User where email=:email");
 		q.setParameter("email", email);
 		return (User) q.uniqueResult();
@@ -105,10 +99,9 @@ public class UserDaoImp implements UserRepo {
 	public List<User> findByEmail(String email) {
 		Session session = sessionFactory.getCurrentSession();
 		String hql = "FROM User E WHERE E.email = :email";
-		Query query = session.createQuery(hql);
+		Query<User> query = session.createQuery(hql);
 		query.setParameter("email", email);
-		List results = query.list();
-		return results;
+		return query.list();
 	}
 
 }

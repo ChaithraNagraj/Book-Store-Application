@@ -50,10 +50,6 @@ public class User {
 	@NotNull
 	private boolean isVerify;
 
-	@Column(name = "is_deleted")
-	@NotNull
-	private boolean isDeleted;
-
 	@Column(name = "registration_date_time")
 	@NotNull
 	private LocalDateTime registrationDateTime;
@@ -76,7 +72,6 @@ public class User {
 		this.password = req.getPassword();
 		this.mobileNumber = req.getMoblieNumber();
 		this.isVerify = false;
-		this.isDeleted = false;
 		this.registrationDateTime = DateUtility.today();
 		this.updateDateTime = DateUtility.today();
 		this.role = req.getRole();
@@ -136,14 +131,6 @@ public class User {
 
 	public void setVerify(boolean isVerify) {
 		this.isVerify = isVerify;
-	}
-
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
 	}
 
 	public LocalDateTime getRegistrationDateTime() {

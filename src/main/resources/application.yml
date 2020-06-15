@@ -17,3 +17,10 @@ rmq:
     exchange: ${exchange}
     queue: ${queue}
     routingkey: ${routingkey}
+
+amazonProperties:
+  endpointUrl: ${awsurl}
+  accessKey: ${accesskey}
+  secretKey: ${secretkey}
+  bucketName: ${bucketname}
+    

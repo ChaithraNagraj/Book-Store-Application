@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -48,6 +49,9 @@ public class UserServiceImp implements UserService {
 	private String redisKey = "Key";
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
+	
+	@Autowired
+	private Environment environment;
 
 	@Override
 	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
@@ -60,7 +64,7 @@ public class UserServiceImp implements UserService {
 			Role userRole = getRoleName(registerRequest.getRole());
 			user.setRole(userRole.getRole());
 			userRepository.addUser(user);
-			registerMail(user, Constant.REGISTRATION_TEMPLET);
+			registerMail(user, environment.getProperty("registration-template-path"));
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
 		}
@@ -80,7 +84,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.info(e.getMessage());
 		}
 	}
 
@@ -115,7 +119,11 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
+<<<<<<< HEAD
 				registerMail(idAvailable, Constant.LOGIN_TEMPLET);
+=======
+				registerMail(idAvailable,environment.getProperty("login-template-path"));
+>>>>>>> c95f005bd52b3ea8f88631704a8883b0b42baa62
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -127,8 +135,7 @@ public class UserServiceImp implements UserService {
 	@Override
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
-		logger.info("given: " + encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()));
-		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword())) {
+		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
@@ -151,11 +158,7 @@ public class UserServiceImp implements UserService {
 	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-//			String response = Constant.RESET_PASSWORD
-//					+ JwtValidate.createJWT(isIdAvailable.getId(), Constant.LOGIN_EXP);
-			// rabbitMqSender.send(new MailResponse(isIdAvailable.getEmail(),
-			// Constant.PASSWORD_UPDATE_MESSAGE, response));
-			registerMail(maybeUser, Constant.FORGOT_PASSWORD_TEMPLET);
+			registerMail(maybeUser,environment.getProperty("forgot-password-template-path"));
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
 		}
