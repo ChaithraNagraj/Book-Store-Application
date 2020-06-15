@@ -6,8 +6,14 @@ spring:
   rabbitmq:
     username: ${rabbitUser}
     password: ${rabbitPass}
-url: jdbc:mysql://localhost:3306/${dbName}?useSSL=false
+    
+url: jdbc:mysql://localhost:${port}/${dbName}?useSSL=false
 dbUserName: ${dbUser}
 dbPassword: ${dbPass}
 driverClassName: com.mysql.cj.jdbc.Driver
   
+rmq:
+  rube:
+    exchange: ${exchange}
+    queue: ${queue}
+    routingkey: ${routingkey}
