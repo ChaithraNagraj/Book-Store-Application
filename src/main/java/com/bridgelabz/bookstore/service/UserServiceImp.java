@@ -55,11 +55,10 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
+		RegistrationDTO.isValid(registerRequest.getMoblieNumber());
 		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
-		logger.info("UserDetails: " + maybeUser);
 		if (maybeUser != null) {
 			User user = new User(registerRequest);
-			logger.info("UserDetails: " + user.getEmail());
 			user.setPassword(encrypt.bCryptPasswordEncoder().encode(registerRequest.getPassword()));
 			Role userRole = getRoleName(registerRequest.getRole());
 			user.setRole(userRole.getRole());
@@ -119,9 +118,7 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
-
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -137,12 +134,10 @@ public class UserServiceImp implements UserService {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
-			logger.info("Token: " + token);
 			redis.putMap(redisKey, user.getEmail(), token);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE));
 		}
-
 		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
@@ -181,4 +176,30 @@ public class UserServiceImp implements UserService {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 	}
+	
+	@Override
+	public boolean isSessionActive(String token) {
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		return user.getStatus();
+	}
+
+	@Override
+	public ResponseEntity<Response> logOut(String token) throws UserException {
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		if (user == null) {
+			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		if (user.getStatus()) {
+			user.setStatus(Boolean.FALSE);
+			userRepository.addUser(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
+				
+}
+
 }
