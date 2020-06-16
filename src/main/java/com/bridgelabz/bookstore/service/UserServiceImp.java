@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -33,6 +35,9 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 @Component
 public class UserServiceImp implements UserService {
 
+	@Autowired
+	private RoleRepositoryImp roleRepository;
+	
 	@Autowired
 	private UserRepo userRepository;
 
@@ -49,22 +54,54 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
-	@Override
-	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
-		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
-		logger.info("UserDetails: " + maybeUser);
-		if (maybeUser != null) {
-			User user = new User(registerRequest);
-			logger.info("UserDetails: " + user.getEmail());
-			user.setPassword(encrypt.bCryptPasswordEncoder().encode(registerRequest.getPassword()));
-			Role userRole = getRoleName(registerRequest.getRole());
-			user.setRole(userRole.getRole());
-			userRepository.addUser(user);
-			registerMail(user, Constant.REGISTRATION_TEMPLET);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
+	
+	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
+//		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
+//		logger.info("UserDetails: " + maybeUser);
+//		if (maybeUser != null) {
+//			User user = new User(registerRequest);
+//			logger.info("UserDetails: " + user.getEmail());
+//			user.setPassword(encrypt.bCryptPasswordEncoder().encode(registerRequest.getPassword()));
+//			Role userRole = getRoleName(registerRequest.getRole());
+//			//user.setRole(userRole.getRole());
+//			//userRepository.addUser(user);
+//			registerMail(user, Constant.REGISTRATION_TEMPLET);
+//			return ResponseEntity.status(HttpStatus.OK)
+//					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
+//		}
+//		throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		User userEntity = new User(); 
+		userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
+		BeanUtils.copyProperties(userDetails, userEntity);
+		userEntity.setRegistrationDateTime(DateUtility.today());
+		userEntity.setUpdateDateTime(DateUtility.today());
+		userEntity.setMobileNumber(userDetails.getMoblieNumber());
+		userEntity.setVerify(false);
+		if(userDetails.getRole().equals("1")) {
+			
+			Role roleEntity= roleRepository.getRoleByName("Buyer");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
 		}
-		throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		if(userDetails.getRole().equals("2")) {
+			
+			Role roleEntity= roleRepository.getRoleByName("Seller");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+		}
+		if(userDetails.getRole().equals("3")) {
+			
+			Role roleEntity= roleRepository.getRoleById(2);
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+			roleEntity= roleRepository.getRoleByName("Seller");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+			
+		}
+		registerMail(userEntity, Constant.REGISTRATION_TEMPLET);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
 	}
 
 	private Role getRoleName(String userRole) {
@@ -84,27 +121,27 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	@Override
+	
 	public User findById(Long id) {
 		return userRepository.findByUserId(id);
 	}
 
-	@Override
+	
 	public List<User> getUser() {
 		return userRepository.getUser();
 	}
 
-	@Override
+	
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
 
-	@Override
+	
 	public User update(User user, Long id) {
 		return userRepository.update(user, id);
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> verify(String token) {
 		long id = JwtValidate.decodeJWT(token);
 		User idAvailable = userRepository.findByUserId(id);
@@ -124,7 +161,7 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
 		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
@@ -140,7 +177,7 @@ public class UserServiceImp implements UserService {
 		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
-	@Override
+	
 	public boolean addRole(RoleDTO request) {
 		request.setRole(request.getRole().toUpperCase());
 		userRepository.saveRoles(new Role(request));
@@ -158,7 +195,7 @@ public class UserServiceImp implements UserService {
 				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
 			long id = JwtValidate.decodeJWT(token);

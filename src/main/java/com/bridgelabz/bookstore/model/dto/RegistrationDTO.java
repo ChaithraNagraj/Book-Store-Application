@@ -11,6 +11,21 @@ public class RegistrationDTO {
 	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
 	private String name;
 
+	public RegistrationDTO(
+			@NotEmpty(message = "Enter First Name - Registration DTO") @Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName") String name,
+			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
+			@Email String email,
+			@Size(min = 3) @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number") String password,
+			@NotEmpty(message = "Enter Role - Registration DTO") String role, Long moblieNumber) {
+		super();
+		this.name = name;
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.mobileNumber = moblieNumber;
+	}
+
 	@Size(min = 3)
 	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName")
 	private String userName;
@@ -26,7 +41,7 @@ public class RegistrationDTO {
 	private String role;
 
 	//@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
-	private Long moblieNumber;
+	private Long mobileNumber;
 
 	public RegistrationDTO() {
 		super();
@@ -50,11 +65,11 @@ public class RegistrationDTO {
 	}
 
 	public Long getMoblieNumber() {
-		return moblieNumber;
+		return mobileNumber;
 	}
 
 	public void setMoblieNumber(Long moblieNumber) {
-		this.moblieNumber = moblieNumber;
+		this.mobileNumber = moblieNumber;
 	}
 
 	public String getUserName() {
@@ -84,7 +99,7 @@ public class RegistrationDTO {
 	@Override
 	public String toString() {
 		return "RegistrationDTO [name=" + name + ", userName=" + userName + ", email=" + email + ", password="
-				+ password + ", moblieNumber=" + moblieNumber + ", role=" + role + "]";
+				+ password + ", moblieNumber=" + mobileNumber + ", role=" + role + "]";
 	}
 
 
