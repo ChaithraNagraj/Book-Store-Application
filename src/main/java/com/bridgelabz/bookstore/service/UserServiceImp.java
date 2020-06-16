@@ -49,7 +49,7 @@ public class UserServiceImp implements UserService {
 	private String redisKey = "Key";
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
-	
+
 	@Autowired
 	private Environment environment;
 
@@ -119,11 +119,9 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-<<<<<<< HEAD
-				registerMail(idAvailable, Constant.LOGIN_TEMPLET);
-=======
-				registerMail(idAvailable,environment.getProperty("login-template-path"));
->>>>>>> c95f005bd52b3ea8f88631704a8883b0b42baa62
+
+				registerMail(idAvailable, environment.getProperty("login-template-path"));
+
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -158,7 +156,7 @@ public class UserServiceImp implements UserService {
 	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser,environment.getProperty("forgot-password-template-path"));
+			registerMail(maybeUser, environment.getProperty("forgot-password-template-path"));
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
 		}
