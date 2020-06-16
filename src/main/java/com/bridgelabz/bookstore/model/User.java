@@ -59,6 +59,7 @@ public class User {
 	@NotNull
 	private LocalDateTime updateDateTime;
 
+
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })

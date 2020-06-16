@@ -44,7 +44,7 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private AmazonClient amazonClient;
 
@@ -116,7 +116,10 @@ public class UserController {
 			return new ResponseEntity<>(headers, HttpStatus.CREATED);
 		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
 	}
-
+	@PostMapping("/logout")
+	public ResponseEntity<Response> logOut(@RequestParam("token") String token) throws UserException {
+		return userService.logOut(token);
+	}
 	@PostMapping("/uploadimage")
 	public ResponseEntity<Response> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 		return this.amazonClient.uploadFile(file);

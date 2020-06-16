@@ -33,5 +33,9 @@ public interface UserService {
 
 	public void deleteUserById(Long id);
 
-	boolean addRole(RoleDTO request);
+	public boolean addRole(RoleDTO request);
+	
+	ResponseEntity<Response> logOut(String token) throws UserException;
+
+	boolean isSessionActive(String token);
 }
