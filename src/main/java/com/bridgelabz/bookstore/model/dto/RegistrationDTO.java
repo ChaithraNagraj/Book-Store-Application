@@ -1,5 +1,7 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import java.util.regex.Matcher;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
@@ -7,25 +9,25 @@ import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-	//@Size(min = 3)
-	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
+	@Size(min = 3)
+	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
 	private String name;
 
-	//@Size(min = 3)
-	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName")
+	@Size(min = 3)
+	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
 	private String userName;
 
 	@Email
 	private String email;
 
-//	@Size(min = 3)
-//	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
+	@Size(min = 3)
+	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
 
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
-	//@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
+	@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
 	private Long moblieNumber;
 
 	public RegistrationDTO() {
@@ -79,6 +81,14 @@ public class RegistrationDTO {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public static Boolean isValid(Long mobileNumber) {
+		String phNo = Long.toString(mobileNumber);
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[7-9]{1}[0-9]{9}");
+		Matcher m = pattern.matcher(phNo);
+		return m.find();
+		
 	}
 
 	@Override

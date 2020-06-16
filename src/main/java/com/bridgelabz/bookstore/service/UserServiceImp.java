@@ -55,6 +55,7 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
+		RegistrationDTO.isValid(registerRequest.getMoblieNumber());
 		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
 		logger.info("UserDetails: " + maybeUser);
 		if (maybeUser != null) {
@@ -119,11 +120,8 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-<<<<<<< HEAD
 				registerMail(idAvailable, Constant.LOGIN_TEMPLET);
-=======
 				registerMail(idAvailable,environment.getProperty("login-template-path"));
->>>>>>> c95f005bd52b3ea8f88631704a8883b0b42baa62
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -183,4 +181,30 @@ public class UserServiceImp implements UserService {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 	}
+	
+	@Override
+	public boolean isSessionActive(String token) {
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		return user.getStatus();
+	}
+
+	@Override
+	public ResponseEntity<Response> logOut(String token) throws UserException {
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		if (user == null) {
+			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		if (user.getStatus()) {
+			user.setStatus(Boolean.FALSE);
+			userRepository.addUser(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
+				
+}
+
 }
