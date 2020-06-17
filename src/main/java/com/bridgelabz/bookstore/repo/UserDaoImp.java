@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
@@ -18,6 +19,9 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 @Transactional
 @SuppressWarnings("unchecked")
 public class UserDaoImp implements UserRepo {
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -32,11 +36,11 @@ public class UserDaoImp implements UserRepo {
 		return sessionFactory.getCurrentSession().get(User.class, id);
 	}
 
+	@Transactional
 	public List<User> getUser() {
-		Session session = sessionFactory.getCurrentSession();
-		String hql = "FROM User";
-		Query<User> query = session.createQuery(hql);
-		return query.list();
+		Session session = entityManager.unwrap(Session.class);
+		Query q=session.createQuery("From User");
+		return q.getResultList();
 	}
 
 	public User update(User val, Long id) {

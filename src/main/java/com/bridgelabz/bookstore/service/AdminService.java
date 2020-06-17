@@ -1,5 +1,11 @@
 package com.bridgelabz.bookstore.service;
 
-public interface AdminService {
+import java.util.List;
 
+import com.bridgelabz.bookstore.model.User;
+
+public interface AdminService {
+	
+	public List<User> getBuyers();
+	public List<User> getSellers();
 }

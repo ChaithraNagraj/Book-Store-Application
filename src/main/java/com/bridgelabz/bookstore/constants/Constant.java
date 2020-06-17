@@ -2,13 +2,10 @@ package com.bridgelabz.bookstore.constants;
 
 public class Constant {
 
-	private Constant() {}
+	private Constant() {
+	}
 
 
-
-//	public static final String LOGIN_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Login-template.html";
-//	public static final String FORGOT_PASSWORD_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Forgot-Password-template.html";
-//	public static final String REGISTRATION_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -39,9 +36,11 @@ public class Constant {
 	public static final String MESSAGEING_RESPONSE = "No-Reply";
 	public static final String VERIFICATION = "Verification";
 	public static final long REGISTER_EXP = (long) 3 * 60 * 60 * 1000;
-//	public static final String RESET_PASSWORD = "http://localhost:8080/user/resetpassword/";
 	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
 	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
-//	public static final String PATH = "E:\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
 	public static final String USER_REGISTER_SUCESSFULLY = "User Registration Sucessfully Done.";
+	public static final String LOGOUT_MEAASGE = "User LogOut Sucessfully";
+	public static final String LOGOUT_FAILED_MEAASGE = "User LogOut Failed";
+	public static final String USER_DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
+
 }

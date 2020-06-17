@@ -2,29 +2,30 @@
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
-import com.bridgelabz.bookstore.utils.DateUtility;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "user")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User {
-	@GenericGenerator(name = "user_id", strategy = "increment")
-	@GeneratedValue(generator = "userid")
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_id")
 	private Long id;
 
 	@Column(name = "name", nullable = false)
@@ -58,23 +59,19 @@ public class User {
 	@NotNull
 	private LocalDateTime updateDateTime;
 
-	@Column(name = "role_name", nullable = false)
-	@Size(min = 3)
-	private String role;
 
-	public User() {
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+	public List<Role> roleList;
+	public List<Role> getRoleList() {
+		return roleList;
+	}
+	public void setRoleList(List<Role> roleList) {
+		this.roleList = roleList;
 	}
 
-	public User(RegistrationDTO req) {
-		this.name = req.getName();
-		this.userName = req.getUserName();
-		this.email = req.getEmail();
-		this.password = req.getPassword();
-		this.mobileNumber = req.getMoblieNumber();
-		this.isVerify = false;
-		this.registrationDateTime = DateUtility.today();
-		this.updateDateTime = DateUtility.today();
-		this.role = req.getRole();
+	public User() {
 	}
 
 	public String getName() {
@@ -147,13 +144,5 @@ public class User {
 
 	public void setUpdateDateTime(LocalDateTime updateDateTime) {
 		this.updateDateTime = updateDateTime;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
 	}
 }

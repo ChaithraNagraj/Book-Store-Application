@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -35,6 +37,9 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 public class UserServiceImp implements UserService {
 
 	@Autowired
+	private RoleRepositoryImp roleRepository;
+	
+	@Autowired
 	private UserRepo userRepository;
 
 	@Autowired
@@ -45,30 +50,51 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RedisCache<Object> redis;
-
-	private String redisKey = "Key";
-
-	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 	
 	@Autowired
 	private Environment environment;
 
-	@Override
-	public ResponseEntity<Response> registerUser(RegistrationDTO registerRequest) throws UserException {
-		List<User> maybeUser = userRepository.findByEmail(registerRequest.getEmail());
-		logger.info("UserDetails: " + maybeUser);
-		if (maybeUser != null) {
-			User user = new User(registerRequest);
-			logger.info("UserDetails: " + user.getEmail());
-			user.setPassword(encrypt.bCryptPasswordEncoder().encode(registerRequest.getPassword()));
-			Role userRole = getRoleName(registerRequest.getRole());
-			user.setRole(userRole.getRole());
-			userRepository.addUser(user);
-			registerMail(user, environment.getProperty("registration-template-path"));
+	private String redisKey = "Key";
+
+	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
+
+
+	
+	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
+
+		User userEntity = new User(); 
+		userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
+		BeanUtils.copyProperties(userDetails, userEntity);
+		userEntity.setRegistrationDateTime(DateUtility.today());
+		userEntity.setUpdateDateTime(DateUtility.today());
+		userEntity.setMobileNumber(userDetails.getMoblieNumber());
+		userEntity.setVerify(false);
+		if(userDetails.getRole().equals("1")) {
+			
+			Role roleEntity= roleRepository.getRoleByName("Buyer");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+		}
+		if(userDetails.getRole().equals("2")) {
+			
+			Role roleEntity= roleRepository.getRoleByName("Seller");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+		}
+		if(userDetails.getRole().equals("3")) {
+			
+			Role roleEntity= roleRepository.getRoleById(2);
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+			roleEntity= roleRepository.getRoleByName("Seller");
+			roleEntity.getUser().add(userEntity);
+			roleRepository.save(roleEntity);
+		}
+
+			registerMail(userEntity, environment.getProperty("registration-template-path"));
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
-		}
-		throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+
 	}
 
 	private Role getRoleName(String userRole) {
@@ -88,27 +114,27 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	@Override
+	
 	public User findById(Long id) {
 		return userRepository.findByUserId(id);
 	}
 
-	@Override
+	
 	public List<User> getUser() {
 		return userRepository.getUser();
 	}
 
-	@Override
+	
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
 
-	@Override
+	
 	public User update(User user, Long id) {
 		return userRepository.update(user, id);
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> verify(String token) {
 		long id = JwtValidate.decodeJWT(token);
 		User idAvailable = userRepository.findByUserId(id);
@@ -119,8 +145,12 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
+<<<<<<< HEAD
 				registerMail(idAvailable,  environment.getProperty("login-template-path"));
 				registerMail(idAvailable,environment.getProperty("login-template-path"));
+=======
+				registerMail(idAvailable, environment.getProperty("login-template-path"));
+>>>>>>> bfe19743e5752f09963da6a17eb34e3b73648051
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
@@ -129,23 +159,21 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
 		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
-			logger.info("Token: " + token);
 			redis.putMap(redisKey, user.getEmail(), token);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE));
 		}
-
 		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
-	@Override
+	
 	public boolean addRole(RoleDTO request) {
 		request.setRole(request.getRole().toUpperCase());
 		userRepository.saveRoles(new Role(request));
@@ -155,7 +183,7 @@ public class UserServiceImp implements UserService {
 	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser,environment.getProperty("forgot-password-template-path"));
+			registerMail(maybeUser, environment.getProperty("forgot-password-template-path"));
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
 		}
@@ -163,7 +191,7 @@ public class UserServiceImp implements UserService {
 				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 
-	@Override
+	
 	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
 			long id = JwtValidate.decodeJWT(token);
@@ -180,4 +208,33 @@ public class UserServiceImp implements UserService {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 	}
+
+	
+	@Override
+	public boolean isSessionActive(String token) {
+//		long id = JwtValidate.decodeJWT(token);
+//		User user = userRepository.findByUserId(id);
+//		return user.getStatus();
+		return false;
+	}
+//
+	@Override
+	public ResponseEntity<Response> logOut(String token) throws UserException {
+//		long id = JwtValidate.decodeJWT(token);
+//		User user = userRepository.findByUserId(id);
+//		if (user == null) {
+//			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
+//		}
+//		if (user.getStatus()) {
+//			user.setStatus(Boolean.FALSE);
+//			userRepository.addUser(user);
+//			return ResponseEntity.status(HttpStatus.OK)
+//					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+//		}
+//		return ResponseEntity.status(HttpStatus.OK)
+//				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
+//				
+		return null;
+	}
+
 }
