@@ -119,11 +119,8 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-<<<<<<< HEAD
-				registerMail(idAvailable, Constant.LOGIN_TEMPLET);
-=======
+				registerMail(idAvailable,  environment.getProperty("login-template-path"));
 				registerMail(idAvailable,environment.getProperty("login-template-path"));
->>>>>>> c95f005bd52b3ea8f88631704a8883b0b42baa62
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}

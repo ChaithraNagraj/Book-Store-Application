@@ -6,9 +6,9 @@ public class Constant {
 
 
 
-	public static final String LOGIN_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Login-template.html";
-	public static final String FORGOT_PASSWORD_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Forgot-Password-template.html";
-	public static final String REGISTRATION_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
+//	public static final String LOGIN_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Login-template.html";
+//	public static final String FORGOT_PASSWORD_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Forgot-Password-template.html";
+//	public static final String REGISTRATION_TEMPLET = "C:\\Users\\SHUBHAM\\Desktop\\Java STS Workspace\\Book-Store-Application\\src\\main\\resources\\templates\\Registration-template.html";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -18,6 +18,8 @@ public class Constant {
 	public static final long LOGIN_EXP = (long) 24 * 60 * 60 * 10000000;
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
+	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY="PROFILE_IMAGE_DELETED_SUCCESSFULLY";
+	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY="PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
 	public static final int ALREADY_EXIST_EXCEPTION_STATUS = 208;
 	public static final int NOTE_NOT_FOUND_EXCEPTION_STATUS = 300;
 	public static final int BAD_REQUEST_RESPONSE_CODE = 400;
