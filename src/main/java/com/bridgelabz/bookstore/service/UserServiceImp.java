@@ -65,6 +65,7 @@ public class UserServiceImp implements UserService {
 		} else {
 			User user = new User();
 			BeanUtils.copyProperties(userDetails, user);
+			user.setFullName(userDetails.getName());
 			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
 			user.setRegistrationDateTime(DateUtility.today());
 			user.setUpdateDateTime(DateUtility.today());

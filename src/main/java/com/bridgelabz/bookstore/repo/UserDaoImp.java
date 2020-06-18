@@ -29,7 +29,7 @@ public class UserDaoImp implements UserRepo {
 	public void addUser(User user) {
 		System.out.println("3");
 
-		sessionFactory.getCurrentSession().save(user);
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
 	public User findByUserId(Long id) {

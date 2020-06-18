@@ -1,31 +1,45 @@
 package com.bridgelabz.bookstore.model.dto;
 
-public class BookDTO {
+import org.springframework.stereotype.Component;
 
-	private String bookCode;
-	private String bookName;
+@Component
+public class BookDto {
+
+    
+    
+ 
+    private String bookName;
+
+    private int quantity;
+	
+	private Double price;
+	
 	private String authorName;
-	private String quantity;
+	
+	private String image;
+	
+	private String bookDetails;
 
-	public BookDTO() {
+	public BookDto() {
 		super();
 	}
-
-	public BookDTO(String bookCode, String bookName, String authorName, String quantity) {
+	
+	public BookDto(String bookName, int quantity, Double price, String authorName, String image, String bookDetails) {
 		super();
-		this.bookCode = bookCode;
 		this.bookName = bookName;
-		this.authorName = authorName;
 		this.quantity = quantity;
+		this.price = price;
+		this.authorName = authorName;
+		this.image = image;
+		this.bookDetails = bookDetails;
 	}
 
-	public String getBookCode() {
-		return bookCode;
-	}
 
-	public void setBookCode(String bookCode) {
-		this.bookCode = bookCode;
-	}
+
+
+
+
+
 
 	public String getBookName() {
 		return bookName;
@@ -33,6 +47,24 @@ public class BookDTO {
 
 	public void setBookName(String bookName) {
 		this.bookName = bookName;
+	}
+
+	
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 
 	public String getAuthorName() {
@@ -43,13 +75,28 @@ public class BookDTO {
 		this.authorName = authorName;
 	}
 
-	public String getQuantity() {
-		return quantity;
+	public String getImage() {
+		return image;
 	}
 
-	public void setQuantity(String quantity) {
-		this.quantity = quantity;
+	public void setImage(String image) {
+		this.image = image;
 	}
 
+	public String getBookDetails() {
+		return bookDetails;
+	}
+
+	public void setBookDetails(String bookDetails) {
+		this.bookDetails = bookDetails;
+	}
+	
+	public String toString() {
+		return "bookName=" + this.bookName + "authorName=" + this.authorName + "price=" + this.price + "quantity="
+				+ this.quantity+ "image="+this.image+"bookDetails="+this.bookDetails;
+	}
+
+	
+	
 	
 }
