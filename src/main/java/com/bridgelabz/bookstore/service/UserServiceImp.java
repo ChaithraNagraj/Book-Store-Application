@@ -38,7 +38,7 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RoleRepositoryImp roleRepository;
-	
+
 	@Autowired
 	private UserRepo userRepository;
 
@@ -50,7 +50,7 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RedisCache<Object> redis;
-	
+
 	@Autowired
 	private Environment environment;
 
@@ -58,43 +58,41 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
-
-	
 	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
+		User userEntity = userRepository.getusersByemail(userDetails.getEmail());
+		if (userEntity != null) {
+			throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		} else {
+			User user = new User();
+			BeanUtils.copyProperties(userDetails, user);
+			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
+			user.setRegistrationDateTime(DateUtility.today());
+			user.setUpdateDateTime(DateUtility.today());
+			user.setMobileNumber(userDetails.getMobileNumber());
+			user.setVerify(false);
+			if (userDetails.getRole().equals("1")) {
+				Role roleEntity = roleRepository.getRoleByName("Buyer");
+				roleEntity.getUser().add(user);
+				roleRepository.save(roleEntity);
+			}
+			if (userDetails.getRole().equals("2")) {
+				Role roleEntity = roleRepository.getRoleByName("Seller");
+				roleEntity.getUser().add(user);
+				roleRepository.save(roleEntity);
+			}
+			if (userDetails.getRole().equals("3")) {
+				Role roleEntity = roleRepository.getRoleById(2);
+				roleEntity.getUser().add(user);
+				roleRepository.save(roleEntity);
+				roleEntity = roleRepository.getRoleByName("Seller");
+				roleEntity.getUser().add(user);
+				roleRepository.save(roleEntity);
+			}
 
-		User userEntity = new User(); 
-		userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
-		BeanUtils.copyProperties(userDetails, userEntity);
-		userEntity.setRegistrationDateTime(DateUtility.today());
-		userEntity.setUpdateDateTime(DateUtility.today());
-		userEntity.setMobileNumber(userDetails.getMoblieNumber());
-		userEntity.setVerify(false);
-		if(userDetails.getRole().equals("1")) {
-			
-			Role roleEntity= roleRepository.getRoleByName("Buyer");
-			roleEntity.getUser().add(userEntity);
-			roleRepository.save(roleEntity);
+			registerMail(user, environment.getProperty("registration-template-path"));
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
+					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
 		}
-		if(userDetails.getRole().equals("2")) {
-			
-			Role roleEntity= roleRepository.getRoleByName("Seller");
-			roleEntity.getUser().add(userEntity);
-			roleRepository.save(roleEntity);
-		}
-		if(userDetails.getRole().equals("3")) {
-			
-			Role roleEntity= roleRepository.getRoleById(2);
-			roleEntity.getUser().add(userEntity);
-			roleRepository.save(roleEntity);
-			roleEntity= roleRepository.getRoleByName("Seller");
-			roleEntity.getUser().add(userEntity);
-			roleRepository.save(roleEntity);
-		}
-
-			registerMail(userEntity, environment.getProperty("registration-template-path"));
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
-
 	}
 
 	private Role getRoleName(String userRole) {
@@ -114,61 +112,55 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	
 	public User findById(Long id) {
 		return userRepository.findByUserId(id);
 	}
 
-	
 	public List<User> getUser() {
 		return userRepository.getUser();
 	}
 
-	
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
 
-	
 	public User update(User user, Long id) {
 		return userRepository.update(user, id);
 	}
 
-	
 	public ResponseEntity<Response> verify(String token) {
 		long id = JwtValidate.decodeJWT(token);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
+					Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 		} else {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
-				return ResponseEntity.status(HttpStatus.OK)
-						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
+				return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
+						Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new Response(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
+					Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS));
 		}
 	}
 
-	
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
 		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			userRepository.updateDateTime(user.getId());
 			user.setUpdateDateTime(DateUtility.today());
+			userRepository.updateUserStatus(Boolean.TRUE, user.getId());
 			redis.putMap(redisKey, user.getEmail(), token);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE));
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE,
+					Constant.OK_RESPONSE_CODE, token, DateUtility.today(), user));
 		}
 		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
-	
 	public boolean addRole(RoleDTO request) {
 		request.setRole(request.getRole().toUpperCase());
 		userRepository.saveRoles(new Role(request));
@@ -186,7 +178,6 @@ public class UserServiceImp implements UserService {
 				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 
-	
 	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
 			long id = JwtValidate.decodeJWT(token);
@@ -204,32 +195,29 @@ public class UserServiceImp implements UserService {
 				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 	}
 
-	
 	@Override
 	public boolean isSessionActive(String token) {
-//		long id = JwtValidate.decodeJWT(token);
-//		User user = userRepository.findByUserId(id);
-//		return user.getStatus();
-		return false;
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		return user.isUserStatus();
 	}
-//
+
 	@Override
 	public ResponseEntity<Response> logOut(String token) throws UserException {
-//		long id = JwtValidate.decodeJWT(token);
-//		User user = userRepository.findByUserId(id);
-//		if (user == null) {
-//			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
-//		}
-//		if (user.getStatus()) {
-//			user.setStatus(Boolean.FALSE);
-//			userRepository.addUser(user);
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
-//		}
-//		return ResponseEntity.status(HttpStatus.OK)
-//				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
-//				
-		return null;
+		long id = JwtValidate.decodeJWT(token);
+		User user = userRepository.findByUserId(id);
+		if (user == null) {
+			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		if (user.isUserStatus()) {
+			user.setUserStatus(Boolean.FALSE);
+			userRepository.addUser(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
+
 	}
 
 }

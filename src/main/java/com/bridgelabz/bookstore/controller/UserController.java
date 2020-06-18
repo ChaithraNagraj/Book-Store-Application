@@ -116,13 +116,16 @@ public class UserController {
 			return new ResponseEntity<>(headers, HttpStatus.CREATED);
 		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
 	}
+
 	@PostMapping("/logout")
 	public ResponseEntity<Response> logOut(@RequestParam("token") String token) throws UserException {
 		return userService.logOut(token);
 	}
+
 	@PostMapping("/uploadimage")
-	public ResponseEntity<Response> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-		return this.amazonClient.uploadFile(file);
+	public ResponseEntity<Response> uploadFile(@RequestParam("file") MultipartFile file,
+			@RequestParam("token") String token) throws IOException {
+		return this.amazonClient.uploadFile(file, token);
 	}
 
 	@DeleteMapping("/deleteimage")

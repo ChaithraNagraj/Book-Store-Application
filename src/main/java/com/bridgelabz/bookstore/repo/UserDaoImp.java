@@ -39,7 +39,7 @@ public class UserDaoImp implements UserRepo {
 	@Transactional
 	public List<User> getUser() {
 		Session session = entityManager.unwrap(Session.class);
-		Query q=session.createQuery("From User");
+		Query<User> q=session.createQuery("From User");
 		return q.getResultList();
 	}
 
@@ -106,6 +106,24 @@ public class UserDaoImp implements UserRepo {
 		Query<User> query = session.createQuery(hql);
 		query.setParameter("email", email);
 		return query.list();
+	}
+
+	@Override
+	public void updateUserStatus(Boolean userStatus, Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setUserStatus(userStatus);
+		session.update(user);
+	}
+
+	@Override
+	public void saveImageUrl(String imageUrl, Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setImageUrl(imageUrl);
+		session.update(user);
 	}
 
 }

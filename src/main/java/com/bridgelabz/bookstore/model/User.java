@@ -28,14 +28,14 @@ public class User {
 	@Column(name = "user_id")
 	private Long id;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "full_name", nullable = false)
 	@Size(min = 3)
-	private String name;
+	private String fullName;
 
-	@Column
+	@Column(name = "username",unique = true, nullable = false)
 	private String userName;
 
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", unique = true, nullable = false)
 	@Email
 	private String email;
 
@@ -47,7 +47,7 @@ public class User {
 	@NotNull
 	private Long mobileNumber;
 
-	@Column(name = "is_verify")
+	@Column(name = "is_verify", columnDefinition = "boolean default false")
 	@NotNull
 	private boolean isVerify;
 
@@ -59,27 +59,37 @@ public class User {
 	@NotNull
 	private LocalDateTime updateDateTime;
 
+	@Column(name = "user_status", columnDefinition = "boolean default false")
+	@NotNull
+	private boolean userStatus;
+	
+	@Column(name = "imageUrl")
+	private String imageUrl;
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
+	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "role_id") })
 	public List<Role> roleList;
+
 	public List<Role> getRoleList() {
 		return roleList;
 	}
+
 	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
 	}
 
 	public User() {
+		super();
 	}
 
 	public String getName() {
-		return name;
+		return fullName;
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.fullName = name;
 	}
 
 	public Long getId() {
@@ -145,4 +155,22 @@ public class User {
 	public void setUpdateDateTime(LocalDateTime updateDateTime) {
 		this.updateDateTime = updateDateTime;
 	}
+
+	public boolean isUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(boolean userStatus) {
+		this.userStatus = userStatus;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	
+
 }

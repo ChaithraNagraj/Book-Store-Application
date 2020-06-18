@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,18 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.response.Response;
+import com.bridgelabz.bookstore.utils.JwtValidate;
 
 @Service
 public class AmazonClient {
 	private AmazonS3 s3client;
-
+	
+	@Autowired
+	private UserRepo userRepository;
+	
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
 	@Value("${amazonProperties.bucketName}")
@@ -44,14 +51,16 @@ public class AmazonClient {
 		this.s3client = new AmazonS3Client(credentials);
 	}
 
-	public ResponseEntity<Response> uploadFile(MultipartFile multipartFile) throws IOException {
+	public ResponseEntity<Response> uploadFile(MultipartFile multipartFile,String token) throws IOException {
 
 		String fileUrl = "";
+		long id = JwtValidate.decodeJWT(token);
 		try {
 			File file = convertMultiPartToFile(multipartFile);
 			String fileName = generateFileName(multipartFile);
 			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
 			uploadFileTos3bucket(fileName, file);
+			userRepository.saveImageUrl(fileUrl, id);
 			file.delete();
 		} catch (AmazonServiceException ase) {
 			ase.printStackTrace();
