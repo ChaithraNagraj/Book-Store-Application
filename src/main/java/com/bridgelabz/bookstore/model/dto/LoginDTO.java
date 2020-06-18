@@ -7,6 +7,7 @@ public class LoginDTO {
 
 	private String loginId;
 	private String password;
+	private String role;
 
 	public String getloginId() {
 		return loginId;
@@ -23,5 +24,14 @@ public class LoginDTO {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
 
 }

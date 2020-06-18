@@ -22,10 +22,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
+	@Column(name = "role_id", nullable = false)
 	private Long roleId;
 
-	@Column(name = "role_name")
+	@Column(name = "role_name" , nullable = false)
 	private String role;
 
 	public Role() {
@@ -55,12 +55,12 @@ public class Role {
 		this.roleId = roleId;
 	}
 
-	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
+	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "user_id") })
 	private List<User> user;
-					
+
 	public List<User> getUser() {
 		return user;
 	}

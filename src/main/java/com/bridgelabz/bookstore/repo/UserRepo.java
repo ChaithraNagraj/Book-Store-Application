@@ -29,5 +29,11 @@ public interface UserRepo {
 	public Role findByRoleId(Long parseLong);
 
 	public void saveRoles(Role role);
+	
+	public void updateUserStatus(Boolean userStatus, Long id);
+	
+	public void saveImageUrl(String imageUrl, Long id);
+	
+	public void userMerge(User user);
 
 }

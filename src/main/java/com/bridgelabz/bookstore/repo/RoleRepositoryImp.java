@@ -1,7 +1,5 @@
 package com.bridgelabz.bookstore.repo;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.model.Role;
-import com.bridgelabz.bookstore.model.User;
 
 
 @Repository
