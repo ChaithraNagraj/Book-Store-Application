@@ -67,7 +67,7 @@ public class UserServiceImp implements UserService {
 		BeanUtils.copyProperties(userDetails, userEntity);
 		userEntity.setRegistrationDateTime(DateUtility.today());
 		userEntity.setUpdateDateTime(DateUtility.today());
-		userEntity.setMobileNumber(userDetails.getMoblieNumber());
+		userEntity.setMobileNumber(userDetails.getMobileNumber());
 		userEntity.setVerify(false);
 		if(userDetails.getRole().equals("1")) {
 			
@@ -153,7 +153,6 @@ public class UserServiceImp implements UserService {
 					new Response(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS));
 		}
 	}
-
 	
 	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
@@ -168,7 +167,6 @@ public class UserServiceImp implements UserService {
 		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 	}
 
-	
 	public boolean addRole(RoleDTO request) {
 		request.setRole(request.getRole().toUpperCase());
 		userRepository.saveRoles(new Role(request));
@@ -185,7 +183,6 @@ public class UserServiceImp implements UserService {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
-
 	
 	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
@@ -204,7 +201,6 @@ public class UserServiceImp implements UserService {
 				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 	}
 
-	
 	@Override
 	public boolean isSessionActive(String token) {
 //		long id = JwtValidate.decodeJWT(token);
