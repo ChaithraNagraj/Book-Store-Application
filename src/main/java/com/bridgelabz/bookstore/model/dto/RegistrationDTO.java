@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
+	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
 	private String name;
 
 	@Size(min = 3)
@@ -27,12 +27,28 @@ public class RegistrationDTO {
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
-	@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
-	private Long moblieNumber;
+
+	private Long mobileNumber;
 
 	public RegistrationDTO() {
 		super();
 	}
+	
+	public RegistrationDTO(
+			@NotEmpty(message = "Enter First Name - Registration DTO") @Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName") String name,
+			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
+			@Email String email,
+			@Size(min = 3) @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number") String password,
+			@NotEmpty(message = "Enter Role - Registration DTO") String role, Long mobileNumber) {
+		super();
+		this.name = name;
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.mobileNumber = mobileNumber;
+	}
+
 
 	public String getEmail() {
 		return email;
@@ -51,12 +67,12 @@ public class RegistrationDTO {
 		return this;
 	}
 
-	public Long getMoblieNumber() {
-		return moblieNumber;
+	public Long getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setMoblieNumber(Long moblieNumber) {
-		this.moblieNumber = moblieNumber;
+	public void setMobileNumber(Long mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getUserName() {
@@ -82,21 +98,19 @@ public class RegistrationDTO {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
+
 	public static Boolean isValid(Long mobileNumber) {
 		String phNo = Long.toString(mobileNumber);
 		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[7-9]{1}[0-9]{9}");
 		Matcher m = pattern.matcher(phNo);
 		return m.find();
-		
+
 	}
 
 	@Override
 	public String toString() {
 		return "RegistrationDTO [name=" + name + ", userName=" + userName + ", email=" + email + ", password="
-				+ password + ", moblieNumber=" + moblieNumber + ", role=" + role + "]";
+				+ password + ", moblieNumber=" + mobileNumber + ", role=" + role + "]";
 	}
-
-
 
 }

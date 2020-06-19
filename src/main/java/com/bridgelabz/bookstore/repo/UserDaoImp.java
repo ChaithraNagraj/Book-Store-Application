@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
@@ -18,24 +19,26 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 @Transactional
 @SuppressWarnings("unchecked")
 public class UserDaoImp implements UserRepo {
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
-
-		sessionFactory.getCurrentSession().save(user);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 	public User findByUserId(Long id) {
 		return sessionFactory.getCurrentSession().get(User.class, id);
 	}
 
+	@Transactional
 	public List<User> getUser() {
-		Session session = sessionFactory.getCurrentSession();
-		String hql = "FROM User";
-		Query<User> query = session.createQuery(hql);
-		return query.list();
+		Session session = entityManager.unwrap(Session.class);
+		Query<User> q=session.createQuery("From User");
+		return q.getResultList();
 	}
 
 	public User update(User val, Long id) {
@@ -101,6 +104,30 @@ public class UserDaoImp implements UserRepo {
 		Query<User> query = session.createQuery(hql);
 		query.setParameter("email", email);
 		return query.list();
+	}
+
+	@Override
+	public void updateUserStatus(Boolean userStatus, Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setUserStatus(userStatus);
+		session.update(user);
+	}
+
+	@Override
+	public void saveImageUrl(String imageUrl, Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setImageUrl(imageUrl);
+		session.update(user);
+	}
+
+	@Override
+	public void userMerge(User user) {
+		sessionFactory.getCurrentSession().merge(user);
+		
 	}
 
 }
