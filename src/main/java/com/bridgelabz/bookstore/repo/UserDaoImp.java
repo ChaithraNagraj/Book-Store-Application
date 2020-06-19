@@ -27,7 +27,6 @@ public class UserDaoImp implements UserRepo {
 
 		sessionFactory.getCurrentSession().save(user);
 	}
-
 	public User findByUserId(Long id) {
 		return sessionFactory.getCurrentSession().get(User.class, id);
 	}
