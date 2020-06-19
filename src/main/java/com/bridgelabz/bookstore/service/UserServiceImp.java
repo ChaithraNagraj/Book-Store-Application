@@ -90,6 +90,7 @@ public class UserServiceImp implements UserService {
 			}
 
 			registerMail(user, environment.getProperty("registration-template-path"));
+			System.out.println(user);
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
 					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
 		}
