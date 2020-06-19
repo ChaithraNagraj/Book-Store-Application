@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -29,7 +30,7 @@ public class UserDaoImp implements UserRepo {
 	public void addUser(User user) {
 		System.out.println("3");
 
-		sessionFactory.getCurrentSession().save(user);
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
 	public User findByUserId(Long id) {
@@ -124,6 +125,16 @@ public class UserDaoImp implements UserRepo {
 		user.setUpdateDateTime(DateUtility.today());
 		user.setImageUrl(imageUrl);
 		session.update(user);
+	}
+
+	@Override
+	public User findByUserIdAndRoleId(Long userId,Long roleId) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
+		Query query = session.createSQLQuery(hql).addEntity("u",User.class);
+		query.setParameter("userId", userId);
+		query.setParameter("roleId", roleId);
+		return  (User)query.uniqueResult();
 	}
 
 }
