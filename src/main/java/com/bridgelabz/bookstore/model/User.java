@@ -7,12 +7,14 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -32,7 +34,7 @@ public class User {
 	@Size(min = 3)
 	private String fullName;
 
-	@Column(name = "username",unique = true, nullable = false)
+	@Column(name = "username", unique = true, nullable = false)
 	private String userName;
 
 	@Column(name = "email", unique = true, nullable = false)
@@ -62,7 +64,7 @@ public class User {
 	@Column(name = "user_status", columnDefinition = "boolean default false")
 	@NotNull
 	private boolean userStatus;
-	
+
 	@Column(name = "imageUrl")
 	private String imageUrl;
 
@@ -71,6 +73,18 @@ public class User {
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
 	public List<Role> roleList;
+
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
+	private List<Book> books;
+	
+	public List<Book> getBooks() {
+		return books;
+	}
+
+	public void setBooks(List<Book> books) {
+		this.books = books;
+	}
 
 	public List<Role> getRoleList() {
 		return roleList;
@@ -171,6 +185,15 @@ public class User {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-	
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", fullName=" + fullName + ", userName=" + userName + ", email=" + email
+				+ ", password=" + password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify
+				+ ", registrationDateTime=" + registrationDateTime + ", updateDateTime=" + updateDateTime
+				+ ", userStatus=" + userStatus + ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books="
+				+ books + "]";
+	}
+
+	
 }
