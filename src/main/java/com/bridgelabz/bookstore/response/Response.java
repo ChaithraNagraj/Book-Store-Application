@@ -33,7 +33,7 @@ public class Response {
 		this.status = status;
 	}
 
-	public Response(String message, int status, String data) {
+	public Response(String message, int status, Object data) {
 		this.message = message;
 		this.status = status;
 		this.data = data;
