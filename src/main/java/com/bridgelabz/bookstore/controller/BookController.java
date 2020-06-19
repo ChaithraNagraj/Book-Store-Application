@@ -32,7 +32,6 @@ public class BookController {
 	public List<Book> searchBookByBookName(@RequestParam("bookName") String bookName) {
 		return bookservice.findBookByTitle(bookName);
 
-
 	}
 
 	@GetMapping(value = "/getBooks")
