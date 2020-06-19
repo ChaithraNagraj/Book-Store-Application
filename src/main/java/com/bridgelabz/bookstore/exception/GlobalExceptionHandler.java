@@ -63,4 +63,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
 
 	}
+	
+	@ExceptionHandler(BookAlreadyExistsException.class)
+	public ResponseEntity<Response> bookAlreadyExistsException(BookAlreadyExistsException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(),
+				ex.getLocalizedMessage(),HttpStatus.ALREADY_REPORTED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+
+	}
+	
+	@ExceptionHandler(BookNotFoundException.class)
+	public ResponseEntity<Response> bookNotFoundException(BookNotFoundException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(),
+				ex.getLocalizedMessage(),HttpStatus.ALREADY_REPORTED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+
+	}
 }
