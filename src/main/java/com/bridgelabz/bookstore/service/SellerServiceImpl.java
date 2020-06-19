@@ -35,15 +35,15 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
-		seller.getBooks().stream().filter(book -> book.getBookTitle().equals(newBook.getBookTitle())).findAny()
+		seller.getSellerBooks().stream().filter(book -> book.getBookName().equals(newBook.getBookName())).findAny()
 				.ifPresent(action -> {
 					throw new BookAlreadyExistsException("Book Already Exists In Your Inventory");
 				});
 		Book book = new Book();
 		BeanUtils.copyProperties(newBook, book);
-		book.setCreatedDateTime(DateUtility.today());
-		book.setRejectionCounter(0);
-		seller.getBooks().add(book);
+		book.setCreatedDateAndTime(DateUtility.today());
+		book.setNoOfRejections(0);
+		seller.getSellerBooks().add(book);
 		userRepository.addUser(seller);
 		return book;
 	}
@@ -51,10 +51,10 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book updateBook(BookDto updatedBookInfo, long bookId, String token) {
 		User seller = authentication(token);
-		Book bookToBeUpdated = seller.getBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
+		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
 				.orElseThrow(() -> new BookNotFoundException("Book Not Found In Your Inventory"));
 		BeanUtils.copyProperties(updatedBookInfo, bookToBeUpdated);
-		bookToBeUpdated.setUpdatedDateTime(DateUtility.today());
+		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToBeUpdated;
 	}
@@ -62,15 +62,15 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public List<Book> getAllBooks(String token) {
 		User seller = authentication(token);
-		return seller.getBooks();
+		return seller.getSellerBooks();
 	}
 
 	@Override
 	public boolean removeBook(long bookId, String token) {
 		User seller = authentication(token);
-		Book bookTobeDeleted = seller.getBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
+		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
 				.orElseThrow(() -> new BookNotFoundException("Book Not Available In Your Inventory"));
-		seller.getBooks().remove(bookTobeDeleted);
+		seller.getSellerBooks().remove(bookTobeDeleted);
 		userRepository.addUser(seller);
 		return true;
 	}
