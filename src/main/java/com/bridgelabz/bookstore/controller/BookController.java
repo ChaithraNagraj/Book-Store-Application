@@ -15,10 +15,12 @@ import com.bridgelabz.bookstore.model.dto.BookDto;
 import com.bridgelabz.bookstore.service.BookService;
 
 @RestController
+
 public class BookController {
 
 	@Autowired
 	private BookService bookservice;
+
 
 	@GetMapping(value = "/bookStoreApplication/getBookByAuthorName")
 	public List<Book> searchBookByAuthorName(@RequestParam("authorName") String authorName) {
@@ -30,9 +32,10 @@ public class BookController {
 	public List<Book> searchBookByBookName(@RequestParam("bookName") String bookName) {
 		return bookservice.findBookByTitle(bookName);
 
+
 	}
 
-	@GetMapping(value = "/bookStoreApplication/getBooks")
+	@GetMapping(value = "/getBooks")
 	public List<Book> getAllBooks() {
 		return bookservice.findAllBook();
 	}
