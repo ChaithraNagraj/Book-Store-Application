@@ -20,4 +20,18 @@ public interface BookService {
 
 	public void addBook(BookDto request, Long userId);
 
+	public List<Book> sortBookByAsc();
+
+	public List<Book> sortBookByDesc();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 }

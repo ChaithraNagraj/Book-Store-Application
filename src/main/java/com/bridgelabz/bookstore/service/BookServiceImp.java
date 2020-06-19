@@ -58,4 +58,14 @@ public class BookServiceImp implements BookService {
 		user.getSellbookList().add(bookEntity);
 		userRepository.addUser(user);
 	}
+
+	@Override
+	public List<Book> sortBookByAsc() {
+		return bookRepository.sortBookAsc(); 
+	}
+
+	@Override
+	public List<Book> sortBookByDesc() {
+		return bookRepository.sortBookDesc(); 
+	}
 }
