@@ -25,6 +25,8 @@ public interface UserRepo {
 	public User getusersByemail(String email);
 
 	public List<User> findByEmail(String email);
+	
+	public List<User> findByName(String name);
 
 	public Role findByRoleId(Long parseLong);
 

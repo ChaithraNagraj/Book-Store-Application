@@ -8,4 +8,5 @@ public interface AdminService {
 	
 	public List<User> getBuyers();
 	public List<User> getSellers();
+	boolean verifyBook(long bookId, String staus, String token);
 }

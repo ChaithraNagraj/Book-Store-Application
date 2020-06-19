@@ -145,4 +145,12 @@ public class User {
 	public void setUpdateDateTime(LocalDateTime updateDateTime) {
 		this.updateDateTime = updateDateTime;
 	}
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", userName=" + userName + ", email=" + email + ", password="
+				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", roleList=" + roleList + "]";
+	}
+	
+	
 }

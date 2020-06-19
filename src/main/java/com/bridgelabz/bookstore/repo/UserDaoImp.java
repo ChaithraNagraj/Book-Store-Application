@@ -108,4 +108,13 @@ public class UserDaoImp implements UserRepo {
 		return query.list();
 	}
 
+	@Override
+	public List<User> findByName(String name) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql ="FROM User U where U.name=:name";
+		Query<User> query = session.createQuery(hql);
+		query.setParameter("name", name);
+		 return query.list();
+	}
+
 }

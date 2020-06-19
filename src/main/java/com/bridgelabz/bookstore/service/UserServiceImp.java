@@ -2,7 +2,11 @@ package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+
 
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
@@ -31,6 +36,7 @@ import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Component
@@ -38,6 +44,13 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private RoleRepositoryImp roleRepository;
+	
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 	
 	@Autowired
 	private UserRepo userRepository;
@@ -67,19 +80,37 @@ public class UserServiceImp implements UserService {
 		BeanUtils.copyProperties(userDetails, userEntity);
 		userEntity.setRegistrationDateTime(DateUtility.today());
 		userEntity.setUpdateDateTime(DateUtility.today());
-		userEntity.setMobileNumber(userDetails.getMoblieNumber());
+		userEntity.setMobileNumber(userDetails.getMobileNumber());
 		userEntity.setVerify(false);
 		if(userDetails.getRole().equals("1")) {
 			
 			Role roleEntity= roleRepository.getRoleByName("Buyer");
 			roleEntity.getUser().add(userEntity);
 			roleRepository.save(roleEntity);
+			 Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+				IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(userEntity.getId()))
+						.source(documentMapper);
+				try {
+					client.index(indexRequest, RequestOptions.DEFAULT);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
 		}
 		if(userDetails.getRole().equals("2")) {
 			
 			Role roleEntity= roleRepository.getRoleByName("Seller");
 			roleEntity.getUser().add(userEntity);
 			roleRepository.save(roleEntity);
+			 Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+				IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(userEntity.getId()))
+						.source(documentMapper);
+				try {
+					client.index(indexRequest, RequestOptions.DEFAULT);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
 		}
 		if(userDetails.getRole().equals("3")) {
 			
@@ -89,6 +120,15 @@ public class UserServiceImp implements UserService {
 			roleEntity= roleRepository.getRoleByName("Seller");
 			roleEntity.getUser().add(userEntity);
 			roleRepository.save(roleEntity);
+			 Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+				IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(userEntity.getId()))
+						.source(documentMapper);
+				try {
+					client.index(indexRequest, RequestOptions.DEFAULT);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
 		}
 
 			registerMail(userEntity, environment.getProperty("registration-template-path"));
@@ -145,12 +185,9 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-<<<<<<< HEAD
-				registerMail(idAvailable,  environment.getProperty("login-template-path"));
-				registerMail(idAvailable,environment.getProperty("login-template-path"));
-=======
+
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
->>>>>>> bfe19743e5752f09963da6a17eb34e3b73648051
+
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 			}

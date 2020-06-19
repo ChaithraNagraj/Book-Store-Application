@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
+	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
 	private String name;
 
 	public RegistrationDTO(
@@ -18,14 +18,14 @@ public class RegistrationDTO {
 			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
 			@Email String email,
 			@Size(min = 3) @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number") String password,
-			@NotEmpty(message = "Enter Role - Registration DTO") String role, Long moblieNumber) {
+			@NotEmpty(message = "Enter Role - Registration DTO") String role, Long mobileNumber) {
 		super();
 		this.name = name;
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.role = role;
-		this.mobileNumber = moblieNumber;
+		this.mobileNumber = mobileNumber;
 	}
 
 	@Size(min = 3)
@@ -43,7 +43,7 @@ public class RegistrationDTO {
 	private String role;
 
 
-	@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
+	//@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
 	private Long mobileNumber;
 
 
@@ -68,12 +68,12 @@ public class RegistrationDTO {
 		return this;
 	}
 
-	public Long getMoblieNumber() {
+	public Long getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMoblieNumber(Long moblieNumber) {
-		this.mobileNumber = moblieNumber;
+	public void setMobileNumber(Long mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getUserName() {
