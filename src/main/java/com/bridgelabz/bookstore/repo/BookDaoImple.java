@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -32,7 +33,7 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> findBookByAuthorName(String authorName) {
 		Session session = entityManager.unwrap(Session.class);
-		Query<Book> q = session.createQuery("From Book where authorName: name");
+		Query<Book> q = session.createQuery("From Book where authorName=:name");
 		q.setParameter("name", authorName);
 		return q.getResultList();
 	}
@@ -40,9 +41,38 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> findBookByTitle(String bookName) {
 		Session session = entityManager.unwrap(Session.class);
-		Query<Book> q = session.createQuery("From Book where bookName: name");
+		Query<Book> q = session.createQuery("From Book where bookName=:name");
 		q.setParameter("name", bookName);
 		return q.getResultList();
 	}
 
+	@Override
+	public List<Book> getBooksForVerification() {
+		Session session = entityManager.unwrap(Session.class);
+		Query<Book> q = session.createQuery("From Book where is_approved=:value");
+		q.setParameter("value", false);
+		return q.getResultList();
+	}
+
+	@Override
+	public Optional<Book> getBookById(Long bookId) {
+		Session session = entityManager.unwrap(Session.class);
+		Query<Book> q = session.createQuery("From Book where book_id=:value");
+		q.setParameter("value", bookId);
+		return q.uniqueResultOptional();
+		
+	}
+
+	@Override
+	public void deleteBook(Book book) {
+		Session session = entityManager.unwrap(Session.class);
+		session.delete(book);	
+	}
+
+	@Override
+	public void save(Book book) {
+		Session session = entityManager.unwrap(Session.class);
+		session.saveOrUpdate(book);
+		
+	}
 }

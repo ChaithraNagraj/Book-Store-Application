@@ -82,17 +82,17 @@ public class UserServiceImp implements UserService {
 				roleRepository.save(roleEntity);
 			}
 			if (userDetails.getRole().equals("3")) {
-				Role roleEntity = roleRepository.getRoleById(2);
+				Role roleEntity = roleRepository.getRoleByName("buyer");
 				roleEntity.getUser().add(user);
 				roleRepository.save(roleEntity);
 				roleEntity = roleRepository.getRoleByName("Seller");
 				roleEntity.getUser().add(user);
 				roleRepository.save(roleEntity);
 			}
-
 			registerMail(user, environment.getProperty("registration-template-path"));
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
 					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
+
 		}
 	}
 

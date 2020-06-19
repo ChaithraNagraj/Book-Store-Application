@@ -1,6 +1,8 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
+
 import com.bridgelabz.bookstore.model.Book;
 
 public interface BookRepo {
@@ -10,5 +12,13 @@ public interface BookRepo {
 	public List<Book> findBookByTitle(String bookName);
 
 	public List<Book> findAllBooks();
+
+	public List<Book> getBooksForVerification();
+
+	public Optional<Book> getBookById(Long bookId);
+
+	public void deleteBook(Book book);
+
+	public void save(Book book);
 
 }

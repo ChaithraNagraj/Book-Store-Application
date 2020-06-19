@@ -53,14 +53,9 @@ public class BookServiceImp implements BookService {
 		bookEntity.setLastUpdatedDateAndTime(LocalDateTime.now());
 		bookEntity.setVerifiedDateAndTime(LocalDateTime.now());
 		bookEntity.setIsapproved(false);
-		bookEntity.setNoOfApprovals(0);
-		Role role = roleRepository.getRoleById(2);		
+		bookEntity.setNoOfApprovals(0);	
 		User user = userRepository.findByUserId(userId);
 		user.getSellbookList().add(bookEntity);
 		userRepository.addUser(user);
-//		role.getUser().add(user);
-//		roleRepository.save(role);
-
 	}
-
 }

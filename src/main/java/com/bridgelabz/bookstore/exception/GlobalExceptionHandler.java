@@ -2,9 +2,9 @@ package com.bridgelabz.bookstore.exception;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -62,5 +62,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
 
+	}
+	
+	@ExceptionHandler(BookException.class)
+	public ResponseEntity<Response> handleBookException(BookException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(),
+				ex.getLocalizedMessage(),HttpStatus.BAD_REQUEST.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
+		
+		
 	}
 }

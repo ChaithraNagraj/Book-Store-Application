@@ -27,11 +27,9 @@ public class UserDaoImp implements UserRepo {
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
-
+		
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
-
 	public User findByUserId(Long id) {
 		return sessionFactory.getCurrentSession().get(User.class, id);
 	}
@@ -124,6 +122,12 @@ public class UserDaoImp implements UserRepo {
 		user.setUpdateDateTime(DateUtility.today());
 		user.setImageUrl(imageUrl);
 		session.update(user);
+	}
+
+	@Override
+	public void userMerge(User user) {
+		sessionFactory.getCurrentSession().merge(user);
+		
 	}
 
 }

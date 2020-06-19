@@ -27,6 +27,7 @@ public class RegistrationDTO {
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
+
 	private Long mobileNumber;
 
 	public RegistrationDTO() {
