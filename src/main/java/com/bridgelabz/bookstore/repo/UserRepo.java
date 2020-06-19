@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
@@ -29,9 +30,11 @@ public interface UserRepo {
 	public Role findByRoleId(Long parseLong);
 
 	public void saveRoles(Role role);
-	
+
 	public void updateUserStatus(Boolean userStatus, Long id);
-	
+
 	public void saveImageUrl(String imageUrl, Long id);
+
+	public User findByUserIdAndRoleId(Long userId, Long roleId);
 
 }
