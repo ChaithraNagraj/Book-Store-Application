@@ -1,7 +1,9 @@
 package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.services.cognitoidp.model.UsernameExistsException;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserException;
@@ -59,41 +62,69 @@ public class UserServiceImp implements UserService {
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
 	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
-		User userEntity = userRepository.getusersByemail(userDetails.getEmail());
-		if (userEntity != null) {
-			throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
-		} else {
-			User user = new User();
-			BeanUtils.copyProperties(userDetails, user);
-			user.setFullName(userDetails.getName());
-			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
-			user.setRegistrationDateTime(DateUtility.today());
-			user.setUpdateDateTime(DateUtility.today());
-			user.setMobileNumber(userDetails.getMobileNumber());
-			user.setVerify(false);
-			if (userDetails.getRole().equals("1")) {
-				Role roleEntity = roleRepository.getRoleByName("Buyer");
-				roleEntity.getUser().add(user);
-				roleRepository.save(roleEntity);
-			}
-			if (userDetails.getRole().equals("2")) {
-				Role roleEntity = roleRepository.getRoleByName("Seller");
-				roleEntity.getUser().add(user);
-				roleRepository.save(roleEntity);
-			}
-			if (userDetails.getRole().equals("3")) {
-				Role roleEntity = roleRepository.getRoleByName("buyer");
-				roleEntity.getUser().add(user);
-				roleRepository.save(roleEntity);
-				roleEntity = roleRepository.getRoleByName("Seller");
-				roleEntity.getUser().add(user);
-				roleRepository.save(roleEntity);
-			}
-			registerMail(user, environment.getProperty("registration-template-path"));
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
-					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
+//		User userEntity = userRepository.getusersByemail(userDetails.getEmail());
+//		if (userEntity != null) {
+//			throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+//		} else {
+//			User user = new User();
+//			BeanUtils.copyProperties(userDetails, user);
+//			user.setFullName(userDetails.getName());
+//			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
+//			user.setRegistrationDateTime(DateUtility.today());
+//			user.setUpdateDateTime(DateUtility.today());
+//			user.setMobileNumber(userDetails.getMobileNumber());
+//			user.setVerify(false);
+//			if (userDetails.getRole().equals("1")) {
+//				Role roleEntity = roleRepository.getRoleByName("Buyer");
+//				roleEntity.getUser().add(user);
+//				roleRepository.save(roleEntity);
+//			}
+//			if (userDetails.getRole().equals("2")) {
+//				Role roleEntity = roleRepository.getRoleByName("Seller");
+//				roleEntity.getUser().add(user);
+//				roleRepository.save(roleEntity);
+//			}
+//			if (userDetails.getRole().equals("3")) {
+//				Role roleEntity = roleRepository.getRoleByName("buyer");
+//				roleEntity.getUser().add(user);
+//				roleRepository.save(roleEntity);
+//				roleEntity = roleRepository.getRoleByName("Seller");
+//				roleEntity.getUser().add(user);
+//				roleRepository.save(roleEntity);
+//			}
+//			registerMail(user, environment.getProperty("registration-template-path"));
+//			System.out.println(user);
+//			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
+//					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
 
+		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
+		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
+
+		if (userEmailExists.isPresent()) {
+			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
+					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
+						throw new UsernameExistsException("User Already Regsitered As ");
+					});
+			userEmailExists.get().roleList.add(role);
+			userRepository.addUser(userEmailExists.get());
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(
+					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
+		} else {
+			User userEntity = new User();
+			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
+			BeanUtils.copyProperties(userDetails, userEntity);
+			userEntity.setRegistrationDateTime(DateUtility.today());
+			userEntity.setUpdateDateTime(DateUtility.today());
+			userEntity.setMobileNumber(userDetails.getMobileNumber());
+			List<Role> roles = new ArrayList<>();
+			roles.add(role);
+			userEntity.setRoleList(roles);
+			userRepository.addUser(userEntity);
+			registerMail(userEntity, environment.getProperty("registration-template-path"));
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(
+					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
 		}
+
 	}
 
 	private Role getRoleName(String userRole) {

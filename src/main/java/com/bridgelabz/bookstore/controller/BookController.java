@@ -21,7 +21,6 @@ public class BookController {
 	@Autowired
 	private BookService bookservice;
 
-
 	@GetMapping(value = "/bookStoreApplication/getBookByAuthorName")
 	public List<Book> searchBookByAuthorName(@RequestParam("authorName") String authorName) {
 		return bookservice.findBookByAuthorName(authorName);
@@ -43,4 +42,15 @@ public class BookController {
 	public void addBook(@RequestBody BookDto request, @PathVariable("token") Long userId) {
 		bookservice.addBook(request, userId);
 	}
+
+	@GetMapping("getBooksByPriceAsc")
+	public List<Book> sortBookByPriceAsc() {
+		return bookservice.sortBookByAsc();
+	}
+
+	@GetMapping("getBooksByPriceDesc")
+	public List<Book> sortBookByPriceDesc() {
+		return bookservice.sortBookByDesc();
+	}
+
 }

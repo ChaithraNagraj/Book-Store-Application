@@ -21,4 +21,8 @@ public interface BookRepo {
 
 	public void save(Book book);
 
+	public List<Book> sortBookAsc();
+
+	public List<Book> sortBookDesc();
+
 }

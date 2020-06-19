@@ -65,14 +65,14 @@ public class AdminServiceImp implements AdminService{
 		Book book = bookRepository.getBookById(bookId).orElseThrow(()-> new BookException(Constant.BOOK_NOT_FOUND , Constant.NOT_FOUND_RESPONSE_CODE));
 		User seller=userRepository.findByUserId(sellerId);
 		if(verify.equals("yes")) {
-			book.setIsapproved(true);
+			book.setApproved(true);
 			bookRepository.save(book);
 			registerMail(seller, environment.getProperty("book-approval-template-path"));
 		}
 		else {
-			book.setIsapproved(false);
-			book.setNoOfApprovals(book.getNoOfApprovals()+1);
-			if(book.getNoOfApprovals()>2) {
+			book.setApproved(false);
+			book.setNoOfRejections(book.getNoOfRejections()+1);
+			if(book.getNoOfRejections()>2) {
 				bookRepository.deleteBook(book);
 				registerMail(seller, environment.getProperty("book-deletion-template-path"));
 			}

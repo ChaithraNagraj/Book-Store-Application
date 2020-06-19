@@ -52,10 +52,20 @@ public class BookServiceImp implements BookService {
 		bookEntity.setCreatedDateAndTime(LocalDateTime.now());
 		bookEntity.setLastUpdatedDateAndTime(LocalDateTime.now());
 		bookEntity.setVerifiedDateAndTime(LocalDateTime.now());
-		bookEntity.setIsapproved(false);
-		bookEntity.setNoOfApprovals(0);	
+		bookEntity.setApproved(false);
+		bookEntity.setNoOfRejections(0);	
 		User user = userRepository.findByUserId(userId);
-		user.getSellbookList().add(bookEntity);
+		user.getSellerBooks().add(bookEntity);
 		userRepository.addUser(user);
+	}
+
+	@Override
+	public List<Book> sortBookByAsc() {
+		return bookRepository.sortBookAsc(); 
+	}
+
+	@Override
+	public List<Book> sortBookByDesc() {
+		return bookRepository.sortBookDesc(); 
 	}
 }
