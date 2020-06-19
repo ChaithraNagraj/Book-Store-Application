@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +18,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -72,24 +74,14 @@ public class User {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Role> roleList;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "seller_id")
-	private List<Book> sellbookList;
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id")
-	private List<Book> books;
-
-	public List<Book> getBooks() {
-		return books;
-	}
-
-	public void setBooks(List<Book> books) {
-		this.books = books;
-	}
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Book> sellerBooks;
 
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
 			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
@@ -109,7 +101,7 @@ public class User {
 		this.imageUrl = imageUrl;
 
 		this.roleList = roleList;
-		this.sellbookList = sellbookList;
+		this.sellerBooks = sellbookList;
 	}
 
 	public User() {
@@ -124,12 +116,14 @@ public class User {
 		this.id = id;
 	}
 
-	public String getFullName() {
+	
+
+	public String getName() {
 		return name;
 	}
 
-	public void setFullName(String fullName) {
-		this.name = fullName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getUserName() {
@@ -212,12 +206,12 @@ public class User {
 		this.roleList = roleList;
 	}
 
-	public List<Book> getSellbookList() {
-		return sellbookList;
+	public List<Book> getSellerBooks() {
+		return sellerBooks;
 	}
 
-	public void setSellbookList(List<Book> sellbookList) {
-		this.sellbookList = sellbookList;
+	public void setSellerBooks(List<Book> sellerBooks) {
+		this.sellerBooks = sellerBooks;
 	}
 
 	@Override
@@ -225,7 +219,7 @@ public class User {
 		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
 				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
-				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + books + "]";
+				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
 
 }
