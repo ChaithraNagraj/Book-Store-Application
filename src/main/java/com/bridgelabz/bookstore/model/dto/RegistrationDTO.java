@@ -101,7 +101,7 @@ public class RegistrationDTO {
 
 	public static Boolean isValid(Long mobileNumber) {
 		String phNo = Long.toString(mobileNumber);
-		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[7-9]{1}[0-9]{9}");
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[7-9]\\d{9}$");
 		Matcher m = pattern.matcher(phNo);
 		return m.find();
 

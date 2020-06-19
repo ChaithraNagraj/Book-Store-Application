@@ -1,5 +1,5 @@
 package com.bridgelabz.bookstore.exception;
-public class UserNotFoundException extends Exception {
+public class UserNotFoundException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private int status;

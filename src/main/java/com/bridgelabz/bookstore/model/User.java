@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +18,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,7 +36,7 @@ public class User {
 	@Size(min = 3)
 	private String name;
 
-	@Column(name = "username",unique = true, nullable = false)
+	@Column(name = "username", unique = true, nullable = false)
 	private String userName;
 
 	@Column(name = "email", unique = true, nullable = false)
@@ -64,7 +66,7 @@ public class User {
 	@Column(name = "user_status", columnDefinition = "boolean default false")
 	@NotNull
 	private boolean userStatus;
-	
+
 	@Column(name = "imageUrl")
 	private String imageUrl;
 
@@ -72,16 +74,15 @@ public class User {
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
+	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Role> roleList;
-	
-	
-	@JsonIgnore
-	@OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name="seller_id")
-	private List<Book> sellbookList;
 
-	
-	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "seller_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Book> sellerBooks;
+
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
 			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
 			@NotNull LocalDateTime registrationDateTime, @NotNull LocalDateTime updateDateTime,
@@ -98,148 +99,127 @@ public class User {
 		this.updateDateTime = updateDateTime;
 		this.userStatus = userStatus;
 		this.imageUrl = imageUrl;
-		this.roleList = roleList;
-		this.sellbookList = sellbookList;
-	}
 
+		this.roleList = roleList;
+		this.sellerBooks = sellbookList;
+	}
 
 	public User() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
 
 	public Long getId() {
 		return id;
 	}
 
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	
 
-	public String getFullName() {
+	public String getName() {
 		return name;
 	}
 
-
-	public void setFullName(String fullName) {
-		this.name = fullName;
+	public void setName(String name) {
+		this.name = name;
 	}
-
 
 	public String getUserName() {
 		return userName;
 	}
 
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
 
 	public String getEmail() {
 		return email;
 	}
 
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 
 	public String getPassword() {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 
 	public Long getMobileNumber() {
 		return mobileNumber;
 	}
 
-
 	public void setMobileNumber(Long mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
-
 
 	public boolean isVerify() {
 		return isVerify;
 	}
 
-
 	public void setVerify(boolean isVerify) {
 		this.isVerify = isVerify;
 	}
-
 
 	public LocalDateTime getRegistrationDateTime() {
 		return registrationDateTime;
 	}
 
-
 	public void setRegistrationDateTime(LocalDateTime registrationDateTime) {
 		this.registrationDateTime = registrationDateTime;
 	}
-
 
 	public LocalDateTime getUpdateDateTime() {
 		return updateDateTime;
 	}
 
-
 	public void setUpdateDateTime(LocalDateTime updateDateTime) {
 		this.updateDateTime = updateDateTime;
 	}
-
 
 	public boolean isUserStatus() {
 		return userStatus;
 	}
 
-
 	public void setUserStatus(boolean userStatus) {
 		this.userStatus = userStatus;
 	}
-
 
 	public String getImageUrl() {
 		return imageUrl;
 	}
 
-
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-
 
 	public List<Role> getRoleList() {
 		return roleList;
 	}
 
-
 	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
 	}
 
-
-	public List<Book> getSellbookList() {
-		return sellbookList;
+	public List<Book> getSellerBooks() {
+		return sellerBooks;
 	}
 
-
-	public void setSellbookList(List<Book> sellbookList) {
-		this.sellbookList = sellbookList;
+	public void setSellerBooks(List<Book> sellerBooks) {
+		this.sellerBooks = sellerBooks;
 	}
-	
 
-	
-	
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
+				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
+	}
 
 }

@@ -3,43 +3,37 @@ package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
-
-import com.bridgelabz.bookstore.model.dto.BookDto;
-import com.bridgelabz.bookstore.utils.DateUtility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-
 
 @Entity
 @Table(name = "book")
 public class Book {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id")
-	private Long bookid;
+	private Long bookId;
 
 	@Column
+	@NotNull
 	private String bookName;
 
 	@Column
+	@NotNull
 	private int quantity;
 
 	@Column
-	private Double price ;
+	@NotNull
+	private Double price;
 
 	@Column
+	@NotNull
 	private String authorName;
 
 	@Column(name = "created_date_time")
@@ -47,59 +41,48 @@ public class Book {
 	private LocalDateTime createdDateAndTime;
 
 	@Column(name = "lastupdated_date_time")
-	@NotNull
-	private LocalDateTime LastUpdatedDateAndTime;
+	private LocalDateTime lastUpdatedDateAndTime;
 
 	@Column(name = "verified_date_time")
-	@NotNull
-	private LocalDateTime  verifiedDateAndTime;
-	
+	private LocalDateTime verifiedDateAndTime;
+
 	@Column
 	private int noOfRejections;
-	
+
 	@Column
 	private String image;
 
 	@Column(name = "is_approved")
 	@NotNull
-	private boolean isapproved;
-	
-	
+	private boolean isApproved;
 
-
-	
-	
-	
-	
 	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
 			@NotNull LocalDateTime createdDateAndTime, @NotNull LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image,
-			@NotNull boolean isapproved) {
+			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved) {
 		super();
-		this.bookid = bookid;
+		this.bookId = bookid;
 		this.bookName = bookName;
 		this.quantity = quantity;
 		this.price = price;
 		this.authorName = authorName;
 		this.createdDateAndTime = createdDateAndTime;
-		this.LastUpdatedDateAndTime = lastUpdatedDateAndTime;
+		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
 		this.verifiedDateAndTime = verifiedDateAndTime;
 		this.noOfRejections = noOfRejections;
 		this.image = image;
-		this.isapproved = isapproved;
+		this.isApproved = isapproved;
 	}
 
 	public Book() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Long getBookid() {
-		return bookid;
+	public Long getBookId() {
+		return bookId;
 	}
 
-	public void setBookid(Long bookid) {
-		this.bookid = bookid;
+	public void setBookId(Long bookId) {
+		this.bookId = bookId;
 	}
 
 	public String getBookName() {
@@ -143,11 +126,11 @@ public class Book {
 	}
 
 	public LocalDateTime getLastUpdatedDateAndTime() {
-		return LastUpdatedDateAndTime;
+		return lastUpdatedDateAndTime;
 	}
 
 	public void setLastUpdatedDateAndTime(LocalDateTime lastUpdatedDateAndTime) {
-		LastUpdatedDateAndTime = lastUpdatedDateAndTime;
+		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
 	}
 
 	public LocalDateTime getVerifiedDateAndTime() {
@@ -158,11 +141,11 @@ public class Book {
 		this.verifiedDateAndTime = verifiedDateAndTime;
 	}
 
-	public int getNoOfApprovals() {
+	public int getNoOfRejections() {
 		return noOfRejections;
 	}
 
-	public void setNoOfApprovals(int noOfRejections) {
+	public void setNoOfRejections(int noOfRejections) {
 		this.noOfRejections = noOfRejections;
 	}
 
@@ -174,14 +157,12 @@ public class Book {
 		this.image = image;
 	}
 
-	public boolean isIsapproved() {
-		return isapproved;
+	public boolean isApproved() {
+		return isApproved;
 	}
 
-	public void setIsapproved(boolean isapproved) {
-		this.isapproved = isapproved;
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
 	}
-
-	
 
 }
