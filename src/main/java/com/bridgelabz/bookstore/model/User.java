@@ -32,7 +32,7 @@ public class User {
 
 	@Column(name = "full_name", nullable = false)
 	@Size(min = 3)
-	private String fullName;
+	private String name;
 
 	@Column(name = "username", unique = true, nullable = false)
 	private String userName;
@@ -74,10 +74,15 @@ public class User {
 			@JoinColumn(name = "role_id") })
 	public List<Role> roleList;
 
-	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "seller_id")
+	private List<Book> sellbookList;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	private List<Book> books;
-	
+
 	public List<Book> getBooks() {
 		return books;
 	}
@@ -86,24 +91,29 @@ public class User {
 		this.books = books;
 	}
 
-	public List<Role> getRoleList() {
-		return roleList;
-	}
+	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
+			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
+			@NotNull LocalDateTime registrationDateTime, @NotNull LocalDateTime updateDateTime,
+			@NotNull boolean userStatus, String imageUrl, List<Role> roleList, List<Book> sellbookList) {
+		super();
+		this.id = id;
+		this.name = fullName;
+		this.userName = userName;
+		this.email = email;
+		this.password = password;
+		this.mobileNumber = mobileNumber;
+		this.isVerify = isVerify;
+		this.registrationDateTime = registrationDateTime;
+		this.updateDateTime = updateDateTime;
+		this.userStatus = userStatus;
+		this.imageUrl = imageUrl;
 
-	public void setRoleList(List<Role> roleList) {
 		this.roleList = roleList;
+		this.sellbookList = sellbookList;
 	}
 
 	public User() {
 		super();
-	}
-
-	public String getName() {
-		return fullName;
-	}
-
-	public void setName(String name) {
-		this.fullName = name;
 	}
 
 	public Long getId() {
@@ -112,6 +122,14 @@ public class User {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getFullName() {
+		return name;
+	}
+
+	public void setFullName(String fullName) {
+		this.name = fullName;
 	}
 
 	public String getUserName() {
@@ -186,14 +204,28 @@ public class User {
 		this.imageUrl = imageUrl;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", fullName=" + fullName + ", userName=" + userName + ", email=" + email
-				+ ", password=" + password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify
-				+ ", registrationDateTime=" + registrationDateTime + ", updateDateTime=" + updateDateTime
-				+ ", userStatus=" + userStatus + ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books="
-				+ books + "]";
+	public List<Role> getRoleList() {
+		return roleList;
 	}
 
-	
+	public void setRoleList(List<Role> roleList) {
+		this.roleList = roleList;
+	}
+
+	public List<Book> getSellbookList() {
+		return sellbookList;
+	}
+
+	public void setSellbookList(List<Book> sellbookList) {
+		this.sellbookList = sellbookList;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
+				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + books + "]";
+	}
+
 }

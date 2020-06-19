@@ -34,6 +34,8 @@ public interface UserRepo {
 	public void updateUserStatus(Boolean userStatus, Long id);
 
 	public void saveImageUrl(String imageUrl, Long id);
+	
+	public void userMerge(User user);
 
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
 

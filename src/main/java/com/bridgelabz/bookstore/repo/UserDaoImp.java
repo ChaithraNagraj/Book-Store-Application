@@ -20,7 +20,7 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 @Transactional
 @SuppressWarnings("unchecked")
 public class UserDaoImp implements UserRepo {
-	
+
 	@Autowired
 	private EntityManager entityManager;
 
@@ -29,7 +29,6 @@ public class UserDaoImp implements UserRepo {
 
 	public void addUser(User user) {
 		System.out.println("3");
-
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
@@ -40,7 +39,7 @@ public class UserDaoImp implements UserRepo {
 	@Transactional
 	public List<User> getUser() {
 		Session session = entityManager.unwrap(Session.class);
-		Query<User> q=session.createQuery("From User");
+		Query<User> q = session.createQuery("From User");
 		return q.getResultList();
 	}
 
@@ -127,14 +126,17 @@ public class UserDaoImp implements UserRepo {
 		session.update(user);
 	}
 
-	@Override
-	public User findByUserIdAndRoleId(Long userId,Long roleId) {
-		Session session = sessionFactory.getCurrentSession();
-		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
-		Query query = session.createSQLQuery(hql).addEntity("u",User.class);
-		query.setParameter("userId", userId);
-		query.setParameter("roleId", roleId);
-		return  (User)query.uniqueResult();
+	public void userMerge(User user) {
+		sessionFactory.getCurrentSession().merge(user);
 	}
 
+	@Override
+	public User findByUserIdAndRoleId(Long userId, Long roleId) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
+		Query query = session.createSQLQuery(hql).addEntity("u", User.class);
+		query.setParameter("userId", userId);
+		query.setParameter("roleId", roleId);
+		return (User) query.uniqueResult();
+	}
 }

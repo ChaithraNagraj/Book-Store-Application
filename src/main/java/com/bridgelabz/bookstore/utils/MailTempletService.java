@@ -28,12 +28,12 @@ public class MailTempletService {
 			templateMSG = Template.readContentFromTemplet(path);
 		}
 
-		templateMSG = templateMSG.replaceAll(Pattern.quote("$%name%"), request.getName());
+		templateMSG = templateMSG.replaceAll(Pattern.quote("$%name%"), request.getFullName());
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%token%"), token);
 
 		mail.setTo(request.getEmail());
 		mail.setFrom(EmailService.SENDER_EMAIL_ID);
-		mail.setSubject(request.getName());
+		mail.setSubject(request.getFullName());
 		mail.setContent(templateMSG);
 		mail.setSentDate(Date.from(DateUtility.today().atZone(ZoneId.systemDefault()).toInstant()));
 		
