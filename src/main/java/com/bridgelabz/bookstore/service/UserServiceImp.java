@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,6 @@ import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
@@ -61,45 +58,10 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
-	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
-//		User userEntity = userRepository.getusersByemail(userDetails.getEmail());
-//		if (userEntity != null) {
-//			throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
-//		} else {
-//			User user = new User();
-//			BeanUtils.copyProperties(userDetails, user);
-//			user.setFullName(userDetails.getName());
-//			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
-//			user.setRegistrationDateTime(DateUtility.today());
-//			user.setUpdateDateTime(DateUtility.today());
-//			user.setMobileNumber(userDetails.getMobileNumber());
-//			user.setVerify(false);
-//			if (userDetails.getRole().equals("1")) {
-//				Role roleEntity = roleRepository.getRoleByName("Buyer");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			if (userDetails.getRole().equals("2")) {
-//				Role roleEntity = roleRepository.getRoleByName("Seller");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			if (userDetails.getRole().equals("3")) {
-//				Role roleEntity = roleRepository.getRoleByName("buyer");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//				roleEntity = roleRepository.getRoleByName("Seller");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			registerMail(user, environment.getProperty("registration-template-path"));
-//			System.out.println(user);
-//			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
-//					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
-
+	public int registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
-
+System.out.println("user: "+userEmailExists);
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
@@ -107,8 +69,8 @@ public class UserServiceImp implements UserService {
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
+			return 1;
+
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -121,14 +83,10 @@ public class UserServiceImp implements UserService {
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
 			registerMail(userEntity, environment.getProperty("registration-template-path"));
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
+			return 2;
+
 		}
 
-	}
-
-	private Role getRoleName(String userRole) {
-		return userRepository.findByRoleId(Long.parseLong(userRole));
 	}
 
 	private void registerMail(User user, String templet) {
@@ -160,37 +118,42 @@ public class UserServiceImp implements UserService {
 		return userRepository.update(user, id);
 	}
 
-	public ResponseEntity<Response> verify(String token) {
+	public boolean verify(String token) throws UserException {
 		long id = JwtValidate.decodeJWT(token);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
-					Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
 		} else {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
-				return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
-						Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
+				return true;
+
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
-					Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS));
+			throw new UserException(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS);
+
 		}
 	}
 
-	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
-		User user = userRepository.getusersByemail(loginDto.getloginId());
-		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
-			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
-			userRepository.updateDateTime(user.getId());
-			user.setUpdateDateTime(DateUtility.today());
-			userRepository.updateUserStatus(Boolean.TRUE, user.getId());
-			redis.putMap(redisKey, user.getEmail(), token);
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE,
-					Constant.OK_RESPONSE_CODE, token, DateUtility.today(), user));
+	public boolean login(LoginDTO loginDto) throws UserException {
+		User user = userRepository.getusersByLoginId(loginDto.getloginId());
+		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
+		System.out.println(roleWithUser);
+		if (roleWithUser != null) {
+			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
+					&& roleWithUser.isVerify()) {
+				String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+				userRepository.updateDateTime(user.getId());
+				user.setUpdateDateTime(DateUtility.today());
+				userRepository.updateUserStatus(Boolean.TRUE, user.getId());
+				redis.putMap(redisKey, user.getEmail(), token);
+				return true;
+			}
+			throw new UserException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 		}
-		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
 	}
 
 	public boolean addRole(RoleDTO request) {
@@ -199,18 +162,17 @@ public class UserServiceImp implements UserService {
 		return true;
 	}
 
-	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
+	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
 			registerMail(maybeUser, environment.getProperty("forgot-password-template-path"));
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+			return true;
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
+		return false;
+
 	}
 
-	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
+	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
 			long id = JwtValidate.decodeJWT(token);
 			User user = userRepository.findByUserId(id);
@@ -219,12 +181,11 @@ public class UserServiceImp implements UserService {
 						encrypt.bCryptPasswordEncoder().encode(resetPassword.getConfirmpassword()));
 				String getToken = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 				redis.putMap(redisKey, user.getEmail(), getToken);
-				return ResponseEntity.status(HttpStatus.OK).body(
-						new Response(Constant.PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+				return true;
 			}
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
+		return false;
+
 	}
 
 	@Override
@@ -235,7 +196,7 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<Response> logOut(String token) throws UserException {
+	public boolean logOut(String token) throws UserException {
 		long id = JwtValidate.decodeJWT(token);
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
@@ -244,11 +205,9 @@ public class UserServiceImp implements UserService {
 		if (user.isUserStatus()) {
 			user.setUserStatus(Boolean.FALSE);
 			userRepository.addUser(user);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+			return true;
 		}
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
+		return false;
 
 	}
 

@@ -26,7 +26,7 @@ public class RoleRepositoryImp implements RoleRepository{
 	public Role getRoleByName(String name)
 	{
 		Session session = entityManager.unwrap(Session.class);
-		Query q=session.createQuery("From Role where role_name=:name");		
+		Query<Role> q=session.createQuery("From Role where role_name=:name");		
 		q.setParameter("name", name);
 		
 		return (Role) q.uniqueResult();
