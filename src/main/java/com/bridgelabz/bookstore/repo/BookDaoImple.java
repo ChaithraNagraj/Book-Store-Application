@@ -75,4 +75,19 @@ public class BookDaoImple implements BookRepo {
 		session.saveOrUpdate(book);
 		
 	}
+
+	@Override
+	public List<Book> sortBookAsc() {
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price ASC;").addEntity(Book.class).list();
+	}
+
+	@Override
+	public List<Book> sortBookDesc() {
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price DESC;").addEntity(Book.class).list();
+	}
+	
+	
+	
+	
+	
 }

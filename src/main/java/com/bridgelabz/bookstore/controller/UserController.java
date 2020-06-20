@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.config.AmazonClient;
+import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserException;
-import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
@@ -34,11 +34,12 @@ import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
+import com.bridgelabz.bookstore.utils.DateUtility;
 
 import io.swagger.annotations.Api;
 
 @RestController
-@RequestMapping(value = { "/user" })
+@RequestMapping(value = { "/users" })
 @Api(value = "User Controller")
 public class UserController {
 
@@ -51,28 +52,60 @@ public class UserController {
 	@PostMapping(value = "/register", headers = "Accept=application/json")
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
 			throws IOException, UserException {
-		return userService.registerUser(request);
+		if (userService.registerUser(request) == 1) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY + " as Seller", Constant.OK_RESPONSE_CODE));
+		} else if (userService.registerUser(request) == 2) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY + " as Buyer", Constant.OK_RESPONSE_CODE));
+		} else {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_REGISTER_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
+		}
 	}
 
 	@GetMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> userVerification(@RequestParam("token") String token) {
-		return userService.verify(token);
+	public ResponseEntity<Response> userVerification(@RequestParam("token") String token) throws UserException {
+		if (userService.verify(token)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
+					Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
+					Constant.USER_VERIFIED_FAILD_MEAASGE, Constant.BAD_REQUEST_RESPONSE_CODE));
+		}
 	}
 
 	@PostMapping(value = "/login", headers = "Accept=application/json")
-	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserNotFoundException {
-		return userService.login(loginDto);
+	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserException {
+		if (userService.login(loginDto)) {
+			return ResponseEntity.status(HttpStatus.OK).body(
+					new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, DateUtility.today()));
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_FAILED_MESSAGE,
+					Constant.BAD_REQUEST_RESPONSE_CODE, DateUtility.today()));
+		}
 	}
 
 	@PutMapping("/forgotpassword")
 	public ResponseEntity<Response> forgotPassword(@RequestParam("email") String email) throws UserException {
-		return userService.forgetPassword(email);
+		if (userService.forgetPassword(email)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 
 	@PutMapping("/resetpassword")
 	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPassword,
 			@RequestParam("token") String token) throws UserException {
-		return userService.resetPassword(resetPassword, token);
+		if (userService.resetPassword(resetPassword, token)) {
+			return ResponseEntity.status(HttpStatus.OK).body(
+					new Response(Constant.PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
+		}
 	}
 
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -119,7 +152,12 @@ public class UserController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<Response> logOut(@RequestParam("token") String token) throws UserException {
-		return userService.logOut(token);
+		if (userService.logOut(token)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
 	}
 
 	@PostMapping("/uploadimage")

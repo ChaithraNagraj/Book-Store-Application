@@ -7,7 +7,7 @@ public class LoginDTO {
 
 	private String loginId;
 	private String password;
-	private String role;
+	private Long role;
 
 	public String getloginId() {
 		return loginId;
@@ -25,11 +25,11 @@ public class LoginDTO {
 		this.password = password;
 	}
 
-	public String getRole() {
+	public Long getRole() {
 		return role;
 	}
 
-	public void setRole(String role) {
+	public void setRole(Long role) {
 		this.role = role;
 	}
 	
