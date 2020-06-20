@@ -42,7 +42,11 @@ public class Constant {
 	public static final String LOGOUT_FAILED_MEAASGE = "User LogOut Failed";
 	public static final String USER_DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
 	public static final String BOOK_NOT_FOUND = "Book Not found";
+<<<<<<< HEAD
 	public static final String USER_VERIFIED_FAILD_MEAASGE = "User Verification Failed";
 	public static final String USER_REGISTER_FAILED = "User Registration Failed";
+=======
+	public static final String BOOK_FOUND="book found";
+>>>>>>> 4f163fae7837a581270536724aba65e8cef4aacb
 
 }
