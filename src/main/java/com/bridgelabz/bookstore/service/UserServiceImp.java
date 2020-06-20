@@ -62,40 +62,6 @@ public class UserServiceImp implements UserService {
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
 	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
-//		User userEntity = userRepository.getusersByemail(userDetails.getEmail());
-//		if (userEntity != null) {
-//			throw new UserException(Constant.USER_ALREADY_REGISTER_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
-//		} else {
-//			User user = new User();
-//			BeanUtils.copyProperties(userDetails, user);
-//			user.setFullName(userDetails.getName());
-//			user.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
-//			user.setRegistrationDateTime(DateUtility.today());
-//			user.setUpdateDateTime(DateUtility.today());
-//			user.setMobileNumber(userDetails.getMobileNumber());
-//			user.setVerify(false);
-//			if (userDetails.getRole().equals("1")) {
-//				Role roleEntity = roleRepository.getRoleByName("Buyer");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			if (userDetails.getRole().equals("2")) {
-//				Role roleEntity = roleRepository.getRoleByName("Seller");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			if (userDetails.getRole().equals("3")) {
-//				Role roleEntity = roleRepository.getRoleByName("buyer");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//				roleEntity = roleRepository.getRoleByName("Seller");
-//				roleEntity.getUser().add(user);
-//				roleRepository.save(roleEntity);
-//			}
-//			registerMail(user, environment.getProperty("registration-template-path"));
-//			System.out.println(user);
-//			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.USER_REGISTER_SUCESSFULLY,
-//					Constant.OK_RESPONSE_CODE, user, DateUtility.today()));
 
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
@@ -103,7 +69,7 @@ public class UserServiceImp implements UserService {
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
-						throw new UsernameExistsException("User Already Regsitered As ");
+						throw new UsernameExistsException("User Already Regsitered As " + role.getRole());
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
@@ -179,7 +145,7 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
+	public ResponseEntity<Response> login(LoginDTO loginDto) {
 		User user = userRepository.getusersByemail(loginDto.getloginId());
 		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
 			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
