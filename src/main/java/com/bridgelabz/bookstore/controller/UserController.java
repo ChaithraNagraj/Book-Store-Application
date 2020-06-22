@@ -52,12 +52,9 @@ public class UserController {
 	@PostMapping(value = "/register", headers = "Accept=application/json")
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
 			throws IOException, UserException {
-		if (userService.registerUser(request) == 1) {
+		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY + " as Seller", Constant.OK_RESPONSE_CODE));
-		} else if (userService.registerUser(request) == 2) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY + " as Buyer", Constant.OK_RESPONSE_CODE));
+					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
 		} else {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
