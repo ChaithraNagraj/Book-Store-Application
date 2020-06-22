@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
@@ -19,6 +20,7 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 
 @Service
+@Transactional
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
@@ -51,9 +53,10 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book updateBook(BookDto updatedBookInfo, long bookId, String token) {
 		User seller = authentication(token);
-		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
-				.orElseThrow(() -> new BookNotFoundException("Book Not Found In Your Inventory"));
+		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
+				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		BeanUtils.copyProperties(updatedBookInfo, bookToBeUpdated);
+		bookToBeUpdated.setApproved(false);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToBeUpdated;
@@ -68,11 +71,23 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public boolean removeBook(long bookId, String token) {
 		User seller = authentication(token);
-		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
-				.orElseThrow(() -> new BookNotFoundException("Book Not Available In Your Inventory"));
+		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
+				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		seller.getSellerBooks().remove(bookTobeDeleted);
 		userRepository.addUser(seller);
 		return true;
+	}
+
+	@Override
+	public Book addQuantity(long bookId, String token, int quantity) {
+		User seller = authentication(token);
+		Book bookToAddQuantity = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		quantity += bookToAddQuantity.getQuantity();
+		bookToAddQuantity.setQuantity(quantity);
+		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
+		userRepository.addUser(seller);
+		return bookToAddQuantity;
 	}
 
 }
