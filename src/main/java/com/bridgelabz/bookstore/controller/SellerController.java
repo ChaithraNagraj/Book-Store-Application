@@ -48,9 +48,10 @@ public class SellerController {
 	
 	@GetMapping(value = "/displayBooks/{token}")
 	public ResponseEntity<Response> displayBooks(@PathVariable("token") String token){
+		System.out.println("displaying book");
 		List<Book> sellerBooks = sellerService.getAllBooks(token);
 		if(!sellerBooks.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.FOUND).body(new Response("Books Found", HttpStatus.FOUND.value(), sellerBooks));
+			return ResponseEntity.status(HttpStatus.OK).body(new Response("Books Found", HttpStatus.OK.value(), sellerBooks));
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("Your Inventory Is Empty,No Books Found", HttpStatus.NOT_FOUND.value()));
 	}
