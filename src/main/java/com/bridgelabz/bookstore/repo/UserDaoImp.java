@@ -27,8 +27,9 @@ public class UserDaoImp implements UserRepo {
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
-		sessionFactory.getCurrentSession().saveOrUpdate(user);
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(user);
+//		return user;
 	}
 
 	public User findByUserId(Long id) {
@@ -81,11 +82,11 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
-	public User getusersByemail(String email) {
-		Session session = sessionFactory.getCurrentSession();
-		Query<?> q = session.createQuery("from User where email=:email");
-		q.setParameter("email", email);
-		return (User) q.uniqueResult();
+	public User getusersByemail(String emailId) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		Query<User> query = currentSession.createQuery("FROM User where email=:emailId");
+		query.setParameter("emailId", emailId);
+		return query.uniqueResult();
 	}
 
 	@Override
