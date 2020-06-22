@@ -54,6 +54,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
 
 	}
+	
+	@ExceptionHandler(UserAlreadyRegisteredException.class)
+	public ResponseEntity<Response> userAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.ALREADY_REPORTED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+	}
 
 	@ExceptionHandler(TokenNotFoundException.class)
 	public ResponseEntity<Response> handleTokenNotFoundException(TokenNotFoundException ex) {
