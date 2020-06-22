@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.amazonaws.services.cognitoidp.model.UsernameExistsException;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
@@ -34,6 +35,7 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
 @Component
+@CrossOrigin("*")
 public class UserServiceImp implements UserService {
 
 	@Autowired

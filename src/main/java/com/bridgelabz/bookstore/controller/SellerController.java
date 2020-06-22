@@ -48,6 +48,7 @@ public class SellerController {
 	
 	@GetMapping(value = "/displayBooks/{token}")
 	public ResponseEntity<Response> displayBooks(@PathVariable("token") String token){
+		System.out.println("displaying book");
 		List<Book> sellerBooks = sellerService.getAllBooks(token);
 		if(!sellerBooks.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.OK).body(new Response("Books Found", HttpStatus.OK.value(), sellerBooks));
