@@ -61,7 +61,6 @@ public class UserServiceImp implements UserService {
 	public int registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
-System.out.println("user: "+userEmailExists);
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
@@ -139,8 +138,8 @@ System.out.println("user: "+userEmailExists);
 
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
+		
 		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
-		System.out.println(roleWithUser);
 		if (roleWithUser != null) {
 			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
 					&& roleWithUser.isVerify()) {
