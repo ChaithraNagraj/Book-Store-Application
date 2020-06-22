@@ -28,7 +28,7 @@ public class UserDaoImp implements UserRepo {
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
+		System.out.println(user.getSellerBooks());
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
