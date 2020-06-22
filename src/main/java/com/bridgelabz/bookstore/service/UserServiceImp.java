@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -13,9 +15,9 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.amazonaws.services.cognitoidp.model.UsernameExistsException;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.exception.UserAlreadyRegisteredException;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Role;
@@ -34,6 +36,7 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
 @Component
+@Transactional
 public class UserServiceImp implements UserService {
 
 	@Autowired
@@ -58,19 +61,18 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
-	public int registerUser(RegistrationDTO userDetails) throws UserException {
+	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
-System.out.println("user: "+userEmailExists);
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
-						throw new UsernameExistsException("User Already Regsitered As " + role.getRole());
+						throw new UserAlreadyRegisteredException(
+								Constant.USER_ALREADY_REGISTER_MESSAGE + " As " + role.getRole());
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
-			return 1;
-
+			return true;
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -83,10 +85,8 @@ System.out.println("user: "+userEmailExists);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
 			registerMail(userEntity, environment.getProperty("registration-template-path"));
-			return 2;
-
+			return true;
 		}
-
 	}
 
 	private void registerMail(User user, String templet) {
@@ -140,11 +140,11 @@ System.out.println("user: "+userEmailExists);
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
 		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
-		System.out.println(roleWithUser);
 		if (roleWithUser != null) {
 			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
 					&& roleWithUser.isVerify()) {
 				String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+				System.out.println(token);
 				userRepository.updateDateTime(user.getId());
 				user.setUpdateDateTime(DateUtility.today());
 				userRepository.updateUserStatus(Boolean.TRUE, user.getId());
@@ -169,7 +169,6 @@ System.out.println("user: "+userEmailExists);
 			return true;
 		}
 		return false;
-
 	}
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
@@ -185,7 +184,6 @@ System.out.println("user: "+userEmailExists);
 			}
 		}
 		return false;
-
 	}
 
 	@Override
@@ -208,7 +206,6 @@ System.out.println("user: "+userEmailExists);
 			return true;
 		}
 		return false;
-
 	}
 
 }
