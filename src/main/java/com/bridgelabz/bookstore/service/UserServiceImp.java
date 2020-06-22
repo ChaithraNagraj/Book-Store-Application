@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
@@ -35,7 +34,6 @@ import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
-@Component
 @Transactional
 public class UserServiceImp implements UserService {
 
@@ -139,12 +137,12 @@ public class UserServiceImp implements UserService {
 
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
+
 		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
 		if (roleWithUser != null) {
 			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
 					&& roleWithUser.isVerify()) {
 				String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
-				System.out.println(token);
 				userRepository.updateDateTime(user.getId());
 				user.setUpdateDateTime(DateUtility.today());
 				userRepository.updateUserStatus(Boolean.TRUE, user.getId());

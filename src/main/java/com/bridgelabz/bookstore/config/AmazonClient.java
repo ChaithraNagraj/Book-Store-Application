@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
@@ -32,6 +33,7 @@ import com.bridgelabz.bookstore.service.UserServiceImp;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 
 @Service
+@CrossOrigin("*")
 public class AmazonClient {
 	private AmazonS3 s3client;
 

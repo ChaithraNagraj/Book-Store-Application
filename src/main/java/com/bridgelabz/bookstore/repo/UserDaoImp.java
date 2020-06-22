@@ -29,7 +29,6 @@ public class UserDaoImp implements UserRepo {
 	public void addUser(User user) {
 		Session currentSession = sessionFactory.getCurrentSession();
 		currentSession.saveOrUpdate(user);
-//		return user;
 	}
 
 	public User findByUserId(Long id) {
@@ -137,7 +136,7 @@ public class UserDaoImp implements UserRepo {
 		Query<User> query = session.createSQLQuery(hql).addEntity("u", User.class);
 		query.setParameter("userId", userId);
 		query.setParameter("roleId", roleId);
-		return (User) query.uniqueResult();
+		return query.uniqueResult();
 	}
 	@Override
 	public User getusersByLoginId(String loginId) {
