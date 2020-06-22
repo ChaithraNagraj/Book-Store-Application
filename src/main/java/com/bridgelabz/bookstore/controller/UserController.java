@@ -10,14 +10,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,18 +32,20 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
-
+import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.utils.DateUtility;
+import com.bridgelabz.bookstore.utils.JwtValidate;
 
 import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
 @Api(value = "User Controller")
+@CrossOrigin("*")
 public class UserController {
 
 	@Autowired
@@ -48,6 +53,8 @@ public class UserController {
 
 	@Autowired
 	private AmazonClient amazonClient;
+	@Autowired
+	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
@@ -78,8 +85,10 @@ public class UserController {
 	@PostMapping(value = "/login", headers = "Accept=application/json")
 	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserException {
 		if (userService.login(loginDto)) {
+			User user=userRepository.getusersByLoginId(loginDto.getloginId());
+			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 			return ResponseEntity.status(HttpStatus.OK).body(
-					new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, DateUtility.today()));
+					new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, user,token));
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_FAILED_MESSAGE,
 					Constant.BAD_REQUEST_RESPONSE_CODE, DateUtility.today()));
@@ -107,9 +116,8 @@ public class UserController {
 					.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 		}
 	}
-
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
+	public ResponseEntity<User> getUserById(@PathVariable("id") long id){
 		User user = userService.findById(id);
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -161,8 +169,8 @@ public class UserController {
 	}
 
 	@PostMapping("/uploadimage")
-	public ResponseEntity<Response> uploadFile(@RequestParam("file") MultipartFile file,
-			@RequestParam("token") String token) throws IOException {
+	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file,
+			@RequestHeader String token) throws IOException {
 		return this.amazonClient.uploadFile(file, token);
 	}
 

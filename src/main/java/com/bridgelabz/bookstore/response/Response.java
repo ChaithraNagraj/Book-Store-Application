@@ -9,6 +9,7 @@ public class Response {
 	private String message;
 	private Object data;
 	private LocalDateTime now;
+	private String token;
 	private User userDetails;
 
 	public LocalDateTime getNow() {
@@ -66,7 +67,12 @@ public class Response {
 		this.userDetails = userDetails;
 		this.now = now;
 	}
-
+	public Response(String message, int status, Object data,String tok) {
+		this.message = message;
+		this.status = status;
+		this.data = data;
+		this.token=tok;
+	}
 	public int getStatus() {
 		return status;
 	}
@@ -98,6 +104,15 @@ public class Response {
 	public void setUserDetails(User userDetails) {
 		this.userDetails = userDetails;
 	}
+	
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
 	@Override
 	public String toString() {
 		return "Response [status=" + status + ", message=" + message + "]";
