@@ -1,7 +1,6 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -134,9 +133,17 @@ public class UserDaoImp implements UserRepo {
 	public User findByUserIdAndRoleId(Long userId, Long roleId) {
 		Session session = sessionFactory.getCurrentSession();
 		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
-		Query query = session.createSQLQuery(hql).addEntity("u", User.class);
+		Query<User> query = session.createSQLQuery(hql).addEntity("u", User.class);
 		query.setParameter("userId", userId);
 		query.setParameter("roleId", roleId);
 		return (User) query.uniqueResult();
 	}
+	@Override
+	public User getusersByLoginId(String loginId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<?> q = session.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
+		q.setParameter("loginId", loginId);
+		return (User) q.uniqueResult();
+	}
+	
 }
