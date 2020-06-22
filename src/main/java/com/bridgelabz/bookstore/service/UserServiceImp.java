@@ -67,7 +67,7 @@ System.out.println("user: "+userEmailExists);
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
-						throw new UsernameExistsException("User Already Regsitered As ");
+						throw new UsernameExistsException("User Already Regsitered As " + role.getRole());
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
