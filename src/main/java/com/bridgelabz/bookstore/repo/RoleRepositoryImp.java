@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.model.Role;
 
-
 @Repository
-public class RoleRepositoryImp implements RoleRepository{
+public class RoleRepositoryImp implements RoleRepository {
 
 	@Autowired
 	private EntityManager entityManager;
@@ -20,26 +19,25 @@ public class RoleRepositoryImp implements RoleRepository{
 	@Transactional
 	public void save(Role roleEntity) {
 		Session session = entityManager.unwrap(Session.class);
-		session.saveOrUpdate(roleEntity);		
+		session.saveOrUpdate(roleEntity);
 	}
+
 	@Transactional
-	public Role getRoleByName(String name)
-	{
+	public Role getRoleByName(String name) {
 		Session session = entityManager.unwrap(Session.class);
-		Query q=session.createQuery("From Role where role_name=:name");		
+		Query<Role> q = session.createQuery("From Role where role_name=:name");
 		q.setParameter("name", name);
-		
+
 		return (Role) q.uniqueResult();
 
 	}
+
 	@Transactional
-	public Role getRoleById(int rid)
-	{
+	public Role getRoleById(int rid) {
 		Session session = entityManager.unwrap(Session.class);
-		Query q=session.createQuery("From Role where role_id=:id");		
+		Query q = session.createQuery("From Role where role_id=:id");
 		q.setParameter("id", rid);
 		return (Role) q.uniqueResult();
 	}
-	
-	
+
 }

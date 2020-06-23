@@ -51,14 +51,17 @@ public class Book {
 
 	@Column
 	private String image;
+	
+	@Column
+	private String bookDetails;
 
-	@Column(name = "is_approved")
+	@Column(name = "is_approved",columnDefinition = "boolean default false")
 	@NotNull
 	private boolean isApproved;
 
 	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
 			@NotNull LocalDateTime createdDateAndTime, @NotNull LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved) {
+			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
 		super();
 		this.bookId = bookid;
 		this.bookName = bookName;
@@ -71,6 +74,7 @@ public class Book {
 		this.noOfRejections = noOfRejections;
 		this.image = image;
 		this.isApproved = isapproved;
+		this.bookDetails = bookDetails;
 	}
 
 	public Book() {
@@ -165,13 +169,27 @@ public class Book {
 		this.isApproved = isApproved;
 	}
 
+
+	public String getBookDetails() {
+		return bookDetails;
+	}
+
+	public void setBookDetails(String bookDetails) {
+		this.bookDetails = bookDetails;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", isApproved=" + isApproved + "]";
-	}
+
 	
+
+				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
+				+ ", isApproved=" + isApproved + "]";
+	}
+
 
 }

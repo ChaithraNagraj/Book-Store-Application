@@ -34,22 +34,22 @@ public WebConfig() {
 }
 
 @Override
-public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+		throws IOException, ServletException {
+	HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) res;
-    HttpServletRequest request = (HttpServletRequest) req;
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-    response.setHeader("Access-Control-Max-Age", "12000");
-    response.setHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-    response.setHeader("Access-Control-Expose-Headers", "*");
 
-    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-        response.setStatus(HttpServletResponse.SC_OK);
-    } else {
-        chain.doFilter(req, res);
-    }
+    response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+    response.setHeader("Access-Control-Allow-Credentials", "true");
+    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE,PUT");
+    response.setHeader("Access-Control-Max-Age", "3600");
+//    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
+    response.setHeader("Access-Control-Allow-Headers",
+			"x-requested-with, Content-Type, Accept, X-Requested-With, Authorization, token, email, TimeZoneOffset");
+
+    chain.doFilter(req, res);
+	
 }
-
 @Override
 public void init(FilterConfig filterConfig) {
 }
@@ -57,4 +57,5 @@ public void init(FilterConfig filterConfig) {
 @Override
 public void destroy() {
 }
+
 }

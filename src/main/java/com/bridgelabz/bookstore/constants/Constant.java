@@ -1,5 +1,7 @@
 package com.bridgelabz.bookstore.constants;
 
+import org.springframework.http.HttpStatus;
+
 public class Constant {
 
 	private Constant() {
@@ -12,14 +14,18 @@ public class Constant {
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
-	public static final String VERIFY_ADDRESS = "http://localhost:8080/user/verify?token=";
+	public static final String VERIFY_ADDRESS = "http://localhost:8080/users/verify?token=";
 	public static final String ISSUER = "Bridgelabz";
 	public static final String SUBJECT = "authentication";
 	public static final long LOGIN_EXP = (long) 24 * 60 * 60 * 10000000;
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
+
 	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY="PROFILE_IMAGE_DELETED_SUCCESSFULLY";
 	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY="PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
+
+	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
+
 	public static final int ALREADY_EXIST_EXCEPTION_STATUS = 208;
 	public static final int NOTE_NOT_FOUND_EXCEPTION_STATUS = 300;
 	public static final int BAD_REQUEST_RESPONSE_CODE = 400;
@@ -46,6 +52,14 @@ public class Constant {
 	public static final String LOGOUT_FAILED_MEAASGE = "User LogOut Failed";
 	public static final String USER_DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
 	public static final String BOOK_NOT_FOUND = "Book Not found";
-	public static final String BOOK_FOUND="book found";
+	public static final String USER_VERIFIED_FAILD_MEAASGE = "User Verification Failed";
+	public static final String USER_REGISTER_FAILED = "User Registration Failed";
+	public static final String BOOK_FOUND = "book found";
+	public static final String BOOK_ADDITION_SUCCESSFULL_MESSAGE = "Book Added Successfully";
+	public static final String BOOK_ADDITION_FAILED_MESSAGE = "Book Adding Failed";
+	public static final String BOOK_UPDATION_SUCCESSFULL_MESSAGE = "Book Updation Successfull";
+	public static final String BOOK_UPDATION_FAILED_MESSAGE = "Book Updation Failed";
+	public static final String BOOK_DELETION_SUCCESSFULL_MESSAGE = "Book Removed from your Inventory";
+	public static final String BOOK_QUANTITY_ADDITION_SUCCESSFULL = "Quantity Addition to Book successfull";
 
 }

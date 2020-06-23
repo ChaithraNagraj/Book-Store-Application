@@ -15,4 +15,6 @@ public interface SellerService {
 
 	boolean removeBook(long bookId, String token);
 
+	Book addQuantity(long bookId, String token, int quantity);
+
 }

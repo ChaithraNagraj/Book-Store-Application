@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -20,14 +22,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.amazonaws.services.cognitoidp.model.UsernameExistsException;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.exception.UserAlreadyRegisteredException;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Role;
@@ -38,7 +37,6 @@ import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
@@ -47,7 +45,7 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-@Component
+@Transactional
 public class UserServiceImp implements UserService {
 	
 	@Autowired
@@ -78,21 +76,24 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
-	public ResponseEntity<Response> registerUser(RegistrationDTO userDetails) throws UserException {
+
+	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
+
 
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
-
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
 					Long.parseLong(userDetails.getRole()))).ifPresent(action -> {
-						throw new UsernameExistsException("User Already Regsitered As ");
+						throw new UserAlreadyRegisteredException(
+								Constant.USER_ALREADY_REGISTER_MESSAGE + " As " + role.getRole());
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
+
 			
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
+			return true;
+
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -115,14 +116,8 @@ public class UserServiceImp implements UserService {
 				}
 
 			registerMail(userEntity, environment.getProperty("registration-template-path"));
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_REGISTER_SUCESSFULLY + " as " + role.getRole(), Constant.OK_RESPONSE_CODE));
+			return true;
 		}
-
-	}
-
-	private Role getRoleName(String userRole) {
-		return userRepository.findByRoleId(Long.parseLong(userRole));
 	}
 
 	private void registerMail(User user, String templet) {
@@ -171,12 +166,12 @@ public class UserServiceImp implements UserService {
 		return userRepository.update(user, id);
 	}
 
-	public ResponseEntity<Response> verify(String token) {
+	public boolean verify(String token) throws UserException {
 		long id = JwtValidate.decodeJWT(token);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
-					Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
 		} else {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
@@ -184,27 +179,32 @@ public class UserServiceImp implements UserService {
 
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
 
-				return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
-						Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
+				return true;
+
 
 			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(DateUtility.today(),
-					Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS));
+			throw new UserException(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS);
+
 		}
 	}
 
-	public ResponseEntity<Response> login(LoginDTO loginDto) throws UserNotFoundException {
-		User user = userRepository.getusersByemail(loginDto.getloginId());
-		if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), user.getPassword()) && user.isVerify()) {
-			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
-			userRepository.updateDateTime(user.getId());
-			user.setUpdateDateTime(DateUtility.today());
-			userRepository.updateUserStatus(Boolean.TRUE, user.getId());
-			redis.putMap(redisKey, user.getEmail(), token);
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE,
-					Constant.OK_RESPONSE_CODE, token, DateUtility.today(), user));
+	public boolean login(LoginDTO loginDto) throws UserException {
+		User user = userRepository.getusersByLoginId(loginDto.getloginId());
+
+		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
+		if (roleWithUser != null) {
+			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
+					&& roleWithUser.isVerify()) {
+				String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+				userRepository.updateDateTime(user.getId());
+				user.setUpdateDateTime(DateUtility.today());
+				userRepository.updateUserStatus(Boolean.TRUE, user.getId());
+				redis.putMap(redisKey, user.getEmail(), token);
+				return true;
+			}
+			throw new UserException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
 		}
-		throw new UserNotFoundException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
 	}
 
 	public boolean addRole(RoleDTO request) {
@@ -213,18 +213,16 @@ public class UserServiceImp implements UserService {
 		return true;
 	}
 
-	public ResponseEntity<Response> forgetPassword(String email) throws UserException {
+	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
 			registerMail(maybeUser, environment.getProperty("forgot-password-template-path"));
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.CHECK_MAIL_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+			return true;
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new Response(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE));
+		return false;
 	}
 
-	public ResponseEntity<Response> resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
+	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
 			long id = JwtValidate.decodeJWT(token);
 			User user = userRepository.findByUserId(id);
@@ -233,12 +231,10 @@ public class UserServiceImp implements UserService {
 						encrypt.bCryptPasswordEncoder().encode(resetPassword.getConfirmpassword()));
 				String getToken = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
 				redis.putMap(redisKey, user.getEmail(), getToken);
-				return ResponseEntity.status(HttpStatus.OK).body(
-						new Response(Constant.PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE, Constant.CREATED_RESPONSE_CODE));
+				return true;
 			}
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
+		return false;
 	}
 
 	@Override
@@ -249,7 +245,7 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public ResponseEntity<Response> logOut(String token) throws UserException {
+	public boolean logOut(String token) throws UserException {
 		long id = JwtValidate.decodeJWT(token);
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
@@ -258,12 +254,9 @@ public class UserServiceImp implements UserService {
 		if (user.isUserStatus()) {
 			user.setUserStatus(Boolean.FALSE);
 			userRepository.addUser(user);
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
+			return true;
 		}
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
-
+		return false;
 	}
 
 	private User getSearchResult(SearchResponse response) {

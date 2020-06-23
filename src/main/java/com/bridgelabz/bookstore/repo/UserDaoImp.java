@@ -1,7 +1,6 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -28,8 +27,8 @@ public class UserDaoImp implements UserRepo {
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
-		sessionFactory.getCurrentSession().saveOrUpdate(user);
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(user);
 	}
 
 	public User findByUserId(Long id) {
@@ -82,11 +81,11 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
-	public User getusersByemail(String email) {
-		Session session = sessionFactory.getCurrentSession();
-		Query<?> q = session.createQuery("from User where email=:email");
-		q.setParameter("email", email);
-		return (User) q.uniqueResult();
+	public User getusersByemail(String emailId) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		Query<User> query = currentSession.createQuery("FROM User where email=:emailId");
+		query.setParameter("emailId", emailId);
+		return query.uniqueResult();
 	}
 
 	@Override
@@ -134,10 +133,17 @@ public class UserDaoImp implements UserRepo {
 	public User findByUserIdAndRoleId(Long userId, Long roleId) {
 		Session session = sessionFactory.getCurrentSession();
 		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
-		Query query = session.createSQLQuery(hql).addEntity("u", User.class);
+		Query<User> query = session.createSQLQuery(hql).addEntity("u", User.class);
 		query.setParameter("userId", userId);
 		query.setParameter("roleId", roleId);
-		return (User) query.uniqueResult();
+		return query.uniqueResult();
+	}
+	@Override
+	public User getusersByLoginId(String loginId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<?> q = session.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
+		q.setParameter("loginId", loginId);
+		return (User) q.uniqueResult();
 	}
 
 }

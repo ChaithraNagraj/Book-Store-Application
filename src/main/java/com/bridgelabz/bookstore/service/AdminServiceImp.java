@@ -72,6 +72,7 @@ public class AdminServiceImp implements AdminService{
 	@Override
 	public void bookVerification(Long bookId, Long sellerId, String verify) throws BookException {
 		Book book = bookRepository.getBookById(bookId).orElseThrow(()-> new BookException(Constant.BOOK_NOT_FOUND , Constant.NOT_FOUND_RESPONSE_CODE));
+		
 		User seller=userRepository.findByUserId(sellerId);
 		if(verify.equals("yes")) {
 			book.setApproved(true);

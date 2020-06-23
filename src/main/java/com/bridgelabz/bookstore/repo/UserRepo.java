@@ -1,7 +1,6 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
@@ -40,5 +39,7 @@ public interface UserRepo {
 	public void userMerge(User user);
 
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
+	
+	public User getusersByLoginId(String loginId);
 
 }
