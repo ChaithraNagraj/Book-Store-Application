@@ -9,10 +9,31 @@ import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-	@Size(min = 3)
-	//@Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName")
+//	@Size(min = 3)
+//	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
 	private String name;
+//
+//	@Size(min = 3)
+//	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
+	private String userName;
 
+	@Email
+	private String email;
+
+	@Size(min = 3)
+	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
+	private String password;
+
+	@NotEmpty(message = "Enter Role - Registration DTO")
+	private String role;
+
+
+	private Long mobileNumber;
+
+	public RegistrationDTO() {
+		super();
+	}
+	
 	public RegistrationDTO(
 			@NotEmpty(message = "Enter First Name - Registration DTO") @Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName") String name,
 			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
@@ -28,28 +49,6 @@ public class RegistrationDTO {
 		this.mobileNumber = mobileNumber;
 	}
 
-	@Size(min = 3)
-	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
-	private String userName;
-
-	@Email
-	private String email;
-
-	@Size(min = 3)
-	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
-	private String password;
-
-	@NotEmpty(message = "Enter Role - Registration DTO")
-	private String role;
-
-
-	//@Pattern(regexp = "[7-9]{1}[0-9]{9}", message = "Please Enter Valid PhoneNumber")
-	private Long mobileNumber;
-
-
-	public RegistrationDTO() {
-		super();
-	}
 
 	public String getEmail() {
 		return email;
@@ -99,13 +98,13 @@ public class RegistrationDTO {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
+
 	public static Boolean isValid(Long mobileNumber) {
 		String phNo = Long.toString(mobileNumber);
-		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[7-9]{1}[0-9]{9}");
+		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[7-9]\\d{9}$");
 		Matcher m = pattern.matcher(phNo);
 		return m.find();
-		
+
 	}
 
 	@Override
@@ -113,7 +112,4 @@ public class RegistrationDTO {
 		return "RegistrationDTO [name=" + name + ", userName=" + userName + ", email=" + email + ", password="
 				+ password + ", moblieNumber=" + mobileNumber + ", role=" + role + "]";
 	}
-
-
-
 }

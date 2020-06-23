@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
@@ -19,7 +20,7 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 @Transactional
 @SuppressWarnings("unchecked")
 public class UserDaoImp implements UserRepo {
-	
+
 	@Autowired
 	private EntityManager entityManager;
 
@@ -28,8 +29,7 @@ public class UserDaoImp implements UserRepo {
 
 	public void addUser(User user) {
 		System.out.println("3");
-
-		sessionFactory.getCurrentSession().save(user);
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
 	}
 
 	public User findByUserId(Long id) {
@@ -39,7 +39,7 @@ public class UserDaoImp implements UserRepo {
 	@Transactional
 	public List<User> getUser() {
 		Session session = entityManager.unwrap(Session.class);
-		Query q=session.createQuery("From User");
+		Query<User> q = session.createQuery("From User");
 		return q.getResultList();
 	}
 
@@ -108,13 +108,36 @@ public class UserDaoImp implements UserRepo {
 		return query.list();
 	}
 
-	@Override
-	public List<User> findByName(String name) {
+
+	public void updateUserStatus(Boolean userStatus, Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		String hql ="FROM User U where U.name=:name";
-		Query<User> query = session.createQuery(hql);
-		query.setParameter("name", name);
-		 return query.list();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setUserStatus(userStatus);
+		session.update(user);
+	}
+
+	@Override
+	public void saveImageUrl(String imageUrl, Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setImageUrl(imageUrl);
+		session.update(user);
+	}
+
+	public void userMerge(User user) {
+		sessionFactory.getCurrentSession().merge(user);
+	}
+
+	@Override
+	public User findByUserIdAndRoleId(Long userId, Long roleId) {
+		Session session = sessionFactory.getCurrentSession();
+		String hql = "select {u.*} from user u where u.user_id=(select user_id from User_Role where user_id=:userId and role_id=:roleId)";
+		Query query = session.createSQLQuery(hql).addEntity("u", User.class);
+		query.setParameter("userId", userId);
+		query.setParameter("roleId", roleId);
+		return (User) query.uniqueResult();
 	}
 
 }

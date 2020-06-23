@@ -2,11 +2,14 @@ package com.bridgelabz.bookstore.response;
 
 import java.time.LocalDateTime;
 
+import com.bridgelabz.bookstore.model.User;
+
 public class Response {
 	private int status;
 	private String message;
-	private String data;
+	private Object data;
 	private LocalDateTime now;
+	private User userDetails;
 
 	public LocalDateTime getNow() {
 		return now;
@@ -30,10 +33,18 @@ public class Response {
 		this.status = status;
 	}
 
-	public Response(String message, int status, String data) {
+	public Response(String message, int status, Object data) {
 		this.message = message;
 		this.status = status;
 		this.data = data;
+	}
+	
+	public Response(String message, int status,Object data, LocalDateTime now,User userDetails) {
+		this.message = message;
+		this.status = status;
+		this.data = data;
+		this.now = now;
+		this.userDetails = userDetails;
 	}
 
 	public Response(int status, String message) {
@@ -42,10 +53,18 @@ public class Response {
 		this.message = message;
 	}
 
-	public Response(LocalDateTime now, int status, String message) {
+	public Response(LocalDateTime now , String message,int status) {
 		this.now = now;
 		this.status = status;
 		this.message = message;
+	}
+
+	public Response(String message, int status, User userDetails, LocalDateTime now) {
+		super();
+		this.status = status;
+		this.message = message;
+		this.userDetails = userDetails;
+		this.now = now;
 	}
 
 	public int getStatus() {
@@ -64,17 +83,24 @@ public class Response {
 		this.message = message;
 	}
 
-	public String getData() {
+	public Object getData() {
 		return data;
 	}
 
-	public void setData(String data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
 
+	public User getUserDetails() {
+		return userDetails;
+	}
+
+	public void setUserDetails(User userDetails) {
+		this.userDetails = userDetails;
+	}
 	@Override
 	public String toString() {
 		return "Response [status=" + status + ", message=" + message + "]";
-	}
-
+	
+}
 }

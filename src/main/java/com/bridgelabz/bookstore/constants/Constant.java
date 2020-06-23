@@ -7,6 +7,7 @@ public class Constant {
 
 	public static final String INDEX = "userentity";
 	public static final String TYPE = "_doc";
+	public static final String INDEX1 = "bookentity";
 	public static final String KEY="User";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
@@ -44,5 +45,7 @@ public class Constant {
 	public static final String LOGOUT_MEAASGE = "User LogOut Sucessfully";
 	public static final String LOGOUT_FAILED_MEAASGE = "User LogOut Failed";
 	public static final String USER_DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
+	public static final String BOOK_NOT_FOUND = "Book Not found";
+	public static final String BOOK_FOUND="book found";
 
 }

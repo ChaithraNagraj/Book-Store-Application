@@ -1,19 +1,29 @@
 package com.bridgelabz.bookstore.exception;
-public class UserNotFoundException extends RuntimeException {
 
+public class BookException extends Exception {
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-	private int status;
-	String message;
 
-	public UserNotFoundException(String message) {
-		super(message);
-		this.message = message;
+	private String message;
+	private int status;
+
+	
+
+	public BookException() {
+		super();
 	}
 
-	public UserNotFoundException(String message, int status) {
-		super(message);
+	public BookException(String message, int status) {
+		super();
 		this.message = message;
 		this.status = status;
+	}
+
+	public int getStatus() {
+		return status;
 	}
 
 	@Override
@@ -28,10 +38,4 @@ public class UserNotFoundException extends RuntimeException {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-
-	public int getStatus() {
-		return status;
-	}
-	
-
 }
