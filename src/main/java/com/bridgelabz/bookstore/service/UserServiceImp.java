@@ -88,6 +88,7 @@ public class UserServiceImp implements UserService {
 	}
 
 	private void registerMail(User user, String templet) {
+		System.out.println("ghgh");
 		String token = TokenUtility.verifyResponse(user.getId());
 		sendMail(user, token, templet);
 	}
