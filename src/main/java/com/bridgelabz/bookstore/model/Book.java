@@ -169,6 +169,7 @@ public class Book {
 		this.isApproved = isApproved;
 	}
 
+
 	public String getBookDetails() {
 		return bookDetails;
 	}
@@ -177,13 +178,18 @@ public class Book {
 		this.bookDetails = bookDetails;
 	}
 
+
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+
+	
+
 				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
 				+ ", isApproved=" + isApproved + "]";
 	}
+
 
 }

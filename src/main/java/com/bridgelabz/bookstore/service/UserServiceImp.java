@@ -3,10 +3,20 @@ package com.bridgelabz.bookstore.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -32,10 +42,17 @@ import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Transactional
 public class UserServiceImp implements UserService {
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Autowired
 	private RoleRepositoryImp roleRepository;
@@ -59,7 +76,10 @@ public class UserServiceImp implements UserService {
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
 
+
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
+
+
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
 		if (userEmailExists.isPresent()) {
@@ -70,7 +90,10 @@ public class UserServiceImp implements UserService {
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
+
+			
 			return true;
+
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -82,6 +105,16 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
+			 Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+				IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(userEntity.getId()))
+						.source(documentMapper);
+				try {
+					client.index(indexRequest, RequestOptions.DEFAULT);
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+
 			registerMail(userEntity, environment.getProperty("registration-template-path"));
 			return true;
 		}
@@ -102,7 +135,24 @@ public class UserServiceImp implements UserService {
 	}
 
 	public User findById(Long id) {
-		return userRepository.findByUserId(id);
+		String text = Long.toString(id);
+		SearchRequest searchRequest = new SearchRequest();
+		searchRequest.indices(Constant.INDEX);
+		searchRequest.types(Constant.TYPE);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		QueryBuilder query = QueryBuilders.boolQuery()
+				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
+				
+						
+		searchSourceBuilder.query(query);
+		searchRequest.source(searchSourceBuilder);
+		SearchResponse searchResponse = null;
+		try {
+			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return (User) getSearchResult(searchResponse);
 	}
 
 	public List<User> getUser() {
@@ -127,8 +177,11 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
+
 				registerMail(idAvailable, environment.getProperty("login-template-path"));
+
 				return true;
+
 
 			}
 			throw new UserException(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS);
@@ -205,6 +258,16 @@ public class UserServiceImp implements UserService {
 			return true;
 		}
 		return false;
+	}
+
+	private User getSearchResult(SearchResponse response) {
+
+		SearchHit[] searchHit = response.getHits().getHits();
+             User u= new User();
+		for (SearchHit hit : searchHit) {
+			 u=(objectMapper.convertValue(hit.getSourceAsMap(), User.class));
+		}
+		return u;
 	}
 
 }
