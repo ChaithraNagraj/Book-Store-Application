@@ -86,7 +86,6 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private AmazonS3 amazonS3;
 
-//	private AmazonClient amazonClient;
 
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
@@ -280,7 +279,6 @@ public class UserServiceImp implements UserService {
 		return false;
 	}
 
-<<<<<<< HEAD
 	@Override
 	public boolean updateUser(String userName, String password, String token) throws UserException {
 		long id = JwtValidate.decodeJWT(token);
@@ -345,7 +343,7 @@ public class UserServiceImp implements UserService {
 		logger.info("bucketName: " + bucketName);
 		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 		return true;
-=======
+	}
 	private User getSearchResult(SearchResponse response) {
 
 		SearchHit[] searchHit = response.getHits().getHits();
@@ -354,7 +352,6 @@ public class UserServiceImp implements UserService {
 			 u=(objectMapper.convertValue(hit.getSourceAsMap(), User.class));
 		}
 		return u;
->>>>>>> 9198740ea02ee2720a8d7e8259843320096f5fe3
 	}
 
 }
