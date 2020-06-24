@@ -85,13 +85,14 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private AmazonS3 amazonS3;
 
-//	private AmazonClient amazonClient;
-
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
 
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
+
+	@Value("${amazonProperties.bookBucketName}")
+	private String bookBucketName;
 
 	private String redisKey = "Key";
 
@@ -183,8 +184,8 @@ public class UserServiceImp implements UserService {
 	}
 
 	public boolean verify(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-		long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
@@ -238,8 +239,8 @@ public class UserServiceImp implements UserService {
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
-			Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-			Long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+			Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+			Long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
 				userRepository.updatePassword(user.getId(),
@@ -261,7 +262,7 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean logOut(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
 			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
@@ -303,13 +304,19 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public void uploadFileTos3bucket(String fileName, File file) {
+	public String uploadFileTos3bucket(String fileName, File file, boolean isProfile) {
+		if (isProfile) {
+			amazonS3.putObject(
+					new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+			return amazonS3.getUrl(bucketName, fileName).toString();
+		}
 		amazonS3.putObject(
-				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+				new PutObjectRequest(bookBucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+		return amazonS3.getUrl(bookBucketName, fileName).toString();
 	}
 
 	@Override
-	public String uploadFile(MultipartFile multipartFile, String token) throws IOException {
+	public String uploadFile(MultipartFile multipartFile, String token, boolean isProfile) {
 		String fileUrl = "";
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		try {
@@ -317,9 +324,9 @@ public class UserServiceImp implements UserService {
 			System.out.println("File " + file);
 			String fileName = generateFileName(multipartFile);
 			logger.info("File Name: " + fileName);
-			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-			uploadFileTos3bucket(fileName, file);
-			userRepository.saveImageUrl(fileUrl, id);
+			fileUrl = uploadFileTos3bucket(fileName, file, isProfile);
+			if (isProfile)
+				userRepository.saveImageUrl(fileUrl, id);
 			file.delete();
 		} catch (AmazonServiceException ase) {
 			ase.printStackTrace();
