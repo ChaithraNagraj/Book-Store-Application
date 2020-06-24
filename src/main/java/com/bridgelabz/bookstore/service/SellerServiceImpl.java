@@ -1,13 +1,20 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
@@ -26,9 +33,14 @@ public class SellerServiceImpl implements SellerService {
 	@Autowired
 	private UserRepo userRepository;
 
+	private AmazonS3 s3client;
+
+	@Value("${amazonProperties.bucketName}")
+	private String bucketName;
+
 	private User authentication(String token) {
-		Long userId = JwtValidate.decodeJWT(token);
-		Long roleId = 2L;
+		Long userId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		Long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		return Optional.ofNullable(userRepository.findByUserIdAndRoleId(userId, roleId))
 				.orElseThrow(() -> new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE));
 
@@ -37,10 +49,12 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
-		seller.getSellerBooks().stream().filter(book -> book.getBookName().equals(newBook.getBookName())).findAny()
-				.ifPresent(action -> {
+		seller.getSellerBooks().stream().filter(
+				book -> book.getBookName().equals(newBook.getBookName()) && book.getPrice().equals(newBook.getPrice()))
+				.findAny().ifPresent(action -> {
 					throw new BookAlreadyExistsException("Book Already Exists In Your Inventory");
 				});
+
 		Book book = new Book();
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
@@ -81,13 +95,30 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book addQuantity(long bookId, String token, int quantity) {
 		User seller = authentication(token);
-		Book bookToAddQuantity = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
-				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		Book bookToAddQuantity = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
+				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		quantity += bookToAddQuantity.getQuantity();
 		bookToAddQuantity.setQuantity(quantity);
 		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToAddQuantity;
+	}
+
+	@Override
+	public String uploadImage(MultipartFile image) {
+		ObjectMetadata metadata = new ObjectMetadata();
+		System.out.println(image.getOriginalFilename());
+		metadata.setContentType(image.getContentType());
+		metadata.setContentLength(image.getSize());
+		try {
+			s3client.putObject(
+					new PutObjectRequest(bucketName, image.getOriginalFilename(), image.getInputStream(), metadata)
+							.withCannedAcl(CannedAccessControlList.PublicRead));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return s3client.getUrl(bucketName, image.getOriginalFilename()).toString();
 	}
 
 }
