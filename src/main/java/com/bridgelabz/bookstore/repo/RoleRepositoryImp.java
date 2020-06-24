@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bridgelabz.bookstore.model.Role;
 
 @Repository
+@Transactional
 public class RoleRepositoryImp implements RoleRepository {
 
 	@Autowired
