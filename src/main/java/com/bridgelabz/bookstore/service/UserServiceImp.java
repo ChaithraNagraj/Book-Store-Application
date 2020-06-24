@@ -123,15 +123,15 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
-			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
-			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
-					String.valueOf(userEntity.getId())).source(documentMapper);
-			try {
-				client.index(indexRequest, RequestOptions.DEFAULT);
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
+//			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+//			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
+//					String.valueOf(userEntity.getId())).source(documentMapper);
+//			try {
+//				client.index(indexRequest, RequestOptions.DEFAULT);
+//			} catch (IOException e) {
+//
+//				e.printStackTrace();
+//			}
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
