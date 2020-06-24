@@ -59,7 +59,7 @@ public class SellerController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 	
-	@DeleteMapping(value = "/removeBook/{bookId")
+	@DeleteMapping(value = "/removeBook/{bookId}")
 	public ResponseEntity<Response> removeBook(@PathVariable("bookId") long bookId,@RequestHeader("token") String token){
 		boolean isDeleted = sellerService.removeBook(bookId,token);
 		if(isDeleted) {

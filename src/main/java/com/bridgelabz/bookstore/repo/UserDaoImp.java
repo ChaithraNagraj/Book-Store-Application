@@ -104,7 +104,7 @@ public class UserDaoImp implements UserRepo {
 		return query.list();
 	}
 
-	@Override
+
 	public void updateUserStatus(Boolean userStatus, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
