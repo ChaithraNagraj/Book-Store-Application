@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookException;
+import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
@@ -39,24 +41,50 @@ public class AdminServiceImp implements AdminService {
 	@Override
 	public List<User> getBuyers() {
 
-		return roleRepository.getRoleById(2).getUser();
+		List<User> buyers = roleRepository.getRoleByName("buyer").getUser();
+		if(buyers.isEmpty()) {
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		return buyers;
 	}
 
 	@Override
 	public List<User> getSellers() {
 
-		return roleRepository.getRoleById(3).getUser();
+		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
+		if(sellers.isEmpty()) {
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		return sellers;
 	}
 
 	@Override
 	public List<Book> getAllBooks() {
-
-		return bookRepository.findAllBooks();
+		
+		List<Book> books = bookRepository.findAllBooks();
+		if(books.isEmpty()) {
+			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}		
+		List<Book> book = books.stream().filter(b->b.isApproved()).collect(Collectors.toList());
+		if(book.isEmpty()) {
+			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}	
+		return book;
 	}
 
 	@Override
 	public List<Book> getBooksForVerification() {
 
+		
+		List<Book> books = bookRepository.getBooksForVerification();
+		if(books.isEmpty()) {
+			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
 		return bookRepository.getBooksForVerification();
 	}
 

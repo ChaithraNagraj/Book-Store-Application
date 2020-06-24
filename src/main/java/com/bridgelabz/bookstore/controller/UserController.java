@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bridgelabz.bookstore.config.AmazonClient;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.model.User;
@@ -42,21 +41,18 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
-@Api(value = "User Controller")
-@CrossOrigin("*")
+//@Api(value = "User Controller")
+//@CrossOrigin("*")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private AmazonClient amazonClient;
-	@Autowired
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request,
-			@RequestParam("image") MultipartFile image) throws IOException, UserException {
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws IOException, UserException {
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
@@ -189,15 +185,15 @@ public class UserController {
 
 	}
 
-//	@PostMapping("/update")
-//	public ResponseEntity<Response> userUpdate(@RequestParam("userName") String userName,
-//			@RequestParam("password") String password, @RequestParam("token") String token) throws UserException {
-//		if (userService.updateUser(userName, password, token)) {
-//			return ResponseEntity.status(HttpStatus.OK)
-//					.body(new Response(Constant., Constant.OK_RESPONSE_CODE));
-//		}
-//		return ResponseEntity.status(HttpStatus.OK)
-//				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
-//	}
+	@PutMapping("/update")
+	public ResponseEntity<Response> userUpdate(@RequestParam("userName") String userName,
+			@RequestParam("password") String password, @RequestParam("token") String token) throws UserException {
+		if (userService.updateUser(userName, password, token)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.USER_DETAILS_UPDATED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
+	}
 
 }
