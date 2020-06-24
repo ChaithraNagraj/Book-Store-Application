@@ -85,7 +85,6 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private AmazonS3 amazonS3;
 
-//	private AmazonClient amazonClient;
 
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;

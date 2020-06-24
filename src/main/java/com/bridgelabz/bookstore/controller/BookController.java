@@ -49,19 +49,10 @@ public class BookController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
 	}
 	@GetMapping(value = "/bookStoreApplication/getBookByAuthorName")
-	public ResponseEntity<Response> searchBookByAuthorName(@RequestParam("authorName") String authorName){
-		List<Book> searchBookByAuthorName = bookservice.findBookByAuthorName(authorName);
+	public ResponseEntity<Response> searchBookByAuthorName(@RequestParam("authorName") String text){
+		List<Book> searchBookByAuthorName = bookservice.findBookByAuthorNameAndTile(text);
 		if(!searchBookByAuthorName.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.OK).body(new Response("Books Found", HttpStatus.OK.value(), searchBookByAuthorName));
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
-	}
-	@GetMapping(value = "/bookStoreApplication/getBookByName")
-	public ResponseEntity<Response> searchBookByBookName(@RequestParam("bookName") String bookName){
-		List<Book> searchBookByBookName = bookservice.findBookByTitle(bookName);
-		if(!searchBookByBookName.isEmpty()) {
-
-			return ResponseEntity.status(HttpStatus.OK).body(new Response("Books Found", HttpStatus.OK.value(), searchBookByBookName));
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
 	}
