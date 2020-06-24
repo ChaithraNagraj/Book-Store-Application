@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
@@ -82,13 +82,13 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
-			registerMail(userEntity, environment.getProperty("registration-template-path"));
+			registerMail(userEntity,role, environment.getProperty("registration-template-path"));
 			return true;
 		}
 	}
 
-	private void registerMail(User user, String templet) {
-		String token = TokenUtility.verifyResponse(user.getId());
+	private void registerMail(User user, Role role,String templet) {
+		String token = TokenUtility.verifyResponse(user.getId(),role.getRoleId());
 		sendMail(user, token, templet);
 	}
 
@@ -117,7 +117,9 @@ public class UserServiceImp implements UserService {
 	}
 
 	public boolean verify(String token) throws UserException {
-		long id = JwtValidate.decodeJWT(token);
+		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
+		long roleId= JwtValidate.decodeJWT(token).get("roleId", Long.class);
+		Role role = roleRepository.getRoleById((int)roleId);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -126,7 +128,7 @@ public class UserServiceImp implements UserService {
 			if (!idAvailable.isVerify()) {
 				idAvailable.setVerify(true);
 				userRepository.verify(idAvailable.getId());
-				registerMail(idAvailable, environment.getProperty("login-template-path"));
+				registerMail(idAvailable,role, environment.getProperty("login-template-path"));
 				return true;
 
 			}
@@ -142,7 +144,7 @@ public class UserServiceImp implements UserService {
 		if (roleWithUser != null) {
 			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
 					&& roleWithUser.isVerify()) {
-				String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+				String token = JwtValidate.createJWT(user.getId(),loginDto.getRole(), Constant.LOGIN_EXP);
 				userRepository.updateDateTime(user.getId());
 				user.setUpdateDateTime(DateUtility.today());
 				userRepository.updateUserStatus(Boolean.TRUE, user.getId());
@@ -163,7 +165,7 @@ public class UserServiceImp implements UserService {
 	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser, environment.getProperty("forgot-password-template-path"));
+			registerMail(maybeUser,maybeUser.getRoleList().get(0), environment.getProperty("forgot-password-template-path"));
 			return true;
 		}
 		return false;
@@ -171,12 +173,13 @@ public class UserServiceImp implements UserService {
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
-			long id = JwtValidate.decodeJWT(token);
+			long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
+			long roleId = JwtValidate.decodeJWT(token).get("roleId", Long.class);
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
 				userRepository.updatePassword(user.getId(),
 						encrypt.bCryptPasswordEncoder().encode(resetPassword.getConfirmpassword()));
-				String getToken = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+				String getToken = JwtValidate.createJWT(user.getId(),roleId,Constant.LOGIN_EXP);
 				redis.putMap(redisKey, user.getEmail(), getToken);
 				return true;
 			}
@@ -186,14 +189,14 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean isSessionActive(String token) {
-		long id = JwtValidate.decodeJWT(token);
+		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
 		User user = userRepository.findByUserId(id);
 		return user.isUserStatus();
 	}
 
 	@Override
 	public boolean logOut(String token) throws UserException {
-		long id = JwtValidate.decodeJWT(token);
+		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
 			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
