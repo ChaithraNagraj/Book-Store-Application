@@ -30,11 +30,9 @@ import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
-
+import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
-
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -167,9 +165,9 @@ public class UserController {
 	}
 
 	@PostMapping("/uploadimage")
-	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token)
-			throws IOException {
-		String imageUrl = userService.uploadFile(file, token);
+	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token,
+			@RequestParam("profilePic") boolean isProfile) {
+		String imageUrl = userService.uploadFile(file, token, isProfile);
 		if (imageUrl != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new Response(Constant.PROFILE_IMAGE_UPLOADED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, imageUrl));
