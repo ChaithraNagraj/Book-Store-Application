@@ -1,7 +1,10 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +14,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserAlreadyRegisteredException;
@@ -54,6 +65,17 @@ public class UserServiceImp implements UserService {
 
 	@Autowired
 	private Environment environment;
+
+	@Autowired
+	private AmazonS3 amazonS3;
+
+//	private AmazonClient amazonClient;
+
+	@Value("${amazonProperties.endpointUrl}")
+	private String endpointUrl;
+
+	@Value("${amazonProperties.bucketName}")
+	private String bucketName;
 
 	private String redisKey = "Key";
 
@@ -137,7 +159,6 @@ public class UserServiceImp implements UserService {
 
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
-
 		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
 		if (roleWithUser != null) {
 			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
@@ -204,6 +225,72 @@ public class UserServiceImp implements UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean updateUser(String userName, String password, String token) throws UserException {
+		long id = JwtValidate.decodeJWT(token);
+		User isUserExist = userRepository.findByUserId(id);
+		if (isUserExist != null) {
+			User user = new User();
+			BeanUtils.copyProperties(isUserExist, user);
+			user.setUserName(userName);
+			user.setPassword(password);
+			user.setUpdateDateTime(DateUtility.today());
+			userRepository.update(isUserExist, id);
+			return true;
+		}
+		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
+	}
+
+	public static File convertMultiPartToFile(MultipartFile file) throws IOException {
+		File convFile = new File(file.getOriginalFilename());
+		FileOutputStream fos = new FileOutputStream(convFile);
+		fos.write(file.getBytes());
+		fos.close();
+		return convFile;
+	}
+
+	public static String generateFileName(MultipartFile multiPart) {
+		return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+	}
+
+	@Override
+	public void uploadFileTos3bucket(String fileName, File file) {
+		amazonS3.putObject(
+				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+	}
+
+	@Override
+	public String uploadFile(MultipartFile multipartFile, String token) throws IOException {
+		String fileUrl = "";
+		long id = JwtValidate.decodeJWT(token);
+		try {
+			File file = convertMultiPartToFile(multipartFile);
+			System.out.println("File " + file);
+			String fileName = generateFileName(multipartFile);
+			logger.info("File Name: " + fileName);
+			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
+			uploadFileTos3bucket(fileName, file);
+			userRepository.saveImageUrl(fileUrl, id);
+			file.delete();
+		} catch (AmazonServiceException ase) {
+			ase.printStackTrace();
+		} catch (AmazonClientException ace) {
+			ace.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fileUrl;
+				
+	}
+
+	public boolean deleteFileFromS3Bucket(String fileUrl) {
+		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+		logger.info("FileName: " + fileName);
+		logger.info("bucketName: " + bucketName);
+		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+		return true;
 	}
 
 }

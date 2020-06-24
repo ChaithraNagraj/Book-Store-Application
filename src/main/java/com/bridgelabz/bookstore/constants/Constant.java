@@ -54,5 +54,7 @@ public class Constant {
 	public static final String BOOK_UPDATION_FAILED_MESSAGE = "Book Updation Failed";
 	public static final String BOOK_DELETION_SUCCESSFULL_MESSAGE = "Book Removed from your Inventory";
 	public static final String BOOK_QUANTITY_ADDITION_SUCCESSFULL = "Quantity Addition to Book successfull";
+	public static final String PROFILE_IMAGE_DELETED_FAILED = "Image Deleted Failed";
+	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 
 }

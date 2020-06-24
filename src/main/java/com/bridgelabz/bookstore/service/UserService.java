@@ -1,8 +1,10 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
@@ -35,5 +37,13 @@ public interface UserService {
 	
 	public boolean logOut(String token) throws UserException;
 
-	boolean isSessionActive(String token);
+	public boolean isSessionActive(String token);
+	
+	public boolean updateUser(String userName, String password, String token) throws UserException;
+	
+	public void uploadFileTos3bucket(String fileName, File file);
+	
+	public boolean deleteFileFromS3Bucket(String fileUrl);
+	
+	public String uploadFile(MultipartFile multipartFile, String token) throws IOException;
 }
