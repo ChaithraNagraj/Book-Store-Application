@@ -23,4 +23,5 @@ amazonProperties:
   accessKey: ${accesskey}
   secretKey: ${secretkey}
   bucketName: ${bucketname}
+  region: ${region}
     
