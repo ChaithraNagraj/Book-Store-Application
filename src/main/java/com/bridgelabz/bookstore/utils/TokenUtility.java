@@ -6,8 +6,8 @@ public class TokenUtility {
 	private TokenUtility() {
 	}
 
-	public static String verifyResponse(Long userId) {
-		return Constant.VERIFY_ADDRESS + JwtValidate.createJWT(userId, Constant.REGISTER_EXP);
+	public static String verifyResponse(Long userId,Long roleId) {
+		return Constant.VERIFY_ADDRESS + JwtValidate.createJWT(userId,roleId, Constant.REGISTER_EXP);
 	}
 
 }
