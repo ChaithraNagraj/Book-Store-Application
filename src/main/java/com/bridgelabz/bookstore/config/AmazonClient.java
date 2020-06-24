@@ -38,15 +38,12 @@ public class AmazonClient {
 	}
 
 	public String fileUrl(String fileName) {
-
 		return endpointUrl + "/" + bucketName + "/" + fileName;
 	}
-
 
 	@Bean
 	public AmazonS3 getAmazonS3Cient() {
 		return AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region)).build();
 	}
-
 
 }

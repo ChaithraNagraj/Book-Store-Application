@@ -54,8 +54,8 @@ public class UserController {
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
-			throws IOException, UserException {
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request,
+			@RequestParam("image") MultipartFile image) throws IOException, UserException {
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
@@ -80,7 +80,7 @@ public class UserController {
 	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserException {
 		if (userService.login(loginDto)) {
 			User user = userRepository.getusersByLoginId(loginDto.getloginId());
-			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+			String token = JwtValidate.createJWT(user.getId(), loginDto.getRole(), Constant.LOGIN_EXP);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, user, token));
 		} else {
@@ -167,10 +167,10 @@ public class UserController {
 	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token)
 			throws IOException {
 		String imageUrl = userService.uploadFile(file, token);
-		if(imageUrl != null) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.PROFILE_IMAGE_UPLOADED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, imageUrl));
-		}else {
+		if (imageUrl != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(
+					new Response(Constant.PROFILE_IMAGE_UPLOADED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, imageUrl));
+		} else {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_UPLOADED_FAILED, Constant.OK_RESPONSE_CODE));
 		}
@@ -178,14 +178,14 @@ public class UserController {
 
 	@DeleteMapping("/deleteimage")
 	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl) {
-		if(userService.deleteFileFromS3Bucket(fileUrl)) {
+		if (userService.deleteFileFromS3Bucket(fileUrl)) {
 			return ResponseEntity.status(HttpStatus.OK)
-			.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
-		}else {
+					.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
+		} else {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_DELETED_FAILED, Constant.OK_RESPONSE_CODE));
 		}
-			
+
 	}
 
 	@PutMapping("/update")

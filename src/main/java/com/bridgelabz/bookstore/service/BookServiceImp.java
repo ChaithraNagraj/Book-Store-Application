@@ -22,6 +22,7 @@ import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
@@ -34,7 +35,7 @@ import com.bridgelabz.bookstore.repo.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-@Component
+@Transactional
 public class BookServiceImp implements BookService {
 
 	@Autowired
