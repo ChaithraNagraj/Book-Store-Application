@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -73,15 +72,15 @@ public class User {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
-	@LazyCollection(LazyCollectionOption.FALSE)
 	public List<Role> roleList;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "seller_id")
 	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "seller_id")
 	private List<Book> sellerBooks;
 
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,

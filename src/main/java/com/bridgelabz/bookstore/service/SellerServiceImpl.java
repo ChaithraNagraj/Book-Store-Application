@@ -2,8 +2,12 @@ package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +29,7 @@ import com.bridgelabz.bookstore.model.dto.BookDto;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Transactional
@@ -32,6 +37,12 @@ public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private UserRepo userRepository;
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	private AmazonS3 s3client;
 
@@ -59,6 +70,16 @@ public class SellerServiceImpl implements SellerService {
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
+		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
+		
+			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
+					.source(documentMapper);
+			try {
+				client.index(indexRequest, RequestOptions.DEFAULT);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		seller.getSellerBooks().add(book);
 		userRepository.addUser(seller);
 		return book;

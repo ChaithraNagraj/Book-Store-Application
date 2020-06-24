@@ -34,8 +34,7 @@ public class SellerController {
 	private SellerService sellerService;
 
 	@PostMapping(value = "/addBook")
-	public ResponseEntity<Response> addBook(@RequestBody BookDto newBook,
-			@RequestHeader("token") String token) {
+	public ResponseEntity<Response> addBook(@RequestBody BookDto newBook, @RequestHeader("token") String token) {
 		Book addedbook = sellerService.addBook(newBook, token);
 		if (addedbook != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new Response(
@@ -95,7 +94,8 @@ public class SellerController {
 	@PutMapping(value = "/uploadBookImage")
 	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
 		System.out.println(image.getOriginalFilename());
-		String  imageUrl = sellerService.uploadImage(image);
-		return ResponseEntity.status(HttpStatus.OK).body(new Response("Book image added sucessfully",Constant.OK_RESPONSE_CODE,imageUrl));
+		String imageUrl = sellerService.uploadImage(image);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response("Book image added sucessfully", Constant.OK_RESPONSE_CODE, imageUrl));
 	}
 }

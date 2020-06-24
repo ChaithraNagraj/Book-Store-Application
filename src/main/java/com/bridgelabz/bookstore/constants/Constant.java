@@ -7,6 +7,10 @@ public class Constant {
 	private Constant() {
 	}
 
+	public static final String INDEX = "userentity";
+	public static final String TYPE = "_doc";
+	public static final String INDEX1 = "bookentity";
+	public static final String KEY="User";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -16,7 +20,12 @@ public class Constant {
 	public static final long LOGIN_EXP = (long) 24 * 60 * 60 * 10000000;
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
+
+	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY="PROFILE_IMAGE_DELETED_SUCCESSFULLY";
+	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY="PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
+
 	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
+
 	public static final int ALREADY_EXIST_EXCEPTION_STATUS = 208;
 	public static final int NOTE_NOT_FOUND_EXCEPTION_STATUS = 300;
 	public static final int BAD_REQUEST_RESPONSE_CODE = 400;
@@ -39,8 +48,6 @@ public class Constant {
 	public static final String PASSWORD_UPDATE_MESSAGE = "Password Updation Message";
 	public static final String CHECK_MAIL_MESSAGE = "Please Check your Mail";
 	public static final String USER_REGISTER_SUCESSFULLY = "User Registration Sucessfully Done.";
-	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY = "Profile Pic Uploded Successfully";
-	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY = "Profile Pic Deleted Successfully";
 	public static final String LOGOUT_MEAASGE = "User LogOut Sucessfully";
 	public static final String LOGOUT_FAILED_MEAASGE = "User LogOut Failed";
 	public static final String USER_DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
@@ -54,5 +61,7 @@ public class Constant {
 	public static final String BOOK_UPDATION_FAILED_MESSAGE = "Book Updation Failed";
 	public static final String BOOK_DELETION_SUCCESSFULL_MESSAGE = "Book Removed from your Inventory";
 	public static final String BOOK_QUANTITY_ADDITION_SUCCESSFULL = "Quantity Addition to Book successfull";
+	public static final String PROFILE_IMAGE_DELETED_FAILED = "Image Deleted Failed";
+	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 
 }
