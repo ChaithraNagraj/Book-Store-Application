@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
@@ -17,7 +18,7 @@ import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 
 @Service
-@Component
+@Transactional
 public class BookServiceImp implements BookService {
 
 	@Autowired
