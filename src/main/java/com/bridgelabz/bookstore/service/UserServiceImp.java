@@ -156,7 +156,12 @@ public class UserServiceImp implements UserService {
 	}
 
 	public List<User> getUser() {
-		return userRepository.getUser();
+		List<User> user =  userRepository.getUser();
+		if(user.isEmpty()) {
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		return user;
 	}
 
 	public void deleteUserById(Long id) {
@@ -260,6 +265,7 @@ public class UserServiceImp implements UserService {
 		return false;
 	}
 
+	
 	private User getSearchResult(SearchResponse response) {
 
 		SearchHit[] searchHit = response.getHits().getHits();

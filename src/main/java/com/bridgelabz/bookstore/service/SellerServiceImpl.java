@@ -18,8 +18,10 @@ import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
+import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
@@ -33,6 +35,9 @@ public class SellerServiceImpl implements SellerService {
 	private UserRepo userRepository;
 	
 	@Autowired
+	private RoleRepository roleRepository;
+	
+	@Autowired
 	private RestHighLevelClient client;
 	
 	@Autowired
@@ -40,8 +45,9 @@ public class SellerServiceImpl implements SellerService {
 
 	private User authentication(String token) {
 		Long userId = JwtValidate.decodeJWT(token);
-		Long roleId = 2L;
-		return Optional.ofNullable(userRepository.findByUserIdAndRoleId(userId, roleId))
+		Role role = roleRepository.getRoleByName("seller");
+		Long roleId = 3L;
+		return Optional.ofNullable(userRepository.findByUserIdAndRoleId(userId, role.getRoleId()))
 				.orElseThrow(() -> new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE));
 
 	}
