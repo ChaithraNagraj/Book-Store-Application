@@ -57,7 +57,7 @@ public class UserController {
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request,@RequestParam("image") MultipartFile image)
 			throws IOException, UserException {
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -83,7 +83,7 @@ public class UserController {
 	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserException {
 		if (userService.login(loginDto)) {
 			User user=userRepository.getusersByLoginId(loginDto.getloginId());
-			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
+			String token = JwtValidate.createJWT(user.getId(), loginDto.getRole(),Constant.LOGIN_EXP);
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, user,token));
 		} else {
