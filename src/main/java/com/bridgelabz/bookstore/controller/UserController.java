@@ -166,7 +166,7 @@ public class UserController {
 
 	@PostMapping("/uploadimage")
 	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token,
-			@RequestParam("profilePic") boolean isProfile) {
+			@RequestParam("isProfile") boolean isProfile) {
 		String imageUrl = userService.uploadFile(file, token, isProfile);
 		if (imageUrl != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
@@ -178,8 +178,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/deleteimage")
-	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl) {
-		if (userService.deleteFileFromS3Bucket(fileUrl)) {
+	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl,@RequestHeader("token") String token,@RequestParam("isProfile") boolean isProfile) {
+		if (userService.deleteFileFromS3Bucket(fileUrl,token,isProfile)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
 		} else {
