@@ -43,7 +43,7 @@ public interface UserService {
 	
 	public String uploadFileTos3bucket(String fileName, File file,boolean isProfile);
 	
-	public boolean deleteFileFromS3Bucket(String fileUrl);
+	public boolean deleteFileFromS3Bucket(String fileUrl,String token,boolean isProfile);
 	
 	public String uploadFile(MultipartFile multipartFile, String token,boolean isProfile) ;
 }

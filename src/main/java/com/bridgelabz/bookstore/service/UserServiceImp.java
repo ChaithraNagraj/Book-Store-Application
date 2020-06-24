@@ -300,30 +300,26 @@ public class UserServiceImp implements UserService {
 	}
 
 	public static String generateFileName(MultipartFile multiPart) {
-		return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+		return new Date().getTime() + "_" + multiPart.getOriginalFilename().replace(" ", "_");
 	}
 
 	@Override
 	public String uploadFileTos3bucket(String fileName, File file, boolean isProfile) {
-		if (isProfile) {
-			amazonS3.putObject(
-					new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-			return amazonS3.getUrl(bucketName, fileName).toString();
+		if (!isProfile) {
+			this.bucketName = this.bookBucketName;
 		}
 		amazonS3.putObject(
-				new PutObjectRequest(bookBucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-		return amazonS3.getUrl(bookBucketName, fileName).toString();
+				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+		return amazonS3.getUrl(bucketName, fileName).toString();
 	}
 
 	@Override
 	public String uploadFile(MultipartFile multipartFile, String token, boolean isProfile) {
-		String fileUrl = "";
+		String fileUrl = null;
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		try {
 			File file = convertMultiPartToFile(multipartFile);
-			System.out.println("File " + file);
 			String fileName = generateFileName(multipartFile);
-			logger.info("File Name: " + fileName);
 			fileUrl = uploadFileTos3bucket(fileName, file, isProfile);
 			if (isProfile)
 				userRepository.saveImageUrl(fileUrl, id);
@@ -339,11 +335,15 @@ public class UserServiceImp implements UserService {
 
 	}
 
-	public boolean deleteFileFromS3Bucket(String fileUrl) {
+	public boolean deleteFileFromS3Bucket(String fileUrl,String token, boolean isProfile) {
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-		logger.info("FileName: " + fileName);
-		logger.info("bucketName: " + bucketName);
-		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+		if (isProfile) {
+			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+			userRepository.saveImageUrl(null, id);
+		} else {
+			amazonS3.deleteObject(new DeleteObjectRequest(bookBucketName, fileName));
+		}
 		return true;
 	}
 
