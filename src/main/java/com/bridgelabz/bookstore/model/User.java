@@ -19,6 +19,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -69,12 +72,14 @@ public class User {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
 	public List<Role> roleList;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "seller_id")
 	private List<Book> sellerBooks;
 
@@ -214,6 +219,5 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
-
 
 }
