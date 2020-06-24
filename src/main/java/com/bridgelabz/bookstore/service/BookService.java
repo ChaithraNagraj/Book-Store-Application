@@ -12,9 +12,7 @@ import com.bridgelabz.bookstore.response.Response;
 
 public interface BookService {
 
-	public List<Book> findBookByAuthorName(String authorName);
-
-	public List<Book> findBookByTitle(String title);
+	public List<Book> findBookByAuthorNameAndTile(String authorName,String title);
 
 	public List<Book> findAllBook();
 

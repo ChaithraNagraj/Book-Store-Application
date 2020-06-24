@@ -54,14 +54,14 @@ public class BookServiceImp implements BookService {
 	private UserRepo userRepository;
 
 	@Override
-	public List<Book> findBookByAuthorName(String authorName) {
+	public List<Book> findBookByAuthorNameAndTile(String authorName, String title) {
 		SearchRequest searchRequest = new SearchRequest();
 		searchRequest.indices(Constant.INDEX);
 		searchRequest.types(Constant.TYPE);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(authorName).lenient(true).field("authorName"))
-				.should(QueryBuilders.queryStringQuery("*" + authorName + "*").lenient(true).field("authorName"));
+				.should(QueryBuilders.queryStringQuery(authorName).lenient(true).field("authorName").field("title"))
+				.should(QueryBuilders.queryStringQuery("*" + authorName + "*").lenient(true).field("authorName").field("title"));
 						
 		searchSourceBuilder.query(query);
 		searchRequest.source(searchSourceBuilder);
@@ -74,26 +74,7 @@ public class BookServiceImp implements BookService {
 		return getSearchResult(searchResponse);
 	}
 
-	@Override
-	public List<Book> findBookByTitle(String title) {
-		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(title).lenient(true).field("title"))
-				.should(QueryBuilders.queryStringQuery("*" + title+ "*").lenient(true).field("title"));
-						
-		searchSourceBuilder.query(query);
-		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse = null;
-		try {
-			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return getSearchResult(searchResponse);
-	}
+
 
 	@Override
 	public List<Book> findAllBook() {
