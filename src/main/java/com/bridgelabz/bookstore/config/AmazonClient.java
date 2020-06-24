@@ -60,7 +60,7 @@ public class AmazonClient {
 	public ResponseEntity<Response> uploadFile(MultipartFile multipartFile, String token) throws IOException {
 
 		String fileUrl = "";
-		long id = JwtValidate.decodeJWT(token);
+		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
 		try {
 			File file = convertMultiPartToFile(multipartFile);
 			String fileName = generateFileName(multipartFile);
