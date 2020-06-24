@@ -56,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(UserAlreadyRegisteredException.class)
-	public ResponseEntity<Response> userAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
+	public ResponseEntity<Response> handleUserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
 				HttpStatus.ALREADY_REPORTED.value());
 
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(BookAlreadyExistsException.class)
-	public ResponseEntity<Response> bookAlreadyExistsException(BookAlreadyExistsException ex) {
+	public ResponseEntity<Response> handleBookAlreadyExistsException(BookAlreadyExistsException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
 				HttpStatus.ALREADY_REPORTED.value());
 
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(BookNotFoundException.class)
-	public ResponseEntity<Response> bookNotFoundException(BookNotFoundException ex) {
+	public ResponseEntity<Response> handleBookNotFoundException(BookNotFoundException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
 				HttpStatus.ALREADY_REPORTED.value());
 

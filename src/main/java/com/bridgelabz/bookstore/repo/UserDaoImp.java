@@ -21,9 +21,6 @@ import com.bridgelabz.bookstore.utils.DateUtility;
 public class UserDaoImp implements UserRepo {
 
 	@Autowired
-	private EntityManager entityManager;
-
-	@Autowired
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
@@ -37,7 +34,7 @@ public class UserDaoImp implements UserRepo {
 
 	@Transactional
 	public List<User> getUser() {
-		Session session = entityManager.unwrap(Session.class);
+		Session session = sessionFactory.getCurrentSession();
 		Query<User> q = session.createQuery("From User");
 		return q.getResultList();
 	}
@@ -138,10 +135,12 @@ public class UserDaoImp implements UserRepo {
 		query.setParameter("roleId", roleId);
 		return query.uniqueResult();
 	}
+
 	@Override
 	public User getusersByLoginId(String loginId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<?> q = session.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
+		Query<?> q = session
+				.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
 	}
