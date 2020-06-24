@@ -32,6 +32,17 @@ public class LoginDTO {
 	public void setRole(Long role) {
 		this.role = role;
 	}
+
+	public LoginDTO(String loginId, String password, Long role) {
+		super();
+		this.loginId = loginId;
+		this.password = password;
+		this.role = role;
+	}
+
+	public LoginDTO() {
+		super();
+	}
 	
 
 }

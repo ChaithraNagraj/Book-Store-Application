@@ -44,8 +44,8 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
-@Api(value = "User Controller")
-@CrossOrigin("*")
+//@Api(value = "User Controller")
+//@CrossOrigin("*")
 public class UserController {
 
 	@Autowired
