@@ -344,10 +344,7 @@ public class UserServiceImp implements UserService {
 		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 		return true;
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> 7a9938ed6c365860281b3498a34ab6d2d06d02fe
 	private User getSearchResult(SearchResponse response) {
 
 		SearchHit[] searchHit = response.getHits().getHits();
