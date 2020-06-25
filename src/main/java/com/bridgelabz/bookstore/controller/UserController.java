@@ -24,17 +24,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.bridgelabz.bookstore.config.AmazonClient;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
-
+import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
-
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -44,21 +41,18 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
-@Api(value = "User Controller")
-@CrossOrigin("*")
+//@Api(value = "User Controller")
+//@CrossOrigin("*")
 public class UserController {
 
 	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private AmazonClient amazonClient;
-	@Autowired
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request)
-			throws IOException, UserException {
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws IOException, UserException {
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
@@ -82,10 +76,10 @@ public class UserController {
 	@PostMapping(value = "/login", headers = "Accept=application/json")
 	public ResponseEntity<Response> userLogin(@RequestBody LoginDTO loginDto) throws UserException {
 		if (userService.login(loginDto)) {
-			User user=userRepository.getusersByLoginId(loginDto.getloginId());
-			String token = JwtValidate.createJWT(user.getId(), Constant.LOGIN_EXP);
-			return ResponseEntity.status(HttpStatus.OK).body(
-					new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, user,token));
+			User user = userRepository.getusersByLoginId(loginDto.getloginId());
+			String token = JwtValidate.createJWT(user.getId(), loginDto.getRole(), Constant.LOGIN_EXP);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LOGIN_SUCCESSFULL_MESSAGE, Constant.OK_RESPONSE_CODE, user, token));
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.LOGIN_FAILED_MESSAGE,
 					Constant.BAD_REQUEST_RESPONSE_CODE, DateUtility.today()));
@@ -113,8 +107,9 @@ public class UserController {
 					.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 		}
 	}
+
 	@GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<User> getUserById(@PathVariable("id") long id){
+	public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
 		User user = userService.findById(id);
 		if (user == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -166,14 +161,39 @@ public class UserController {
 	}
 
 	@PostMapping("/uploadimage")
-	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file,
-			@RequestHeader String token) throws IOException {
-		return this.amazonClient.uploadFile(file, token);
+	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token,
+			@RequestParam("isProfile") boolean isProfile) {
+		String imageUrl = userService.uploadFile(file, token, isProfile);
+		if (imageUrl != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(
+					new Response(Constant.PROFILE_IMAGE_UPLOADED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, imageUrl));
+		} else {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.PROFILE_IMAGE_UPLOADED_FAILED, Constant.OK_RESPONSE_CODE));
+		}
 	}
 
 	@DeleteMapping("/deleteimage")
-	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl) {
-		return this.amazonClient.deleteFileFromS3Bucket(fileUrl);
+	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl,@RequestHeader("token") String token,@RequestParam("isProfile") boolean isProfile) {
+		if (userService.deleteFileFromS3Bucket(fileUrl,token,isProfile)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
+		} else {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.PROFILE_IMAGE_DELETED_FAILED, Constant.OK_RESPONSE_CODE));
+		}
+
+	}
+
+	@PutMapping("/update")
+	public ResponseEntity<Response> userUpdate(@RequestParam("userName") String userName,
+			@RequestParam("password") String password, @RequestParam("token") String token) throws UserException {
+		if (userService.updateUser(userName, password, token)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.USER_DETAILS_UPDATED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
 	}
 
 }

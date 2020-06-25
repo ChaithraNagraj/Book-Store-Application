@@ -52,7 +52,7 @@ public class Book {
 	@Column
 	private String image;
 	
-	@Column
+	@Column(length = 10000)
 	private String bookDetails;
 
 	@Column(name = "is_approved",columnDefinition = "boolean default false")
@@ -60,7 +60,7 @@ public class Book {
 	private boolean isApproved;
 
 	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-			@NotNull LocalDateTime createdDateAndTime, @NotNull LocalDateTime lastUpdatedDateAndTime,
+			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
 			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
 		super();
 		this.bookId = bookid;

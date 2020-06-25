@@ -2,6 +2,8 @@ package com.bridgelabz.bookstore.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.dto.BookDto;
 

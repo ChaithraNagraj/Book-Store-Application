@@ -5,25 +5,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookDto {
 
-    
-    
- 
-    private String bookName;
+	private String bookName;
 
-    private int quantity;
-	
+	private int quantity;
+
 	private Double price;
-	
+
 	private String authorName;
-	
+
 	private String image;
-	
+
 	private String bookDetails;
 
 	public BookDto() {
 		super();
 	}
-	
+
 	public BookDto(String bookName, int quantity, Double price, String authorName, String image, String bookDetails) {
 		super();
 		this.bookName = bookName;
@@ -34,13 +31,6 @@ public class BookDto {
 		this.bookDetails = bookDetails;
 	}
 
-
-
-
-
-
-
-
 	public String getBookName() {
 		return bookName;
 	}
@@ -48,8 +38,6 @@ public class BookDto {
 	public void setBookName(String bookName) {
 		this.bookName = bookName;
 	}
-
-	
 
 	public int getQuantity() {
 		return quantity;
@@ -90,13 +78,11 @@ public class BookDto {
 	public void setBookDetails(String bookDetails) {
 		this.bookDetails = bookDetails;
 	}
-	
+
+	@Override
 	public String toString() {
-		return "bookName=" + this.bookName + "authorName=" + this.authorName + "price=" + this.price + "quantity="
-				+ this.quantity+ "image="+this.image+"bookDetails="+this.bookDetails;
+		return "BookDto [bookName=" + bookName + ", quantity=" + quantity + ", price=" + price + ", authorName="
+				+ authorName + ", image=" + image + ", bookDetails=" + bookDetails + "]";
 	}
 
-	
-	
-	
 }

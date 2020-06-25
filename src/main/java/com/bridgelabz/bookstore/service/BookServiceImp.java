@@ -22,6 +22,7 @@ import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
@@ -34,7 +35,7 @@ import com.bridgelabz.bookstore.repo.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-@Component
+@Transactional
 public class BookServiceImp implements BookService {
 
 	@Autowired
@@ -53,14 +54,14 @@ public class BookServiceImp implements BookService {
 	private UserRepo userRepository;
 
 	@Override
-	public List<Book> findBookByAuthorName(String authorName) {
+	public List<Book> findBookByAuthorNameAndTile(String text) {
 		SearchRequest searchRequest = new SearchRequest();
 		searchRequest.indices(Constant.INDEX);
 		searchRequest.types(Constant.TYPE);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(authorName).lenient(true).field("authorName"))
-				.should(QueryBuilders.queryStringQuery("*" + authorName + "*").lenient(true).field("authorName"));
+				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("authorName").field("bookName"))
+				.should(QueryBuilders.queryStringQuery("*" + text + "*").lenient(true).field("authorName").field("bookName"));
 						
 		searchSourceBuilder.query(query);
 		searchRequest.source(searchSourceBuilder);
@@ -73,26 +74,7 @@ public class BookServiceImp implements BookService {
 		return getSearchResult(searchResponse);
 	}
 
-	@Override
-	public List<Book> findBookByTitle(String title) {
-		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(title).lenient(true).field("title"))
-				.should(QueryBuilders.queryStringQuery("*" + title+ "*").lenient(true).field("title"));
-						
-		searchSourceBuilder.query(query);
-		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse = null;
-		try {
-			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return getSearchResult(searchResponse);
-	}
+
 
 	@Override
 	public List<Book> findAllBook() {
