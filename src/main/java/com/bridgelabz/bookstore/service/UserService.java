@@ -38,6 +38,7 @@ public interface UserService {
 
 	public boolean isSessionActive(String token);
 
+
 	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException;
 
 	public String uploadFileTos3bucket(String fileName, File file, String isProfile);
