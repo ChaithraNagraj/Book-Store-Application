@@ -25,8 +25,6 @@ public interface UserRepo {
 	public User getusersByemail(String email);
 
 	public List<User> findByEmail(String email);
-	
-	
 
 	public Role findByRoleId(Long parseLong);
 
@@ -35,11 +33,11 @@ public interface UserRepo {
 	public void updateUserStatus(Boolean userStatus, Long id);
 
 	public void saveImageUrl(String imageUrl, Long id);
-	
+
 	public void userMerge(User user);
 
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
-	
+
 	public User getusersByLoginId(String loginId);
 
 }
