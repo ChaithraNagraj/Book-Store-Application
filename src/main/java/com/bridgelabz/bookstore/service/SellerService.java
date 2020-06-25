@@ -5,12 +5,13 @@ import java.util.List;
 
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
 
 public interface SellerService {
 
 	Book addBook(BookDto newBook, String token);
 
-	Book updateBook(BookDto updatedBookInfo, long bookId, String token);
+	Book updateBook(UpdateBookDto updatedBookInfo, long bookId, String token);
 
 	List<Book> getAllBooks(String token);
 
