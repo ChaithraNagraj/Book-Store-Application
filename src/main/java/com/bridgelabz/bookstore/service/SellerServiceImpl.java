@@ -31,6 +31,7 @@ import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
 import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
+import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -48,11 +49,21 @@ public class SellerServiceImpl implements SellerService {
 	private RoleRepository roleRepository;
 
 	@Autowired
+	private BookRepo bookRepository;
+
+	@Autowired
 	private RestHighLevelClient client;
 
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	/**
+	 * Method to authenticate User 
+	 * @param token
+	 * @return User
+	 * @throws - UserAuthorizationException => if User is not a Seller
+	 * 		   - UserNotFoundException => if User is not registered and tries to login as seller
+	 */
 	private User authentication(String token) {
 
 		Long userId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
@@ -64,7 +75,13 @@ public class SellerServiceImpl implements SellerService {
 				.orElseThrow(() -> new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE));
 
 	}
-
+	
+	/**
+	 * Method to add a new book 
+	 * @param newBook,token
+	 * @return Book
+	 * @throws - BookAlreadyExistsException => if book already exists with same name and price
+	 */
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
@@ -78,90 +95,112 @@ public class SellerServiceImpl implements SellerService {
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
+		book.setSeller(seller);
+		bookRepository.save(book);
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
 
 		IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
 				.source(documentMapper);
 		try {
 			client.index(indexRequest, RequestOptions.DEFAULT);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		seller.getSellerBooks().add(book);
-		userRepository.addUser(seller);
 		return book;
 	}
 
+	/**
+	 * Method to update book price and quantity
+	 * @param updateBookInfo,bookId,token
+	 * @return Book
+	 * @throws - BookNotFoundException => if bookId doesn't exists
+	 */
 	@Override
 	public Book updateBook(UpdateBookDto updatedBookInfo, long bookId, String token) {
-		User seller = authentication(token);
-		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
-				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		int quantity = updatedBookInfo.getQuantity()+bookToBeUpdated.getQuantity();
+		authentication(token);
+		Book bookToBeUpdated = bookRepository.getBookById(bookId)
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		int quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
 		bookToBeUpdated.setQuantity(quantity);
 		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
 		bookToBeUpdated.setApproved(false);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
-		userRepository.addUser(seller);
+		bookRepository.save(bookToBeUpdated);
 		return bookToBeUpdated;
 	}
 
+	/**
+	 *  Method to get all books related to seller
+	 *  @param token
+	 *  @return List<Book>
+	 */
 	@Override
 	public List<Book> getAllBooks(String token) {
 		User seller = authentication(token);
-		return seller.getSellerBooks();
+		return bookRepository.findBySellerId(seller.getId());
 	}
 
+	/**
+	 * Method to delete book
+	 * @param bookId,token
+	 * @return true
+	 * @throws - BookNotFoundException => if bookId doesn't exists
+	 */
 	@Override
 	public boolean removeBook(long bookId, String token) {
-		User seller = authentication(token);
-		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
-				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		seller.getSellerBooks().remove(bookTobeDeleted);
-		userRepository.addUser(seller);
+		authentication(token);
+		Book bookTobeDeleted = bookRepository.getBookById(bookId)
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		bookRepository.deleteBook(bookTobeDeleted);
 		return true;
 	}
 
+	/**
+	 * Method to add Quantity
+	 * @param bookId,token,quantity
+	 * @return Book
+	 * @throws - BookNotFoundException => if bookId doesn't exists
+	 */
 	@Override
 	public Book addQuantity(long bookId, String token, int quantity) {
-		User seller = authentication(token);
-		Book bookToAddQuantity = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
-				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		authentication(token);
+		Book bookToAddQuantity = bookRepository.getBookById(bookId)
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		quantity += bookToAddQuantity.getQuantity();
 		bookToAddQuantity.setQuantity(quantity);
 		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
-		userRepository.addUser(seller);
+		bookRepository.save(bookToAddQuantity);
 		return bookToAddQuantity;
 	}
 
-	public List<Book> searchBook( String token,String input) throws IOException
-	{
-		User seller = authentication(token);
+	/**
+	 * Method to search Book by either authorName or book name
+	 * @param token,input
+	 * @return List<Book>
+	 */
+	public List<Book> searchBook(String token, String input) throws IOException {
+		authentication(token);
 		SearchRequest searchRequest = new SearchRequest();
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();		
-        QueryBuilder builder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*"+input+"*").analyzeWildcard(true).field("authorName", 1.0f).field("bookName",1.0f));
-        searchSourceBuilder.query(builder);
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+		QueryBuilder builder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*" + input + "*")
+				.analyzeWildcard(true).field("authorName", 1.0f).field("bookName", 1.0f));
+		searchSourceBuilder.query(builder);
 		searchRequest.source(searchSourceBuilder);
 		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-	    return getSearchResult(searchResponse);
-		
+		return getSearchResult(searchResponse);
+
 	}
+
 	private List<Book> getSearchResult(SearchResponse response) {
 
+		SearchHit[] searchHit = response.getHits().getHits();
+		List<Book> books = new ArrayList<>();
+		if (searchHit.length > 0) {
 
-        SearchHit[] searchHit = response.getHits().getHits();
-        List<Book> books = new ArrayList<>();
-        if (searchHit.length > 0) {
-
-            Arrays.stream(searchHit)
-                    .forEach(hit -> books
-                            .add(objectMapper
-                                    .convertValue(hit.getSourceAsMap(),
-                                                    Book.class))
-                    );
-        }
-        return books;
+			Arrays.stream(searchHit)
+					.forEach(hit -> books.add(objectMapper.convertValue(hit.getSourceAsMap(), Book.class)));
+		}
+		return books;
 	}
 
 }
