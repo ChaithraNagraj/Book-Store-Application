@@ -3,7 +3,6 @@ package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "book")
 public class Book {
 
+	// Kalpesh Review: Good practice is to give column name while defining variables
+	// in entity as per requirement
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id")
@@ -51,12 +52,15 @@ public class Book {
 	@Column(name = "verified_date_time")
 	private LocalDateTime verifiedDateAndTime;
 
+	// Kalpesh Review: proper name rejectionCounts
 	@Column
 	private int noOfRejections;
 
+	// Kalpesh Review: proper name imageURL
 	@Column
 	private String image;
 
+	// Kalpesh Review: proper name description
 	@Column(length = 10000)
 	private String bookDetails;
 
@@ -74,6 +78,7 @@ public class Book {
 			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,
 			String bookDetails) {
 		super();
+		// Kalpesh Review: No one is going to set bookId so why in constructor ?
 		this.bookId = bookid;
 		this.bookName = bookName;
 		this.quantity = quantity;
@@ -201,7 +206,6 @@ public class Book {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-
 				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
 				+ ", isApproved=" + isApproved + "]";
 	}

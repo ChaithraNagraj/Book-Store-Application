@@ -7,6 +7,8 @@ public class Constant {
 	private Constant() {
 	}
 
+	// Kalpesh Review: Remove hard coded value and unused variables
+	// Kalpesh Review: move status code to it's own file and message into it's own file
 	public static final String INDEX = "userentity";
 	public static final String TYPE = "_doc";
 	public static final String INDEX1 = "bookentity";

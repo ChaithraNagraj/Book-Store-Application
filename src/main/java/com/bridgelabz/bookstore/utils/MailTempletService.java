@@ -23,7 +23,7 @@ public class MailTempletService {
 	private String templateMSG = "";
 
 	public void getTemplate(User request, String token, String path) throws IOException {
-		
+
 		if (templateMSG.equals("")) {
 			templateMSG = Template.readContentFromTemplet(path);
 		}
@@ -36,10 +36,10 @@ public class MailTempletService {
 		mail.setSubject(request.getName());
 		mail.setContent(templateMSG);
 		mail.setSentDate(Date.from(DateUtility.today().atZone(ZoneId.systemDefault()).toInstant()));
-		
+
 		rabbitMQSender.send(mail);
-		
-		templateMSG="";
+
+		templateMSG = "";
 	}
 
 }

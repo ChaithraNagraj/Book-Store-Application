@@ -8,6 +8,15 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
+
+	// Kalpesh Review: Handle all validation at DTO level
+
+	// Kalpesh Review: Apply proper validations name and user name not empty and
+	// atleast 3 char
+	// email in regex format
+	// mobile number regex format
+	// password regex format
+
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 //	@Size(min = 3)
 //	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
@@ -27,13 +36,12 @@ public class RegistrationDTO {
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
-
 	private Long mobileNumber;
 
 	public RegistrationDTO() {
 		super();
 	}
-	
+
 	public RegistrationDTO(
 			@NotEmpty(message = "Enter First Name - Registration DTO") @Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName") String name,
 			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
@@ -48,7 +56,6 @@ public class RegistrationDTO {
 		this.role = role;
 		this.mobileNumber = mobileNumber;
 	}
-
 
 	public String getEmail() {
 		return email;
@@ -100,6 +107,7 @@ public class RegistrationDTO {
 	}
 
 	public static Boolean isValid(Long mobileNumber) {
+		// Kalpesh Review: Proper variable name
 		String phNo = Long.toString(mobileNumber);
 		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[7-9]\\d{9}$");
 		Matcher m = pattern.matcher(phNo);
