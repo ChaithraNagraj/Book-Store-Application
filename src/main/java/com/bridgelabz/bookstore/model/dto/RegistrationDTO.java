@@ -20,7 +20,7 @@ public class RegistrationDTO {
 	@Email
 	private String email;
 
-	@Size(min = 3)
+	@Size(min = 8)
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
 

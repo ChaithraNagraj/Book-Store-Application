@@ -13,7 +13,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bridgelabz.bookstore.response.Response;
-import com.bridgelabz.bookstore.service.UserAuthorizationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -55,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
 
 	}
-	
+
 	@ExceptionHandler(UserAlreadyRegisteredException.class)
 	public ResponseEntity<Response> handleUserAlreadyRegisteredException(UserAlreadyRegisteredException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
@@ -71,7 +70,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
 	}
-	
+
 	@ExceptionHandler(TokenNotFoundException.class)
 	public ResponseEntity<Response> handleTokenNotFoundException(TokenNotFoundException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),

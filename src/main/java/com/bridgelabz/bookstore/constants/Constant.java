@@ -10,7 +10,7 @@ public class Constant {
 	public static final String INDEX = "userentity";
 	public static final String TYPE = "_doc";
 	public static final String INDEX1 = "bookentity";
-	public static final String KEY="User";
+	public static final String KEY = "User";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -21,8 +21,8 @@ public class Constant {
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
 
-	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY="PROFILE_IMAGE_DELETED_SUCCESSFULLY";
-	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY="PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
+	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY = "PROFILE_IMAGE_DELETED_SUCCESSFULLY";
+	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY = "PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
 
 	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
 
@@ -65,5 +65,6 @@ public class Constant {
 	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
 	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
+	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
 
 }

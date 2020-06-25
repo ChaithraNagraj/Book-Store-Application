@@ -13,6 +13,7 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 
 public interface UserService {
 	public boolean login(LoginDTO logindto) throws UserNotFoundException, UserException;
@@ -29,21 +30,20 @@ public interface UserService {
 
 	public List<User> getUser();
 
-	public User update(User user, Long id);
-
 	public void deleteUserById(Long id);
 
 	public boolean addRole(RoleDTO request);
-	
+
 	public boolean logOut(String token) throws UserException;
 
 	public boolean isSessionActive(String token);
-	
-	public boolean updateUser(String userName, String password, String token) throws UserException;
-	
-	public String uploadFileTos3bucket(String fileName, File file,String isProfile);
-	
-	public boolean deleteFileFromS3Bucket(String fileUrl,String token,String isProfile);
-	
-	public String uploadFile(MultipartFile multipartFile, String token,String isProfile) ;
+
+	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException;
+
+	public String uploadFileTos3bucket(String fileName, File file, String isProfile);
+
+	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile);
+
+	public String uploadFile(MultipartFile multipartFile, String token, String isProfile);
+
 }

@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,18 @@ public class SellerController {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
+	}
+
+	@GetMapping("/search/{input}")
+	public ResponseEntity<Response> searchNotes(@RequestHeader(value = "token") String token,
+			@PathVariable String input) throws IOException {
+
+		List<Book> books = sellerService.searchBook(token, input);
+		if (books.isEmpty())
+			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
+
+		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
+
 	}
 
 }
