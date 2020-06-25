@@ -19,6 +19,4 @@ public interface SellerService {
 
 	Book addQuantity(long bookId, String token, int quantity);
 
-	String uploadImage(MultipartFile image);
-
 }

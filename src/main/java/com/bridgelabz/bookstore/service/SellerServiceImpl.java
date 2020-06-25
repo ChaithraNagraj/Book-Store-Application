@@ -13,12 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
@@ -129,23 +125,6 @@ public class SellerServiceImpl implements SellerService {
 		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToAddQuantity;
-	}
-
-	@Override
-	public String uploadImage(MultipartFile image) {
-		ObjectMetadata metadata = new ObjectMetadata();
-		System.out.println(image.getOriginalFilename());
-		metadata.setContentType(image.getContentType());
-		metadata.setContentLength(image.getSize());
-		try {
-			s3client.putObject(
-					new PutObjectRequest(bucketName, image.getOriginalFilename(), image.getInputStream(), metadata)
-							.withCannedAcl(CannedAccessControlList.PublicRead));
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return s3client.getUrl(bucketName, image.getOriginalFilename()).toString();
 	}
 
 }

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
@@ -91,11 +90,4 @@ public class SellerController {
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
 	}
 
-	@PutMapping(value = "/uploadBookImage")
-	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
-		System.out.println(image.getOriginalFilename());
-		String imageUrl = sellerService.uploadImage(image);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response("Book image added sucessfully", Constant.OK_RESPONSE_CODE, imageUrl));
-	}
 }

@@ -29,11 +29,9 @@ import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
-
+import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
-
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -43,8 +41,8 @@ import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
-@Api(value = "User Controller")
-@CrossOrigin("*")
+//@Api(value = "User Controller")
+//@CrossOrigin("*")
 public class UserController {
 
 	@Autowired
@@ -54,7 +52,11 @@ public class UserController {
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
+<<<<<<< HEAD
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws UserException, IOException {
+=======
+	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws IOException, UserException {
+>>>>>>> 75e68a4e55ef68e7fa47abd548f242807289d10d
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
@@ -163,9 +165,9 @@ public class UserController {
 	}
 
 	@PostMapping("/uploadimage")
-	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token)
-			throws IOException {
-		String imageUrl = userService.uploadFile(file, token);
+	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token,
+			@RequestParam("isProfile") boolean isProfile) {
+		String imageUrl = userService.uploadFile(file, token, isProfile);
 		if (imageUrl != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new Response(Constant.PROFILE_IMAGE_UPLOADED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, imageUrl));
@@ -176,8 +178,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/deleteimage")
-	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl) {
-		if (userService.deleteFileFromS3Bucket(fileUrl)) {
+	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl,@RequestHeader("token") String token,@RequestParam("isProfile") boolean isProfile) {
+		if (userService.deleteFileFromS3Bucket(fileUrl,token,isProfile)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
 		} else {
