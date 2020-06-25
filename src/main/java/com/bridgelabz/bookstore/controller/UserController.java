@@ -52,11 +52,7 @@ public class UserController {
 	private UserRepo userRepository;
 
 	@PostMapping(value = "/register", headers = "Accept=application/json")
-<<<<<<< HEAD
-	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws UserException, IOException {
-=======
 	public ResponseEntity<Response> register(@RequestBody @Valid RegistrationDTO request) throws IOException, UserException {
->>>>>>> 75e68a4e55ef68e7fa47abd548f242807289d10d
 		if (userService.registerUser(request)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_REGISTER_SUCESSFULLY, Constant.OK_RESPONSE_CODE));
