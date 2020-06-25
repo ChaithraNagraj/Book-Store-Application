@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,13 +30,13 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.UserService;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 
-import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = { "/users" })
@@ -122,16 +121,6 @@ public class UserController {
 		return userService.getUser();
 	}
 
-	@PutMapping(value = "/update", headers = "Accept=application/json")
-	public ResponseEntity<String> updateUser(@RequestBody User currentUser) {
-		User user = userService.findById(currentUser.getId());
-		if (user == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-		userService.update(currentUser, currentUser.getId());
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
-
 	@DeleteMapping(value = "/{id}", headers = "Accept=application/json")
 	public ResponseEntity<User> deleteUser(@PathVariable("id") Long id) {
 		User user = userService.findById(id);
@@ -186,9 +175,8 @@ public class UserController {
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<Response> userUpdate(@RequestParam("userName") String userName,
-			@RequestParam("password") String password, @RequestParam("token") String token) throws UserException {
-		if (userService.updateUser(userName, password, token)) {
+	public ResponseEntity<Response> userUpdate(@Valid @RequestBody UpdateDTO updateDTO, @RequestParam("token") String token) throws UserException {
+		if (userService.updateUser(updateDTO, token)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
 		}

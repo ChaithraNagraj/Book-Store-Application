@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -45,6 +43,7 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -142,6 +141,10 @@ public class UserServiceImp implements UserService {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
 		sendMail(user, token, templet);
 	}
+	private void resetPasswordMail(User user, Role role, String templet) {
+		String token = TokenUtility.resetPassword(user.getId(), role.getRoleId());
+		sendMail(user, token, templet);
+	}
 
 	private void sendMail(User user, String token, String templet) {
 		try {
@@ -182,10 +185,6 @@ public class UserServiceImp implements UserService {
 
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
-	}
-
-	public User update(User user, Long id) {
-		return userRepository.update(user, id);
 	}
 
 	public boolean verify(String token) throws UserException {
@@ -235,7 +234,7 @@ public class UserServiceImp implements UserService {
 	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser, maybeUser.getRoleList().get(0),
+			resetPasswordMail(maybeUser, maybeUser.getRoleList().get(0),
 					environment.getProperty("forgot-password-template-path"));
 			return true;
 		}
@@ -281,16 +280,12 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public boolean updateUser(String userName, String password, String token) throws UserException {
+	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User isUserExist = userRepository.findByUserId(id);
 		if (isUserExist != null) {
-			User user = new User();
-			BeanUtils.copyProperties(isUserExist, user);
-			user.setUserName(userName);
-			user.setPassword(password);
-			user.setUpdateDateTime(DateUtility.today());
-			userRepository.update(isUserExist, id);
+			userRepository.update(updateDTO, id);
+			userRepository.updatePassword(id, encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
 			return true;
 		}
 		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
@@ -312,6 +307,8 @@ public class UserServiceImp implements UserService {
 	public String uploadFileTos3bucket(String fileName, File file, String isProfile) {
 		if (isProfile.equalsIgnoreCase("false")) {
 			this.bucketName = this.bookBucketName;
+		}else if(!isProfile.equalsIgnoreCase("true")) {
+			return null;
 		}
 		amazonS3.putObject(
 				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
@@ -337,7 +334,6 @@ public class UserServiceImp implements UserService {
 			e.printStackTrace();
 		}
 		return fileUrl;
-
 	}
 
 	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile) {
@@ -346,10 +342,12 @@ public class UserServiceImp implements UserService {
 		if (isProfile.equalsIgnoreCase("true")) {
 			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 			userRepository.saveImageUrl(null, id);
-		} else {
+			return true;
+		} else if(isProfile.equalsIgnoreCase("false")){
 			amazonS3.deleteObject(new DeleteObjectRequest(bookBucketName, fileName));
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	private User getSearchResult(SearchResponse response) {

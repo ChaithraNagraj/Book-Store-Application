@@ -1,13 +1,14 @@
 package com.bridgelabz.bookstore.usermoduletest;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
 import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.exception.UserException;
@@ -16,29 +17,27 @@ import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.service.UserServiceImp;
 
 @RunWith(MockitoJUnitRunner.class)
+@WebMvcTest(UserServiceImp.class)
 public class UserServiceTest {
-	
+
 	@InjectMocks
-	@Autowired
 	private UserServiceImp userServiceImpl;
+
 	@Mock
-	@Autowired
 	private UserRepo userRepo;
+	
 	@Mock
-	@Autowired
 	private WebSecurityConfig encrypt;
+	
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
 
 	@Test
 	public void sucessful_registration_user() throws UserException {
-		RegistrationDTO newUser = new RegistrationDTO();
-		newUser.setEmail("rameshaanji97@gmail.com");
-		newUser.setMobileNumber(8428443096L);
-		newUser.setName("Aanji Ram");
-		newUser.setPassword("Aanji20!");
-		newUser.setUserName("Aanji20@");
-//		Mockito.when(encrypt.bCryptPasswordEncoder()).thenReturn(bCryptPasswordEncoder);
-//		Mockito.when(bCryptPasswordEncoder.encode(Mockito.anyString())).thenReturn("encodedPassword");
-		Boolean registrationResponse = userServiceImpl.registerUser(newUser);
-		Assert.assertTrue(registrationResponse);
+		RegistrationDTO registrationDTO = new RegistrationDTO("Ramesh Aanji", "Aanji20@", "rameshaanji97@gmail.com", "Aanji20@", "2", 8428443096L);
+		boolean response = userServiceImpl.registerUser(registrationDTO);
+		Assert.assertTrue(response);
 	}
 }
