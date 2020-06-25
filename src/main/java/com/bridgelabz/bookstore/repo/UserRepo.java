@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 
 public interface UserRepo {
 	public void addUser(User user);
@@ -12,7 +13,7 @@ public interface UserRepo {
 
 	public List<User> getUser();
 
-	public User update(User user, Long id);
+	public User update(UpdateDTO updateDTO, Long id);
 
 	public void delete(Long id);
 
@@ -25,8 +26,6 @@ public interface UserRepo {
 	public User getusersByemail(String email);
 
 	public List<User> findByEmail(String email);
-	
-	
 
 	public Role findByRoleId(Long parseLong);
 
@@ -35,11 +34,11 @@ public interface UserRepo {
 	public void updateUserStatus(Boolean userStatus, Long id);
 
 	public void saveImageUrl(String imageUrl, Long id);
-	
+
 	public void userMerge(User user);
 
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
-	
+
 	public User getusersByLoginId(String loginId);
 
 }

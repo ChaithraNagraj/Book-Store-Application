@@ -9,5 +9,9 @@ public class TokenUtility {
 	public static String verifyResponse(Long userId,Long roleId) {
 		return Constant.VERIFY_ADDRESS + JwtValidate.createJWT(userId,roleId, Constant.REGISTER_EXP);
 	}
+	
+	public static String resetPassword(Long userId,Long roleId) {
+		return Constant.RESET_PASSWORD + JwtValidate.createJWT(userId,roleId, Constant.REGISTER_EXP);
+	}
 
 }
