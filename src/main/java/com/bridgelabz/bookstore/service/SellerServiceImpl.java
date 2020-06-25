@@ -30,6 +30,7 @@ import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -93,11 +94,13 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	@Override
-	public Book updateBook(BookDto updatedBookInfo, long bookId, String token) {
+	public Book updateBook(UpdateBookDto updatedBookInfo, long bookId, String token) {
 		User seller = authentication(token);
 		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
 				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		BeanUtils.copyProperties(updatedBookInfo, bookToBeUpdated);
+		int quantity = updatedBookInfo.getQuantity()+bookToBeUpdated.getQuantity();
+		bookToBeUpdated.setQuantity(quantity);
+		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
 		bookToBeUpdated.setApproved(false);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
