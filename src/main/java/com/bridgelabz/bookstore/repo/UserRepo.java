@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 
 public interface UserRepo {
 	public void addUser(User user);
@@ -12,7 +13,7 @@ public interface UserRepo {
 
 	public List<User> getUser();
 
-	public User update(User user, Long id);
+	public User update(UpdateDTO updateDTO, Long id);
 
 	public void delete(Long id);
 
