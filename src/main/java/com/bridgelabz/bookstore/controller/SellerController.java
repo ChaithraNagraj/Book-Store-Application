@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
@@ -88,6 +90,27 @@ public class SellerController {
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
+	}
+
+
+	@PutMapping(value = "/uploadBookImage")
+	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
+		System.out.println(image.getOriginalFilename());
+		String imageUrl = sellerService.uploadImage(image);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response("Book image added sucessfully", Constant.OK_RESPONSE_CODE, imageUrl));
+	}
+
+	@GetMapping("/search/{input}")
+	public ResponseEntity<Response> searchNotes(@RequestHeader(value = "token") String token,
+			@PathVariable String input) throws IOException {
+
+		List<Book> books = sellerService.searchBook(token, input);
+		if (books.isEmpty())
+			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
+
+		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
+
 	}
 
 }

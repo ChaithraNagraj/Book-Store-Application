@@ -1,20 +1,32 @@
 package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
@@ -44,7 +56,8 @@ public class SellerServiceImpl implements SellerService {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
-
+    
+	@Autowired
 	private AmazonS3 s3client;
 
 	@Value("${amazonProperties.bucketName}")
@@ -125,6 +138,52 @@ public class SellerServiceImpl implements SellerService {
 		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToAddQuantity;
+	}
+
+
+	@Override
+	public String uploadImage(MultipartFile image) {
+		ObjectMetadata metadata = new ObjectMetadata();
+		System.out.println(image.getOriginalFilename());
+		metadata.setContentType(image.getContentType());
+		metadata.setContentLength(image.getSize());
+		try {
+			s3client.putObject(
+					new PutObjectRequest(bucketName, image.getOriginalFilename(), image.getInputStream(), metadata)
+							.withCannedAcl(CannedAccessControlList.PublicRead));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return s3client.getUrl(bucketName, image.getOriginalFilename()).toString();
+	}
+	public List<Book> searchBook( String token,String input) throws IOException
+	{
+		User seller = authentication(token);
+		SearchRequest searchRequest = new SearchRequest();
+		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();		
+        QueryBuilder builder = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery("*"+input+"*").analyzeWildcard(true).field("authorName", 1.0f).field("bookName",1.0f));
+        searchSourceBuilder.query(builder);
+		searchRequest.source(searchSourceBuilder);
+		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+	    return getSearchResult(searchResponse);
+		
+	}
+	private List<Book> getSearchResult(SearchResponse response) {
+
+
+        SearchHit[] searchHit = response.getHits().getHits();
+        List<Book> books = new ArrayList<>();
+        if (searchHit.length > 0) {
+
+            Arrays.stream(searchHit)
+                    .forEach(hit -> books
+                            .add(objectMapper
+                                    .convertValue(hit.getSourceAsMap(),
+                                                    Book.class))
+                    );
+        }
+        return books;
 	}
 
 }

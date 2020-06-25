@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -18,5 +19,11 @@ public interface SellerService {
 	boolean removeBook(long bookId, String token);
 
 	Book addQuantity(long bookId, String token, int quantity);
+
+
+	String uploadImage(MultipartFile image);
+
+	List<Book> searchBook(String token, String input) throws IOException;
+
 
 }
