@@ -141,6 +141,10 @@ public class UserServiceImp implements UserService {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
 		sendMail(user, token, templet);
 	}
+	private void resetPasswordMail(User user, Role role, String templet) {
+		String token = TokenUtility.resetPassword(user.getId(), role.getRoleId());
+		sendMail(user, token, templet);
+	}
 
 	private void sendMail(User user, String token, String templet) {
 		try {
@@ -230,7 +234,7 @@ public class UserServiceImp implements UserService {
 	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser, maybeUser.getRoleList().get(0),
+			resetPasswordMail(maybeUser, maybeUser.getRoleList().get(0),
 					environment.getProperty("forgot-password-template-path"));
 			return true;
 		}
