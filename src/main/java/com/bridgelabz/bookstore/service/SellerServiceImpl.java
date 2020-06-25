@@ -18,11 +18,13 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
+import com.bridgelabz.bookstore.exception.BookException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.exception.UserAuthorizationException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
@@ -58,11 +60,13 @@ public class SellerServiceImpl implements SellerService {
 	private ObjectMapper objectMapper;
 
 	/**
-	 * Method to authenticate User 
+	 * Method to authenticate User
+	 * 
 	 * @param token
 	 * @return User
-	 * @throws - UserAuthorizationException => if User is not a Seller
-	 * 		   - UserNotFoundException => if User is not registered and tries to login as seller
+	 * @throws - UserAuthorizationException => if User is not a Seller -
+	 *           UserNotFoundException => if User is not registered and tries to
+	 *           login as seller
 	 */
 	private User authentication(String token) {
 
@@ -75,12 +79,14 @@ public class SellerServiceImpl implements SellerService {
 				.orElseThrow(() -> new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE));
 
 	}
-	
+
 	/**
-	 * Method to add a new book 
+	 * Method to add a new book
+	 * 
 	 * @param newBook,token
 	 * @return Book
-	 * @throws - BookAlreadyExistsException => if book already exists with same name and price
+	 * @throws - BookAlreadyExistsException => if book already exists with same name
+	 *           and price
 	 */
 	@Override
 	public Book addBook(BookDto newBook, String token) {
@@ -111,6 +117,7 @@ public class SellerServiceImpl implements SellerService {
 
 	/**
 	 * Method to update book price and quantity
+	 * 
 	 * @param updateBookInfo,bookId,token
 	 * @return Book
 	 * @throws - BookNotFoundException => if bookId doesn't exists
@@ -120,7 +127,15 @@ public class SellerServiceImpl implements SellerService {
 		authentication(token);
 		Book bookToBeUpdated = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		int quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
+		int quantity = 0;
+		if (updatedBookInfo.getQuantity() > 0)
+			quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
+		else {
+			if(bookToBeUpdated.getQuantity()<(-(updatedBookInfo.getQuantity()))) {
+				throw new BookAlreadyExistsException("Book Quantity is Lower than entered quantity");
+			}
+			quantity = bookToBeUpdated.getQuantity()+updatedBookInfo.getQuantity();
+		}
 		bookToBeUpdated.setQuantity(quantity);
 		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
 		bookToBeUpdated.setApproved(false);
@@ -130,9 +145,10 @@ public class SellerServiceImpl implements SellerService {
 	}
 
 	/**
-	 *  Method to get all books related to seller
-	 *  @param token
-	 *  @return List<Book>
+	 * Method to get all books related to seller
+	 * 
+	 * @param token
+	 * @return List<Book>
 	 */
 	@Override
 	public List<Book> getAllBooks(String token) {
@@ -142,6 +158,7 @@ public class SellerServiceImpl implements SellerService {
 
 	/**
 	 * Method to delete book
+	 * 
 	 * @param bookId,token
 	 * @return true
 	 * @throws - BookNotFoundException => if bookId doesn't exists
@@ -157,6 +174,7 @@ public class SellerServiceImpl implements SellerService {
 
 	/**
 	 * Method to add Quantity
+	 * 
 	 * @param bookId,token,quantity
 	 * @return Book
 	 * @throws - BookNotFoundException => if bookId doesn't exists
@@ -175,6 +193,7 @@ public class SellerServiceImpl implements SellerService {
 
 	/**
 	 * Method to search Book by either authorName or book name
+	 * 
 	 * @param token,input
 	 * @return List<Book>
 	 */
