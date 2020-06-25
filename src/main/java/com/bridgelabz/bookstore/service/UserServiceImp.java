@@ -309,8 +309,8 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public String uploadFileTos3bucket(String fileName, File file, boolean isProfile) {
-		if (!isProfile) {
+	public String uploadFileTos3bucket(String fileName, File file, String isProfile) {
+		if (isProfile.equalsIgnoreCase("false")) {
 			this.bucketName = this.bookBucketName;
 		}
 		amazonS3.putObject(
@@ -319,14 +319,14 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public String uploadFile(MultipartFile multipartFile, String token, boolean isProfile) {
+	public String uploadFile(MultipartFile multipartFile, String token, String isProfile) {
 		String fileUrl = null;
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		try {
 			File file = convertMultiPartToFile(multipartFile);
 			String fileName = generateFileName(multipartFile);
 			fileUrl = uploadFileTos3bucket(fileName, file, isProfile);
-			if (isProfile)
+			if (isProfile.equalsIgnoreCase("true"))
 				userRepository.saveImageUrl(fileUrl, id);
 			file.delete();
 		} catch (AmazonServiceException ase) {
@@ -340,10 +340,10 @@ public class UserServiceImp implements UserService {
 
 	}
 
-	public boolean deleteFileFromS3Bucket(String fileUrl, String token, boolean isProfile) {
+	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile) {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-		if (isProfile) {
+		if (isProfile.equalsIgnoreCase("true")) {
 			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 			userRepository.saveImageUrl(null, id);
 		} else {
