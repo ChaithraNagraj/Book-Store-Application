@@ -27,8 +27,8 @@ public class UserDaoImp implements UserRepo {
 	private SessionFactory sessionFactory;
 
 	public void addUser(User user) {
-		System.out.println("3");
-		sessionFactory.getCurrentSession().saveOrUpdate(user);
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(user);
 	}
 
 	public User findByUserId(Long id) {
@@ -81,11 +81,11 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
-	public User getusersByemail(String email) {
-		Session session = sessionFactory.getCurrentSession();
-		Query<?> q = session.createQuery("from User where email=:email");
-		q.setParameter("email", email);
-		return (User) q.uniqueResult();
+	public User getusersByemail(String emailId) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		Query<User> query = currentSession.createQuery("FROM User where email=:emailId");
+		query.setParameter("emailId", emailId);
+		return query.uniqueResult();
 	}
 
 	@Override
@@ -107,7 +107,7 @@ public class UserDaoImp implements UserRepo {
 		return query.list();
 	}
 
-	@Override
+
 	public void updateUserStatus(Boolean userStatus, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
@@ -136,7 +136,7 @@ public class UserDaoImp implements UserRepo {
 		Query<User> query = session.createSQLQuery(hql).addEntity("u", User.class);
 		query.setParameter("userId", userId);
 		query.setParameter("roleId", roleId);
-		return (User) query.uniqueResult();
+		return query.uniqueResult();
 	}
 	@Override
 	public User getusersByLoginId(String loginId) {
@@ -145,5 +145,5 @@ public class UserDaoImp implements UserRepo {
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
 	}
-	
+
 }

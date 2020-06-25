@@ -21,7 +21,7 @@ public interface UserService {
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException;
 
-	public int registerUser(RegistrationDTO user) throws IOException, UserException;
+	public boolean registerUser(RegistrationDTO user) throws IOException, UserException;
 
 	public User findById(Long id);
 

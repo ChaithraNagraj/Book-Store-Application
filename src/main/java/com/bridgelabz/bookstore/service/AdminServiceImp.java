@@ -1,8 +1,17 @@
 package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
+
 import java.util.List;
 
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -14,9 +23,9 @@ import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
+
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.TokenUtility;
-
 @Service
 public class AdminServiceImp implements AdminService{
 
@@ -35,7 +44,7 @@ public class AdminServiceImp implements AdminService{
 	
 	@Autowired
 	private Environment environment;
-	
+
 	@Override
 	public List<User> getBuyers() {
 
@@ -63,6 +72,7 @@ public class AdminServiceImp implements AdminService{
 	@Override
 	public void bookVerification(Long bookId, Long sellerId, String verify) throws BookException {
 		Book book = bookRepository.getBookById(bookId).orElseThrow(()-> new BookException(Constant.BOOK_NOT_FOUND , Constant.NOT_FOUND_RESPONSE_CODE));
+		
 		User seller=userRepository.findByUserId(sellerId);
 		if(verify.equals("yes")) {
 			book.setApproved(true);
@@ -84,6 +94,7 @@ public class AdminServiceImp implements AdminService{
 		}
 		
 	}
+
 	
 	public void registerMail(User user, String templet) {
 		String token = TokenUtility.verifyResponse(user.getId());
@@ -97,4 +108,6 @@ public class AdminServiceImp implements AdminService{
 			
 		}
 	}
+
+
 }

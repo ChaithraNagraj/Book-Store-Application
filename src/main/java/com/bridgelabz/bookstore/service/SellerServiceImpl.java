@@ -1,11 +1,17 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
@@ -17,12 +23,20 @@ import com.bridgelabz.bookstore.model.dto.BookDto;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
+@Transactional
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private UserRepo userRepository;
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	private User authentication(String token) {
 		Long userId = JwtValidate.decodeJWT(token);
@@ -43,6 +57,16 @@ public class SellerServiceImpl implements SellerService {
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
+		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
+		
+			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
+					.source(documentMapper);
+			try {
+				client.index(indexRequest, RequestOptions.DEFAULT);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		seller.getSellerBooks().add(book);
 		userRepository.addUser(seller);
 		return book;
@@ -51,9 +75,10 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public Book updateBook(BookDto updatedBookInfo, long bookId, String token) {
 		User seller = authentication(token);
-		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
-				.orElseThrow(() -> new BookNotFoundException("Book Not Found In Your Inventory"));
+		Book bookToBeUpdated = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
+				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		BeanUtils.copyProperties(updatedBookInfo, bookToBeUpdated);
+		bookToBeUpdated.setApproved(false);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		userRepository.addUser(seller);
 		return bookToBeUpdated;
@@ -68,11 +93,23 @@ public class SellerServiceImpl implements SellerService {
 	@Override
 	public boolean removeBook(long bookId, String token) {
 		User seller = authentication(token);
-		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
-				.orElseThrow(() -> new BookNotFoundException("Book Not Available In Your Inventory"));
+		Book bookTobeDeleted = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId))
+				.findAny().orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		seller.getSellerBooks().remove(bookTobeDeleted);
 		userRepository.addUser(seller);
 		return true;
+	}
+
+	@Override
+	public Book addQuantity(long bookId, String token, int quantity) {
+		User seller = authentication(token);
+		Book bookToAddQuantity = seller.getSellerBooks().stream().filter(book -> book.getBookId().equals(bookId)).findAny()
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		quantity += bookToAddQuantity.getQuantity();
+		bookToAddQuantity.setQuantity(quantity);
+		bookToAddQuantity.setLastUpdatedDateAndTime(DateUtility.today());
+		userRepository.addUser(seller);
+		return bookToAddQuantity;
 	}
 
 }

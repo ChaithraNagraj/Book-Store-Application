@@ -9,12 +9,12 @@ import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
+//	@Size(min = 3)
+//	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
 	private String name;
-
-	@Size(min = 3)
-	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
+//
+//	@Size(min = 3)
+//	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
 	private String userName;
 
 	@Email
@@ -112,5 +112,4 @@ public class RegistrationDTO {
 		return "RegistrationDTO [name=" + name + ", userName=" + userName + ", email=" + email + ", password="
 				+ password + ", moblieNumber=" + mobileNumber + ", role=" + role + "]";
 	}
-
 }
