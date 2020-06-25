@@ -52,7 +52,7 @@ public class Book {
 	@Column
 	private String image;
 	
-	@Column
+	@Column(length = 10000)
 	private String bookDetails;
 
 	@Column(name = "is_approved",columnDefinition = "boolean default false")
