@@ -140,6 +140,7 @@ public class SellerServiceImpl implements SellerService {
 		return bookToAddQuantity;
 	}
 
+
 	@Override
 	public String uploadImage(MultipartFile image) {
 		ObjectMetadata metadata = new ObjectMetadata();
@@ -184,4 +185,5 @@ public class SellerServiceImpl implements SellerService {
         }
         return books;
 	}
+
 }

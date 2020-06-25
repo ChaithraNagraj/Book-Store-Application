@@ -85,12 +85,14 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private AmazonS3 amazonS3;
 
-
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
 
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
+
+	@Value("${amazonProperties.bookBucketName}")
+	private String bookBucketName;
 
 	private String redisKey = "Key";
 
@@ -122,20 +124,19 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
-			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
-			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
-					String.valueOf(userEntity.getId())).source(documentMapper);
-			try {
-				client.index(indexRequest, RequestOptions.DEFAULT);
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
+//			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
+//			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
+//					String.valueOf(userEntity.getId())).source(documentMapper);
+//			try {
+//				client.index(indexRequest, RequestOptions.DEFAULT);
+//			} catch (IOException e) {
+//
+//				e.printStackTrace();
+//			}
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
 	}
-
 
 	private void registerMail(User user, Role role, String templet) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
@@ -171,8 +172,8 @@ public class UserServiceImp implements UserService {
 	}
 
 	public List<User> getUser() {
-		List<User> user =  userRepository.getUser();
-		if(user.isEmpty()) {
+		List<User> user = userRepository.getUser();
+		if (user.isEmpty()) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}
@@ -188,8 +189,8 @@ public class UserServiceImp implements UserService {
 	}
 
 	public boolean verify(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-		long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
@@ -243,8 +244,8 @@ public class UserServiceImp implements UserService {
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
-			Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-			Long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+			Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+			Long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
 				userRepository.updatePassword(user.getId(),
@@ -266,7 +267,7 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean logOut(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
 			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
@@ -304,27 +305,29 @@ public class UserServiceImp implements UserService {
 	}
 
 	public static String generateFileName(MultipartFile multiPart) {
-		return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+		return new Date().getTime() + "_" + multiPart.getOriginalFilename().replace(" ", "_");
 	}
 
 	@Override
-	public void uploadFileTos3bucket(String fileName, File file) {
+	public String uploadFileTos3bucket(String fileName, File file, boolean isProfile) {
+		if (!isProfile) {
+			this.bucketName = this.bookBucketName;
+		}
 		amazonS3.putObject(
 				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+		return amazonS3.getUrl(bucketName, fileName).toString();
 	}
 
 	@Override
-	public String uploadFile(MultipartFile multipartFile, String token) throws IOException {
-		String fileUrl = "";
+	public String uploadFile(MultipartFile multipartFile, String token, boolean isProfile) {
+		String fileUrl = null;
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		try {
 			File file = convertMultiPartToFile(multipartFile);
-			System.out.println("File " + file);
 			String fileName = generateFileName(multipartFile);
-			logger.info("File Name: " + fileName);
-			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-			uploadFileTos3bucket(fileName, file);
-			userRepository.saveImageUrl(fileUrl, id);
+			fileUrl = uploadFileTos3bucket(fileName, file, isProfile);
+			if (isProfile)
+				userRepository.saveImageUrl(fileUrl, id);
 			file.delete();
 		} catch (AmazonServiceException ase) {
 			ase.printStackTrace();
@@ -337,11 +340,15 @@ public class UserServiceImp implements UserService {
 
 	}
 
-	public boolean deleteFileFromS3Bucket(String fileUrl) {
+	public boolean deleteFileFromS3Bucket(String fileUrl, String token, boolean isProfile) {
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-		logger.info("FileName: " + fileName);
-		logger.info("bucketName: " + bucketName);
-		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+		if (isProfile) {
+			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+			userRepository.saveImageUrl(null, id);
+		} else {
+			amazonS3.deleteObject(new DeleteObjectRequest(bookBucketName, fileName));
+		}
 		return true;
 	}
 

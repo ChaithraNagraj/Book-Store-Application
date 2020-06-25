@@ -92,6 +92,7 @@ public class SellerController {
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
 	}
 
+
 	@PutMapping(value = "/uploadBookImage")
 	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
 		System.out.println(image.getOriginalFilename());
@@ -111,4 +112,5 @@ public class SellerController {
 		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
 
 	}
+
 }
