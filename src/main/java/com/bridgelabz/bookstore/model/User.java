@@ -78,9 +78,8 @@ public class User {
 	public List<Role> roleList;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "seller_id")
 	private List<Book> sellerBooks;
 
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,

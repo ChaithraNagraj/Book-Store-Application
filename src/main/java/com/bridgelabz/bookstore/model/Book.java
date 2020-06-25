@@ -3,13 +3,18 @@ package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "book")
@@ -51,17 +56,23 @@ public class Book {
 
 	@Column
 	private String image;
-	
+
 	@Column(length = 10000)
 	private String bookDetails;
 
-	@Column(name = "is_approved",columnDefinition = "boolean default false")
+	@Column(name = "is_approved", columnDefinition = "boolean default false")
 	@NotNull
 	private boolean isApproved;
 
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private User seller;
+
 	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
 			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
+			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,
+			String bookDetails) {
 		super();
 		this.bookId = bookid;
 		this.bookName = bookName;
@@ -169,7 +180,6 @@ public class Book {
 		this.isApproved = isApproved;
 	}
 
-
 	public String getBookDetails() {
 		return bookDetails;
 	}
@@ -178,6 +188,13 @@ public class Book {
 		this.bookDetails = bookDetails;
 	}
 
+	public User getSeller() {
+		return seller;
+	}
+
+	public void setSeller(User seller) {
+		this.seller = seller;
+	}
 
 	@Override
 	public String toString() {
@@ -185,11 +202,8 @@ public class Book {
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
 
-	
-
 				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
 				+ ", isApproved=" + isApproved + "]";
 	}
-
 
 }

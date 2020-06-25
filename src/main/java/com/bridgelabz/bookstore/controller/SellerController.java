@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
@@ -104,14 +103,4 @@ public class SellerController {
 		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
 
 	}
-
-	@PostMapping(value = "/addBookWithImage")
-	public ResponseEntity<Response> addBookWithImage(@RequestBody BookDto newBook,
-			@RequestParam("image") MultipartFile image) {
-		System.out.println(newBook);
-		System.out.println(image);
-		return ResponseEntity.status(HttpStatus.CREATED).body(
-				new Response(Constant.BOOK_ADDITION_SUCCESSFULL_MESSAGE, Constant.CREATED_RESPONSE_CODE, newBook));
-	}
-
 }
