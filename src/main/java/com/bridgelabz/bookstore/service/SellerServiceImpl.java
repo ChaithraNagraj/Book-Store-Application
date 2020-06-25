@@ -35,17 +35,15 @@ public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private UserRepo userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
-	
+
 	@Autowired
 	private RestHighLevelClient client;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
-
-	private AmazonS3 s3client;
 
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
@@ -53,8 +51,11 @@ public class SellerServiceImpl implements SellerService {
 	private User authentication(String token) {
 
 		Long userId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-		Long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
-		return Optional.ofNullable(userRepository.findByUserIdAndRoleId(userId, roleId))
+		Integer roleId = (Integer) JwtValidate.decodeJWT(token).get("roleId");
+		Role sellerRole = Optional.ofNullable(roleRepository.getRoleById(roleId))
+				.filter(role -> role.getRole().equalsIgnoreCase("SELLER"))
+				.orElseThrow(() -> new UserAuthorizationException(Constant.UNAUTHORIZED_EXCEPTION_MESSAGE));
+		return Optional.ofNullable(userRepository.findByUserIdAndRoleId(userId, sellerRole.getRoleId()))
 				.orElseThrow(() -> new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE));
 
 	}
@@ -73,15 +74,15 @@ public class SellerServiceImpl implements SellerService {
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
-		
-			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
-					.source(documentMapper);
-			try {
-				client.index(indexRequest, RequestOptions.DEFAULT);
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+		IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
+				.source(documentMapper);
+		try {
+			client.index(indexRequest, RequestOptions.DEFAULT);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		seller.getSellerBooks().add(book);
 		userRepository.addUser(seller);
 		return book;
