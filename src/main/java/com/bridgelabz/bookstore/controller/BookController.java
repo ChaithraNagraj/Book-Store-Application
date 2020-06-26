@@ -2,6 +2,7 @@ package com.bridgelabz.bookstore.controller;
 
 import java.util.List;
 
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.BookService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 
@@ -19,6 +21,12 @@ public class BookController {
 
 	@Autowired
 	private BookService bookservice;
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 //	@PostMapping("/addBook/{token}")
 //	public void addBook(@RequestBody BookDto request, @PathVariable("token") Long userId) {

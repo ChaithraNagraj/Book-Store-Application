@@ -63,6 +63,7 @@ public class SellerServiceImpl implements SellerService {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
@@ -76,16 +77,7 @@ public class SellerServiceImpl implements SellerService {
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
-		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
-		
-			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
-					.source(documentMapper);
-			try {
-				client.index(indexRequest, RequestOptions.DEFAULT);
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	
 		seller.getSellerBooks().add(book);
 		userRepository.addUser(seller);
 		return book;

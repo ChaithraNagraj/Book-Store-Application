@@ -53,11 +53,12 @@ public class BookServiceImp implements BookService {
 	@Autowired
 	private UserRepo userRepository;
 
-	@Override
+  
+	
 	public List<Book> findBookByAuthorNameAndTile(String text) {
 		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
+		searchRequest.indices(Constant.INDEX1);
+		searchRequest.types(Constant.TYPE1);
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder query = QueryBuilders.boolQuery()
 				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("authorName").field("bookName"))

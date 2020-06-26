@@ -122,6 +122,7 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
+			@SuppressWarnings("unchecked")
 			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
 			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
 					String.valueOf(userEntity.getId())).source(documentMapper);
@@ -134,6 +135,8 @@ public class UserServiceImp implements UserService {
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
+		
+		
 	}
 
 
@@ -151,23 +154,24 @@ public class UserServiceImp implements UserService {
 	}
 
 	public User findById(Long id) {
-		String text = Long.toString(id);
-		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
-
-		searchSourceBuilder.query(query);
-		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse = null;
-		try {
-			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return (User) getSearchResult(searchResponse);
+//		String text = Long.toString(id);
+//		SearchRequest searchRequest = new SearchRequest();
+//		searchRequest.indices(Constant.INDEX);
+//		searchRequest.types(Constant.TYPE);
+//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//		QueryBuilder query = QueryBuilders.boolQuery()
+//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
+//
+//		searchSourceBuilder.query(query);
+//		searchRequest.source(searchSourceBuilder);
+//		SearchResponse searchResponse = null;
+//		try {
+//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return (User) getSearchResult(searchResponse);
+		return userRepository.findByUserId(id);
 	}
 
 	public List<User> getUser() {

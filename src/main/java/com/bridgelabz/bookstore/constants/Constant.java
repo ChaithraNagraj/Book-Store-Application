@@ -10,6 +10,7 @@ public class Constant {
 	public static final String INDEX = "userentity";
 	public static final String TYPE = "_doc";
 	public static final String INDEX1 = "bookentity";
+	public static final String TYPE1 = "doc";
 	public static final String KEY="User";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
