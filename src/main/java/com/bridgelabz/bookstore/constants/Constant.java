@@ -9,10 +9,11 @@ public class Constant {
 
 	// Kalpesh Review: Remove hard coded value and unused variables
 	// Kalpesh Review: move status code to it's own file and message into it's own file
-	public static final String INDEX = "userentity";
-	public static final String TYPE = "_doc";
-	public static final String INDEX1 = "bookentity";
+
+
+	
 	public static final String KEY = "User";
+
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";

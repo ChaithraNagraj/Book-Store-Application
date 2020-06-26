@@ -3,6 +3,7 @@ package com.bridgelabz.bookstore.repo;
 import javax.persistence.EntityManager;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,18 +18,18 @@ public class RoleRepositoryImp implements RoleRepository {
 	// Kalpesh Review: need to use session factory and hibernet only not JPA
 
 	@Autowired
-	private EntityManager entityManager;
+	private SessionFactory sessionFactory;
 
 	@Transactional
 	public void save(Role roleEntity) {
-		Session session = entityManager.unwrap(Session.class);
-		session.saveOrUpdate(roleEntity);
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(roleEntity);
 	}
 
 	@Transactional
 	public Role getRoleByName(String name) {
-		Session session = entityManager.unwrap(Session.class);
-		Query<Role> q = session.createQuery("From Role where role_name=:name");
+		Session currentSession = sessionFactory.getCurrentSession();
+		Query<Role> q = currentSession.createQuery("From Role where role_name=:name");
 		q.setParameter("name", name);
 
 		return (Role) q.uniqueResult();
@@ -37,8 +38,8 @@ public class RoleRepositoryImp implements RoleRepository {
 
 	@Transactional
 	public Role getRoleById(int rid) {
-		Session session = entityManager.unwrap(Session.class);
-		Query q = session.createQuery("From Role where role_id=:id");
+		Session currentSession = sessionFactory.getCurrentSession();
+		Query q = currentSession.createQuery("From Role where role_id=:id");
 		q.setParameter("id", rid);
 		return (Role) q.uniqueResult();
 	}

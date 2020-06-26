@@ -2,7 +2,11 @@ package com.bridgelabz.bookstore.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import com.bridgelabz.bookstore.model.dto.BookDto;
 import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.SellerService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
 
@@ -30,6 +35,12 @@ import io.swagger.annotations.Api;
 @RequestMapping("/sellers")
 @Api(value = "Seller Controller to perform CRUD operations on book")
 public class SellerController {
+	
+	@Autowired
+	private RestHighLevelClient client;
+	
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Autowired
 	private SellerService sellerService;

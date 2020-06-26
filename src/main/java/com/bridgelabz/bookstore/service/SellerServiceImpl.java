@@ -81,6 +81,9 @@ public class SellerServiceImpl implements SellerService {
 
 	}
 
+
+	@SuppressWarnings("unchecked")
+
 	/**
 	 * Method to add a new book
 	 * 
@@ -89,6 +92,7 @@ public class SellerServiceImpl implements SellerService {
 	 * @throws - BookAlreadyExistsException => if book already exists with same name
 	 *           and price
 	 */
+
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
@@ -102,17 +106,19 @@ public class SellerServiceImpl implements SellerService {
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
 		book.setNoOfRejections(0);
+
 		book.setSeller(seller);
 		bookRepository.save(book);
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
 
-		IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE, String.valueOf(book.getBookId()))
+		IndexRequest indexRequest = new IndexRequest("bookentity", "doc", String.valueOf(book.getBookId()))
 				.source(documentMapper);
 		try {
 			client.index(indexRequest, RequestOptions.DEFAULT);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return book;
 	}
 
