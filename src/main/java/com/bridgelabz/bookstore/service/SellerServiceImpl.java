@@ -133,7 +133,7 @@ public class SellerServiceImpl implements SellerService {
 			quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
 		else {
 			if(bookToBeUpdated.getQuantity()<(-(updatedBookInfo.getQuantity()))) {
-				throw new BookQuantityException("Book Quantity is Lower than entered quantity to remove");
+				throw new BookException("Book Quantity is Lower than entered quantity to remove");
 			}
 			quantity = bookToBeUpdated.getQuantity()+updatedBookInfo.getQuantity();
 		}
