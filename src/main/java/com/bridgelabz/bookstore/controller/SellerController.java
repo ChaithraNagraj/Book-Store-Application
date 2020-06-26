@@ -3,9 +3,12 @@ package com.bridgelabz.bookstore.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +37,16 @@ public class SellerController {
 	@Autowired
 	private SellerService sellerService;
 
+	@Autowired
+	private Response response;
+
 	@PostMapping(value = "/addBook")
-	public ResponseEntity<Response> addBook(@RequestBody BookDto newBook, @RequestHeader("token") String token) {
+	public ResponseEntity<Response> addBook(@RequestBody @Valid BookDto newBook,BindingResult result, @RequestHeader("token") String token) {
+		if (result.hasErrors()) {
+			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
+			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 		Book addedbook = sellerService.addBook(newBook, token);
 		if (addedbook != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new Response(
@@ -43,11 +54,17 @@ public class SellerController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.BOOK_ADDITION_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE));
+
 	}
 
 	@PutMapping(value = "/updateBook/{bookId}", headers = "Accept=application/json")
-	public ResponseEntity<Response> updateBook(@RequestBody UpdateBookDto updatedBookInfo, @PathVariable long bookId,
-			@RequestHeader("token") String token) {
+	public ResponseEntity<Response> updateBook(@RequestBody @Valid UpdateBookDto updatedBookInfo, BindingResult result,
+			@PathVariable long bookId, @RequestHeader("token") String token) {
+		if (result.hasErrors()) {
+			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
+			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 		Book updatedBook = sellerService.updateBook(updatedBookInfo, bookId, token);
 		if (updatedBook != null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(new Response(
@@ -101,6 +118,13 @@ public class SellerController {
 			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
 
 		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
-
+	}
+	
+	@PutMapping("/approvalSent/{bookId}")
+	public ResponseEntity<Response> sentForApproval(@RequestHeader("token") String token,@PathVariable("bookId") long bookId){
+		if(sellerService.sentForApproval(bookId,token)) {
+			return new ResponseEntity<>(new Response("Book sent For Approval Success", HttpStatus.OK.value()),HttpStatus.OK);
+		}
+		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.OK.value()),HttpStatus.OK);
 	}
 }
