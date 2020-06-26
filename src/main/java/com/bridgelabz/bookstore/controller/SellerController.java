@@ -126,6 +126,6 @@ public class SellerController {
 		if(sellerService.sentForApproval(bookId,token)) {
 			return new ResponseEntity<>(new Response("Book sent For Approval Success", HttpStatus.OK.value()),HttpStatus.OK);
 		}
-		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.BAD_REQUEST.value()),HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.ALREADY_REPORTED.value()),HttpStatus.ALREADY_REPORTED);
 	}
 }

@@ -52,8 +52,39 @@ public class Book {
 	@Column(name = "rejection_counts", columnDefinition = "int default 0")
 	private int rejectionCounts;
 
+//<<<<<<< HEAD
+//	@Column
+//	private String image;
+//	
+//	@Column
+//	private String bookDetails;
+//
+//
+//	@Column(name = "is_approved",columnDefinition = "boolean default false")
+//	@NotNull
+//	private boolean isApproved;
+//
+//	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
+//			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
+//			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
+//		super();
+//		this.bookId = bookid;
+//		this.bookName = bookName;
+//		this.quantity = quantity;
+//		this.price = price;
+//		this.authorName = authorName;
+//		this.createdDateAndTime = createdDateAndTime;
+//		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
+//		this.verifiedDateAndTime = verifiedDateAndTime;
+//		this.noOfRejections = noOfRejections;
+//		this.image = image;
+//		this.isApproved = isapproved;
+//		this.bookDetails = bookDetails;
+//	}
+//=======
 	@Column(name = "image_URL", nullable = false)
 	private String imageURL;
+
 
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;

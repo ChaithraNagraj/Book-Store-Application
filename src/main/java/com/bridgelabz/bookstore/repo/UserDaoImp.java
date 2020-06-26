@@ -1,7 +1,9 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
@@ -22,6 +24,9 @@ public class UserDaoImp implements UserRepo {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	public void addUser(User user) {
 		Session currentSession = sessionFactory.getCurrentSession();
@@ -146,6 +151,14 @@ public class UserDaoImp implements UserRepo {
 				.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
+	}
+
+	@Override
+	public Optional<User> getUserById(long userId) {
+		Session session = entityManager.unwrap(Session.class);
+		Query q = session.createQuery("From User where user_id=:id");
+		q.setParameter("id", userId);
+		return  q.uniqueResultOptional();
 	}
 
 }
