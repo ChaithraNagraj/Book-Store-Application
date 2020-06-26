@@ -12,6 +12,8 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
 public class AmazonClient {
+	// Kalpesh Review: If not using any part of code then remove it and try to avoid
+	// comments until code is not complicated
 
 //	@Value("${amazonProperties.endpointUrl}")
 //	private String endpointUrl;

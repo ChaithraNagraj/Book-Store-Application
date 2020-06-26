@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BookDto {
+	// Kalpesh Review: Handle all validation at DTO level
 
 	private String bookName;
 

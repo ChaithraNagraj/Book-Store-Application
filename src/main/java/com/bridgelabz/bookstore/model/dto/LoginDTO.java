@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LoginDTO {
+	// Kalpesh Review: Handle all validation at DTO level
 
 	private String loginId;
 	private String password;
@@ -43,6 +44,5 @@ public class LoginDTO {
 	public LoginDTO() {
 		super();
 	}
-	
 
 }

@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import com.bridgelabz.bookstore.model.User;
 
 public class Response {
+
+	// Kalpesh Review: Create seprate response class as per requirment and what is
+	// now?, what is userDetails?, what is data? and set token in header
 	private int status;
 	private String message;
 	private Object data;
@@ -39,8 +42,8 @@ public class Response {
 		this.status = status;
 		this.data = data;
 	}
-	
-	public Response(String message, int status,Object data, LocalDateTime now,User userDetails) {
+
+	public Response(String message, int status, Object data, LocalDateTime now, User userDetails) {
 		this.message = message;
 		this.status = status;
 		this.data = data;
@@ -54,7 +57,7 @@ public class Response {
 		this.message = message;
 	}
 
-	public Response(LocalDateTime now , String message,int status) {
+	public Response(LocalDateTime now, String message, int status) {
 		this.now = now;
 		this.status = status;
 		this.message = message;
@@ -67,12 +70,14 @@ public class Response {
 		this.userDetails = userDetails;
 		this.now = now;
 	}
-	public Response(String message, int status, Object data,String tok) {
+
+	public Response(String message, int status, Object data, String tok) {
 		this.message = message;
 		this.status = status;
 		this.data = data;
-		this.token=tok;
+		this.token = tok;
 	}
+
 	public int getStatus() {
 		return status;
 	}
@@ -104,7 +109,7 @@ public class Response {
 	public void setUserDetails(User userDetails) {
 		this.userDetails = userDetails;
 	}
-	
+
 	public String getToken() {
 		return token;
 	}
@@ -116,6 +121,6 @@ public class Response {
 	@Override
 	public String toString() {
 		return "Response [status=" + status + ", message=" + message + "]";
-	
-}
+
+	}
 }

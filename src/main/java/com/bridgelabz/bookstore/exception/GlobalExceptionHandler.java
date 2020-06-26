@@ -95,7 +95,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
 	}
+	
+	@ExceptionHandler(BookQuantityException.class)
+	public ResponseEntity<Response> handleBookQuantityException(BookQuantityException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.BAD_REQUEST.value());
 
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+	}
 	@ExceptionHandler(BookException.class)
 	public ResponseEntity<Response> handleBookException(BookException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),

@@ -54,15 +54,20 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
+//Kalpesh Review: Give transaction at method level
 @Transactional
 public class UserServiceImp implements UserService {
 
+	// Kalpesh Review: Why client for user we are not applying elastic search for
+	// user.
 	@Autowired
 	private RestHighLevelClient client;
 
+	// Kalpesh Review: Remove objectMapper
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	// Kalpesh Review: RoleRepositoryImp don't have interface layer?
 	@Autowired
 	private RoleRepositoryImp roleRepository;
 
@@ -78,21 +83,27 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private RedisCache<Object> redis;
 
+	// Kalpesh Review: this is bad practice to read property and env file in service
+	// layer make model for it and read it with help of encapsulation
 	@Autowired
 	private Environment environment;
 
 	@Autowired
 	private AmazonS3 amazonS3;
 
+	// Kalpesh Review: remove unused variables
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
 
+	// Kalpesh Review: this is bad practice to read property and env file in service
+	// layer make model for it and read it with help of encapsulation
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
 
 	@Value("${amazonProperties.bookBucketName}")
 	private String bookBucketName;
 
+	// Kalpesh Review: set key in yml and value in env
 	private String redisKey = "Key";
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
@@ -100,6 +111,11 @@ public class UserServiceImp implements UserService {
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
+
+		// Kalpesh Review: variable name refactor
+
+		// Kalpesh Review: Refactor logic to many database hits
+		// Try to make only one method in repo which takes email, and all parameters
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
@@ -109,9 +125,7 @@ public class UserServiceImp implements UserService {
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
-
 			return true;
-
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -141,6 +155,7 @@ public class UserServiceImp implements UserService {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
 		sendMail(user, token, templet);
 	}
+
 	private void resetPasswordMail(User user, Role role, String templet) {
 		String token = TokenUtility.resetPassword(user.getId(), role.getRoleId());
 		sendMail(user, token, templet);
@@ -153,6 +168,8 @@ public class UserServiceImp implements UserService {
 			logger.info(e.getMessage());
 		}
 	}
+
+	// Kalpesh Review: I don't know why findById?
 
 	public User findById(Long id) {
 		String text = Long.toString(id);
@@ -174,6 +191,7 @@ public class UserServiceImp implements UserService {
 		return (User) getSearchResult(searchResponse);
 	}
 
+	// Kalpesh Review: Why to get all users? Not needed
 	public List<User> getUser() {
 		List<User> user = userRepository.getUser();
 		if (user.isEmpty()) {
@@ -183,6 +201,7 @@ public class UserServiceImp implements UserService {
 		return user;
 	}
 
+	// Kalpesh Review: Why user delete? Not needed
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
@@ -191,6 +210,7 @@ public class UserServiceImp implements UserService {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
+		// Kalpesh Review: Name of variable
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -259,6 +279,8 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean isSessionActive(String token) {
+		// Kalpesh Review: need to check session for userID with role
+
 		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
 		User user = userRepository.findByUserId(id);
 		return user.isUserStatus();
@@ -266,6 +288,9 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean logOut(String token) throws UserException {
+		// Kalpesh Review: Not using redise cache? not setting id into redise after
+		// login?
+
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
@@ -307,7 +332,7 @@ public class UserServiceImp implements UserService {
 	public String uploadFileTos3bucket(String fileName, File file, String isProfile) {
 		if (isProfile.equalsIgnoreCase("false")) {
 			this.bucketName = this.bookBucketName;
-		}else if(!isProfile.equalsIgnoreCase("true")) {
+		} else if (!isProfile.equalsIgnoreCase("true")) {
 			return null;
 		}
 		amazonS3.putObject(
@@ -343,7 +368,7 @@ public class UserServiceImp implements UserService {
 			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
 			userRepository.saveImageUrl(null, id);
 			return true;
-		} else if(isProfile.equalsIgnoreCase("false")){
+		} else if (isProfile.equalsIgnoreCase("false")) {
 			amazonS3.deleteObject(new DeleteObjectRequest(bookBucketName, fileName));
 			return true;
 		}

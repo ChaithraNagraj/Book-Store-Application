@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,8 @@ import com.bridgelabz.bookstore.service.UserService;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+	// Kalpesh Review: Always make Autowired obj private.
+
 	@Autowired
 	UserService userService;
 
@@ -33,43 +34,44 @@ public class AdminController {
 
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<Response> getAllUsers(@RequestHeader("token") String token) {
-		List <User> users = userService.getUser();
-			return ResponseEntity.status(HttpStatus.OK).body(new Response("User Found", HttpStatus.OK.value(), users));
+		List<User> users = userService.getUser();
+		return ResponseEntity.status(HttpStatus.OK).body(new Response("User Found", HttpStatus.OK.value(), users));
 	}
 
 	@GetMapping("/getAllBuyers")
 	public ResponseEntity<Response> getAllBuyers(@RequestHeader("token") String token) {
-		
-		List <User> buyers = userService.getUser();
-			return ResponseEntity.status(HttpStatus.OK).body(new Response("User Found", HttpStatus.OK.value(), buyers));
-		}
 
+		List<User> buyers = userService.getUser();
+		return ResponseEntity.status(HttpStatus.OK).body(new Response("User Found", HttpStatus.OK.value(), buyers));
+	}
 
 	@GetMapping("/getAllSellers")
 	public ResponseEntity<Response> getAllSellers(@RequestHeader("token") String token) {
-		
-		List <User> sellers = userService.getUser();
+
+		List<User> sellers = userService.getUser();
 		return ResponseEntity.status(HttpStatus.OK).body(new Response("User Found", HttpStatus.OK.value(), sellers));
 	}
-	
 
-	
 	@GetMapping("/getAllBooks")
 	public ResponseEntity<Response> getAllBooks(@RequestHeader("token") String token) {
-		
+
 		List<Book> books = adminService.getAllBooks();
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.BOOK_FOUND, HttpStatus.OK.value(), books));
-		}
-	
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.BOOK_FOUND, HttpStatus.OK.value(), books));
+	}
+
 	@GetMapping("/getBooksForVerification")
 	public ResponseEntity<Response> getBooksForVerification(@RequestHeader("token") String token) {
-		
+
 		List<Book> books = adminService.getBooksForVerification();
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.BOOK_FOUND, HttpStatus.OK.value(), books));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(Constant.BOOK_FOUND, HttpStatus.OK.value(), books));
 	}
-	
+
 	@PutMapping("/bookVerification/{bookId}/{sellerId}")
-	public ResponseEntity<Response> bookVerification(@RequestHeader("token") String token, @PathVariable("bookId") Long bookId, @PathVariable("sellerId") Long sellerId, @RequestParam("verify") String verify) throws BookException {
+	public ResponseEntity<Response> bookVerification(@RequestHeader("token") String token,
+			@PathVariable("bookId") Long bookId, @PathVariable("sellerId") Long sellerId,
+			@RequestParam("verify") String verify) throws BookException {
 		adminService.bookVerification(bookId, sellerId, verify);
 		return ResponseEntity.status(HttpStatus.OK).body(new Response("Verification done", HttpStatus.OK.value()));
 	}
