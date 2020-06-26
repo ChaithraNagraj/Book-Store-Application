@@ -68,12 +68,12 @@ public class AdminServiceImp implements AdminService {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}		
-		List<Book> book = books.stream().filter(b->b.isApproved()).collect(Collectors.toList());
-		if(book.isEmpty()) {
-			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
-					Constant.NOT_FOUND_RESPONSE_CODE);
-		}	
-		return book;
+//		List<Book> book = books.stream().filter(b->b.isApproved()).collect(Collectors.toList());
+//		if(book.isEmpty()) {
+//			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+//					Constant.NOT_FOUND_RESPONSE_CODE);
+//		}	
+		return null;
 	}
 
 	@Override
@@ -96,13 +96,13 @@ public class AdminServiceImp implements AdminService {
 		User seller = userRepository.findByUserId(sellerId);
 		Role role = roleRepository.getRoleByName("SELLER");
 		if (verify.equals("yes")) {
-			book.setApproved(true);
+//			book.setApproved(true);
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
 		} else {
-			book.setApproved(false);
-			book.setNoOfRejections(book.getNoOfRejections() + 1);
-			if (book.getNoOfRejections() > 2) {
+//			book.setApproved(false);
+			book.setRejectionCounts(book.getRejectionCounts() + 1);
+			if (book.getRejectionCounts() > 2) {
 				bookRepository.deleteBook(book);
 				registerMail(seller, role, environment.getProperty("book-deletion-template-path"));
 			} else {
