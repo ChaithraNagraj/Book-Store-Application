@@ -68,5 +68,9 @@ public class Constant {
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
 	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
 	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
+	public static final String APPROVAL_STATUS_WAITING = "waiting";
+	public static final String APPROVAL_STATUS_APPROVED = "approved";
+	public static final String APPROVAL_STATUS_REJECTED = "rejected";
+	public static final String APPROVAL_STATUS_CREATED = "created";
 
 }
