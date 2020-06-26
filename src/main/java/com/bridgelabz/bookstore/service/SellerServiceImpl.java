@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -18,13 +21,11 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
-import com.bridgelabz.bookstore.exception.BookException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.exception.BookQuantityException;
 import com.bridgelabz.bookstore.exception.UserAuthorizationException;
@@ -101,7 +102,7 @@ public class SellerServiceImpl implements SellerService {
 		Book book = new Book();
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
-		book.setNoOfRejections(0);
+		book.setApprovalStatus(Constant.APPROVAL_STATUS_CREATED);
 		book.setSeller(seller);
 		bookRepository.save(book);
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
@@ -132,16 +133,26 @@ public class SellerServiceImpl implements SellerService {
 		if (updatedBookInfo.getQuantity() > 0)
 			quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
 		else {
-			if(bookToBeUpdated.getQuantity()<(-(updatedBookInfo.getQuantity()))) {
+			if (bookToBeUpdated.getQuantity() < (-(updatedBookInfo.getQuantity()))) {
 				throw new BookQuantityException("Book Quantity is Lower than entered quantity to remove");
 			}
-			quantity = bookToBeUpdated.getQuantity()+updatedBookInfo.getQuantity();
+			quantity = bookToBeUpdated.getQuantity() + updatedBookInfo.getQuantity();
 		}
 		bookToBeUpdated.setQuantity(quantity);
 		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
-		bookToBeUpdated.setApproved(false);
+		bookToBeUpdated.setApprovalStatus(Constant.APPROVAL_STATUS_WAITING);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		bookRepository.save(bookToBeUpdated);
+
+		Map<String, Object> bookMapper = objectMapper.convertValue(bookToBeUpdated, Map.class);
+		UpdateRequest updateRequest = new UpdateRequest(Constant.INDEX, Constant.TYPE,
+				String.valueOf(bookToBeUpdated.getBookId())).doc(bookMapper);
+		try {
+			client.update(updateRequest, RequestOptions.DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return bookToBeUpdated;
 	}
 
@@ -170,6 +181,12 @@ public class SellerServiceImpl implements SellerService {
 		Book bookTobeDeleted = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		bookRepository.deleteBook(bookTobeDeleted);
+		DeleteRequest deleteRequest = new DeleteRequest(Constant.INDEX, Constant.TYPE, String.valueOf(bookId));
+		try {
+			client.delete(deleteRequest, RequestOptions.DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 
@@ -216,11 +233,31 @@ public class SellerServiceImpl implements SellerService {
 		SearchHit[] searchHit = response.getHits().getHits();
 		List<Book> books = new ArrayList<>();
 		if (searchHit.length > 0) {
-
 			Arrays.stream(searchHit)
 					.forEach(hit -> books.add(objectMapper.convertValue(hit.getSourceAsMap(), Book.class)));
 		}
 		return books;
+	}
+
+	@Override
+	public boolean sentForApproval(long bookId, String token) {
+		authentication(token);
+		Book bookSentForApproval = bookRepository.getBookById(bookId)
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		if (bookSentForApproval.getApprovalStatus().equalsIgnoreCase(Constant.APPROVAL_STATUS_REJECTED)
+				|| bookSentForApproval.getApprovalStatus().equalsIgnoreCase(Constant.APPROVAL_STATUS_CREATED)) {
+			bookSentForApproval.setApprovalStatus(Constant.APPROVAL_STATUS_WAITING);
+			Map<String, Object> bookMapper = objectMapper.convertValue(bookSentForApproval, Map.class);
+			UpdateRequest updateRequest = new UpdateRequest(Constant.INDEX, Constant.TYPE,
+					String.valueOf(bookSentForApproval.getBookId())).doc(bookMapper);
+			try {
+				client.update(updateRequest, RequestOptions.DEFAULT);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		return false;
 	}
 
 }
