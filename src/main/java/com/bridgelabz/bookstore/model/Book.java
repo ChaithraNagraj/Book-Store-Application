@@ -55,6 +55,7 @@ public class Book {
 	@Column
 	private String bookDetails;
 
+
 	@Column(name = "is_approved",columnDefinition = "boolean default false")
 	@NotNull
 	private boolean isApproved;

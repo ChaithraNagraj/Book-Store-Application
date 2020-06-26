@@ -27,6 +27,7 @@ import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -39,6 +40,9 @@ public class SellerServiceImpl implements SellerService {
 
 	@Autowired
 	private UserRepo userRepository;
+	
+	@Autowired
+	private BookRepo bookRepository;
 	
 	@Autowired
 	private RoleRepository roleRepository;

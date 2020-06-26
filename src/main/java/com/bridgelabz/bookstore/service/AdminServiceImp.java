@@ -17,7 +17,9 @@ import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
+import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -31,6 +33,9 @@ public class AdminServiceImp implements AdminService {
 
 	@Autowired
 	UserRepo userRepository;
+	
+	@Autowired
+	private RedisCache<Object> redis;
 
 	@Autowired
 	private MailTempletService mailTempletService;
@@ -39,20 +44,35 @@ public class AdminServiceImp implements AdminService {
 	private Environment environment;
 
 	@Override
-	public List<User> getBuyers() {
-
-		List<User> buyers = roleRepository.getRoleByName("buyer").getUser();
-		if(buyers.isEmpty()) {
+	public List<User> getSellers(String token) {
+		
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		if(id==1) {
+			userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+					Constant.NOT_FOUND_RESPONSE_CODE));
+			}
+			else {
+				throw new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+						Constant.NOT_FOUND_RESPONSE_CODE);
+			}
+		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
+		
+		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}
-		return buyers;
-	}
-
-	@Override
-	public List<User> getSellers() {
-
-		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
+		int size=sellers.size();
+		int ctr=0;
+		for(int i=0;i<size;i++) {
+			
+			List<Book> book=sellers.get(i-ctr).getSellerBooks().stream().filter(b->b.isApproved()==false).collect(Collectors.toList());
+			if(book.isEmpty()) {
+				sellers.remove(i-ctr);
+				ctr++;
+			}
+			book.clear();
+			
+		}
 		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					Constant.NOT_FOUND_RESPONSE_CODE);
@@ -61,14 +81,24 @@ public class AdminServiceImp implements AdminService {
 	}
 
 	@Override
-	public List<Book> getAllBooks() {
+	public List<Book> getBooksForVerification(long sellerId, String token) {
 		
-		List<Book> books = bookRepository.findAllBooks();
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		if(id==1) {
+		userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+				Constant.NOT_FOUND_RESPONSE_CODE));
+		}
+		else {
+			throw new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		User seller = userRepository.findByUserId(sellerId);		
+		List<Book> books = seller.getSellerBooks();
 		if(books.isEmpty()) {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}		
-		List<Book> book = books.stream().filter(b->b.isApproved()).collect(Collectors.toList());
+		List<Book> book = books.stream().filter(b->b.isApproved()==false).collect(Collectors.toList());
 		if(book.isEmpty()) {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					Constant.NOT_FOUND_RESPONSE_CODE);
@@ -76,26 +106,26 @@ public class AdminServiceImp implements AdminService {
 		return book;
 	}
 
-	@Override
-	public List<Book> getBooksForVerification() {
+	
 
+	@Override
+	public void bookVerification(Long bookId, Long sellerId, boolean verify, String token) throws BookException {
 		
-		List<Book> books = bookRepository.getBooksForVerification();
-		if(books.isEmpty()) {
-			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
-					Constant.NOT_FOUND_RESPONSE_CODE);
-		}
-		return bookRepository.getBooksForVerification();
-	}
-
-	@Override
-	public void bookVerification(Long bookId, Long sellerId, String verify) throws BookException {
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		if(id==1) {
+			userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+					Constant.NOT_FOUND_RESPONSE_CODE));
+			}
+			else {
+				throw new UserNotFoundException(Constant.ADMIN_CREDENTIALS_MISMATCH,
+						Constant.NOT_FOUND_RESPONSE_CODE);
+			}
 		Book book = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookException(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
 
 		User seller = userRepository.findByUserId(sellerId);
 		Role role = roleRepository.getRoleByName("SELLER");
-		if (verify.equals("yes")) {
+		if (verify) {
 			book.setApproved(true);
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));

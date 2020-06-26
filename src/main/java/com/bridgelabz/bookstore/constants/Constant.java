@@ -64,5 +64,7 @@ public class Constant {
 	public static final String PROFILE_IMAGE_DELETED_FAILED = "Image Deleted Failed";
 	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
-
+	public static final String ADMIN_CREDENTIALS_MISMATCH = "Admin Credentials Mismatch";
+	public static final String USER_FOUND = "User Found";
+	public static final String BOOK_VERIFIED_SUCCESSFULLY_MEAASGE = "Book Verified Successfully";
 }

@@ -1,6 +1,7 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
@@ -26,8 +27,6 @@ public interface UserRepo {
 
 	public List<User> findByEmail(String email);
 	
-	
-
 	public Role findByRoleId(Long parseLong);
 
 	public void saveRoles(Role role);
@@ -41,5 +40,7 @@ public interface UserRepo {
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
 	
 	public User getusersByLoginId(String loginId);
+	
+	public Optional<User> getUserById(long userId);
 
 }

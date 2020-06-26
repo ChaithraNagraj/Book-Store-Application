@@ -48,9 +48,6 @@ public class BookServiceImp implements BookService {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
 	private UserRepo userRepository;
 
 	@Override
@@ -96,6 +93,7 @@ public class BookServiceImp implements BookService {
 		bookEntity.setNoOfRejections(0);
 
 		User user = userRepository.findByUserId(userId);
+		
 		user.getSellerBooks().add(bookEntity);
 		userRepository.addUser(user);
 	}
