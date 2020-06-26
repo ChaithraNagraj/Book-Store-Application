@@ -65,6 +65,7 @@ public class AdminServiceImp implements AdminService {
 				throw new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 						AdminConstants.NOT_FOUND_RESPONSE_CODE);
 			}
+		
 		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
 		
 		if(sellers.isEmpty()) {
@@ -75,7 +76,7 @@ public class AdminServiceImp implements AdminService {
 		int ctr=0;
 		for(int i=0;i<size;i++) {
 			
-			List<Book> book=sellers.get(i-ctr).getSellerBooks().stream().filter(b->b.getApprovalStatus()==Constant.APPROVAL_STATUS_WAITING).collect(Collectors.toList());
+			List<Book> book=sellers.get(i-ctr).getSellerBooks().stream().filter(b->b.getApprovalStatus().equals(Constant.APPROVAL_STATUS_WAITING)).collect(Collectors.toList());
 			if(book.isEmpty()) {
 				sellers.remove(i-ctr);
 				ctr++;
@@ -112,12 +113,15 @@ public class AdminServiceImp implements AdminService {
 		}
 		User seller = userRepository.findByUserId(sellerId);		
 		List<Book> books = seller.getSellerBooks();
+		System.out.println(books);
 		if(books.isEmpty()) {
+			
 			throw new UserNotFoundException(AdminConstants.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}		
 
-		List<Book> book = books.stream().filter(b->b.getApprovalStatus()==AdminConstants.APPROVAL_STATUS_WAITING).collect(Collectors.toList());
+		List<Book> book = books.stream().filter(b->b.getApprovalStatus().equals(AdminConstants.APPROVAL_STATUS_WAITING)).collect(Collectors.toList());
+		System.out.println(book);
 		if(book.isEmpty()) {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
