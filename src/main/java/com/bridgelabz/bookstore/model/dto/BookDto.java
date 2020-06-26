@@ -1,36 +1,30 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookDto {
-	// Kalpesh Review: Handle all validation at DTO level
 
+	@NotBlank(message = "Book Name can not be empty")
 	private String bookName;
 
+	@Min(value = 1, message = "Quantity can't be less than 1")
 	private int quantity;
 
+	@Min(value = 0, message = "price can't be less than 0")
 	private Double price;
 
+	@NotBlank(message = "Author Name can not be empty")
 	private String authorName;
 
-	private String image;
+	@NotBlank(message = "provide an image for book")
+	private String imageURL;
 
-	private String bookDetails;
-
-	public BookDto() {
-		super();
-	}
-
-	public BookDto(String bookName, int quantity, Double price, String authorName, String image, String bookDetails) {
-		super();
-		this.bookName = bookName;
-		this.quantity = quantity;
-		this.price = price;
-		this.authorName = authorName;
-		this.image = image;
-		this.bookDetails = bookDetails;
-	}
+	@NotBlank(message = "Book Description can not be empty")
+	private String description;
 
 	public String getBookName() {
 		return bookName;
@@ -57,33 +51,32 @@ public class BookDto {
 	}
 
 	public String getAuthorName() {
-		return authorName;
+		return this.authorName;
 	}
 
 	public void setAuthorName(String authorName) {
 		this.authorName = authorName;
 	}
 
-	public String getImage() {
-		return image;
+	public String getimageURL() {
+		return imageURL;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setimageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 
-	public String getBookDetails() {
-		return bookDetails;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setBookDetails(String bookDetails) {
-		this.bookDetails = bookDetails;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
 	public String toString() {
 		return "BookDto [bookName=" + bookName + ", quantity=" + quantity + ", price=" + price + ", authorName="
-				+ authorName + ", image=" + image + ", bookDetails=" + bookDetails + "]";
+				+ authorName + ", imageURL=" + imageURL + ", description=" + description + "]";
 	}
-
 }
