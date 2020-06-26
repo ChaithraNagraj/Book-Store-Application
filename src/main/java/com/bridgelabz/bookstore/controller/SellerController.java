@@ -34,6 +34,7 @@ import io.swagger.annotations.Api;
 @Api(value = "Seller Controller to perform CRUD operations on book")
 public class SellerController {
 
+
 	@Autowired
 	private SellerService sellerService;
 

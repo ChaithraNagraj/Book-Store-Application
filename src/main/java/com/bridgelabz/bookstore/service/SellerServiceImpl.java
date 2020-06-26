@@ -46,6 +46,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 public class SellerServiceImpl implements SellerService {
 
+	
+
 	@Autowired
 	private UserRepo userRepository;
 
@@ -82,6 +84,9 @@ public class SellerServiceImpl implements SellerService {
 
 	}
 
+
+	@SuppressWarnings("unchecked")
+
 	/**
 	 * Method to add a new book
 	 * 
@@ -90,6 +95,7 @@ public class SellerServiceImpl implements SellerService {
 	 * @throws - BookAlreadyExistsException => if book already exists with same name
 	 *           and price
 	 */
+
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
@@ -114,6 +120,7 @@ public class SellerServiceImpl implements SellerService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return book;
 	}
 
