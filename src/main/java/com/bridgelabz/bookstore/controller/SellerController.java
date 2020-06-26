@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.SellerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,16 +48,6 @@ public class SellerController {
 	@PostMapping(value = "/addBook")
 	public ResponseEntity<Response> addBook(@RequestBody BookDto newBook, @RequestHeader("token") String token) {
 		Book addedbook = sellerService.addBook(newBook, token);
-       Map<String, Object> documentMapper = objectMapper.convertValue(addedbook, Map.class);
-		
-		IndexRequest indexRequest = new IndexRequest(Constant.INDEX1, Constant.TYPE1, String.valueOf(addedbook.getBookId()))
-				.source(documentMapper);
-		try {
-			client.index(indexRequest, RequestOptions.DEFAULT);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		if (addedbook != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new Response(
 					Constant.BOOK_ADDITION_SUCCESSFULL_MESSAGE, Constant.CREATED_RESPONSE_CODE, addedbook));
@@ -67,7 +57,7 @@ public class SellerController {
 	}
 
 	@PutMapping(value = "/updateBook/{bookId}", headers = "Accept=application/json")
-	public ResponseEntity<Response> updateBook(@RequestBody BookDto updatedBookInfo, @PathVariable long bookId,
+	public ResponseEntity<Response> updateBook(@RequestBody UpdateBookDto updatedBookInfo, @PathVariable long bookId,
 			@RequestHeader("token") String token) {
 		Book updatedBook = sellerService.updateBook(updatedBookInfo, bookId, token);
 		if (updatedBook != null) {
@@ -113,11 +103,15 @@ public class SellerController {
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
 	}
 
-	@PutMapping(value = "/uploadBookImage")
-	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
-		System.out.println(image.getOriginalFilename());
-		String imageUrl = sellerService.uploadImage(image);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response("Book image added sucessfully", Constant.OK_RESPONSE_CODE, imageUrl));
+	@GetMapping("/search/{input}")
+	public ResponseEntity<Response> searchNotes(@RequestHeader(value = "token") String token,
+			@PathVariable String input) throws IOException {
+
+		List<Book> books = sellerService.searchBook(token, input);
+		if (books.isEmpty())
+			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
+
+		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
+
 	}
 }

@@ -8,13 +8,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "book")
 public class Book {
 
+	// Kalpesh Review: Good practice is to give column name while defining variables
+	// in entity as per requirement
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id")
@@ -46,23 +52,33 @@ public class Book {
 	@Column(name = "verified_date_time")
 	private LocalDateTime verifiedDateAndTime;
 
+	// Kalpesh Review: proper name rejectionCounts
 	@Column
 	private int noOfRejections;
 
+	// Kalpesh Review: proper name imageURL
 	@Column
 	private String image;
-	
-	@Column
+
+	// Kalpesh Review: proper name description
+	@Column(length = 10000)
 	private String bookDetails;
 
-	@Column(name = "is_approved",columnDefinition = "boolean default false")
+	@Column(name = "is_approved", columnDefinition = "boolean default false")
 	@NotNull
 	private boolean isApproved;
 
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private User seller;
+
 	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
 			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
+			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,
+			String bookDetails) {
 		super();
+		// Kalpesh Review: No one is going to set bookId so why in constructor ?
 		this.bookId = bookid;
 		this.bookName = bookName;
 		this.quantity = quantity;
@@ -169,7 +185,6 @@ public class Book {
 		this.isApproved = isApproved;
 	}
 
-
 	public String getBookDetails() {
 		return bookDetails;
 	}
@@ -178,18 +193,21 @@ public class Book {
 		this.bookDetails = bookDetails;
 	}
 
+	public User getSeller() {
+		return seller;
+	}
+
+	public void setSeller(User seller) {
+		this.seller = seller;
+	}
 
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-
-	
-
 				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
 				+ ", isApproved=" + isApproved + "]";
 	}
-
 
 }

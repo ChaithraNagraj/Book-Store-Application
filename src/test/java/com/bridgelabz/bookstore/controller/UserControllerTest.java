@@ -44,17 +44,9 @@ class UserControllerTest {
 
 	@Test
 	final void testGetUserById() {
-		//ResponseEntity r=new ResponseEntity(HttpStatus.ACCEPTED);
 		when(service.findById(1l)).thenReturn(user);
-		    // Usercontroller.getUserById(1l);
-//		assertNotNull(user);
-//		 Mockito
-//         .when(Usercontroller.getUserById(1l))
-//         .thenReturn(new ResponseEntity(user, HttpStatus.OK));
 		   Usercontroller.getUserById(1l);
 		 assertEquals("pallavi", user.getName());
-	
-		
 	}
 
 }

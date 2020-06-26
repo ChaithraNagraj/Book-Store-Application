@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -45,6 +43,7 @@ import com.bridgelabz.bookstore.model.dto.LoginDTO;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
@@ -55,15 +54,13 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
+//Kalpesh Review: Give transaction at method level
 @Transactional
 public class UserServiceImp implements UserService {
 
-	@Autowired
-	private RestHighLevelClient client;
 
-	@Autowired
-	private ObjectMapper objectMapper;
 
+	// Kalpesh Review: RoleRepositoryImp don't have interface layer?
 	@Autowired
 	private RoleRepositoryImp roleRepository;
 
@@ -79,19 +76,27 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private RedisCache<Object> redis;
 
+	// Kalpesh Review: this is bad practice to read property and env file in service
+	// layer make model for it and read it with help of encapsulation
 	@Autowired
 	private Environment environment;
 
 	@Autowired
 	private AmazonS3 amazonS3;
 
-
+	// Kalpesh Review: remove unused variables
 	@Value("${amazonProperties.endpointUrl}")
 	private String endpointUrl;
 
+	// Kalpesh Review: this is bad practice to read property and env file in service
+	// layer make model for it and read it with help of encapsulation
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
 
+	@Value("${amazonProperties.bookBucketName}")
+	private String bookBucketName;
+
+	// Kalpesh Review: set key in yml and value in env
 	private String redisKey = "Key";
 
 	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
@@ -99,6 +104,11 @@ public class UserServiceImp implements UserService {
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
+
+		// Kalpesh Review: variable name refactor
+
+		// Kalpesh Review: Refactor logic to many database hits
+		// Try to make only one method in repo which takes email, and all parameters
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
@@ -108,9 +118,7 @@ public class UserServiceImp implements UserService {
 					});
 			userEmailExists.get().roleList.add(role);
 			userRepository.addUser(userEmailExists.get());
-
 			return true;
-
 		} else {
 			User userEntity = new User();
 			userDetails.setPassword(encrypt.bCryptPasswordEncoder().encode(userDetails.getPassword()));
@@ -122,16 +130,7 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
-			@SuppressWarnings("unchecked")
-			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
-			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
-					String.valueOf(userEntity.getId())).source(documentMapper);
-			try {
-				client.index(indexRequest, RequestOptions.DEFAULT);
-			} catch (IOException e) {
 
-				e.printStackTrace();
-			}
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
@@ -139,9 +138,13 @@ public class UserServiceImp implements UserService {
 		
 	}
 
-
 	private void registerMail(User user, Role role, String templet) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
+		sendMail(user, token, templet);
+	}
+
+	private void resetPasswordMail(User user, Role role, String templet) {
+		String token = TokenUtility.resetPassword(user.getId(), role.getRoleId());
 		sendMail(user, token, templet);
 	}
 
@@ -152,6 +155,8 @@ public class UserServiceImp implements UserService {
 			logger.info(e.getMessage());
 		}
 	}
+
+	// Kalpesh Review: I don't know why findById?
 
 	public User findById(Long id) {
 //		String text = Long.toString(id);
@@ -174,27 +179,26 @@ public class UserServiceImp implements UserService {
 		return userRepository.findByUserId(id);
 	}
 
+	// Kalpesh Review: Why to get all users? Not needed
 	public List<User> getUser() {
-		List<User> user =  userRepository.getUser();
-		if(user.isEmpty()) {
+		List<User> user = userRepository.getUser();
+		if (user.isEmpty()) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}
 		return user;
 	}
 
+	// Kalpesh Review: Why user delete? Not needed-->{needed for admin}
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
 
-	public User update(User user, Long id) {
-		return userRepository.update(user, id);
-	}
-
 	public boolean verify(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-		long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
+		// Kalpesh Review: Name of variable
 		User idAvailable = userRepository.findByUserId(id);
 		if (idAvailable == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -238,7 +242,7 @@ public class UserServiceImp implements UserService {
 	public boolean forgetPassword(String email) throws UserException {
 		User maybeUser = userRepository.getusersByemail(email);
 		if (maybeUser != null && maybeUser.isVerify()) {
-			registerMail(maybeUser, maybeUser.getRoleList().get(0),
+			resetPasswordMail(maybeUser, maybeUser.getRoleList().get(0),
 					environment.getProperty("forgot-password-template-path"));
 			return true;
 		}
@@ -247,8 +251,8 @@ public class UserServiceImp implements UserService {
 
 	public boolean resetPassword(ResetPasswordDto resetPassword, String token) throws UserException {
 		if (resetPassword.getPassword().equals(resetPassword.getConfirmpassword())) {
-			Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
-			Long roleId =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
+			Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+			Long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 			User user = userRepository.findByUserId(id);
 			if (user != null) {
 				userRepository.updatePassword(user.getId(),
@@ -263,6 +267,8 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean isSessionActive(String token) {
+		// Kalpesh Review: need to check session for userID with role
+
 		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
 		User user = userRepository.findByUserId(id);
 		return user.isUserStatus();
@@ -270,7 +276,10 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean logOut(String token) throws UserException {
-		Long id =  Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
+		// Kalpesh Review: Not using redise cache? not setting id into redise after
+		// login?
+
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
 			throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
@@ -284,16 +293,12 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public boolean updateUser(String userName, String password, String token) throws UserException {
+	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User isUserExist = userRepository.findByUserId(id);
 		if (isUserExist != null) {
-			User user = new User();
-			BeanUtils.copyProperties(isUserExist, user);
-			user.setUserName(userName);
-			user.setPassword(password);
-			user.setUpdateDateTime(DateUtility.today());
-			userRepository.update(isUserExist, id);
+			userRepository.update(updateDTO, id);
+			userRepository.updatePassword(id, encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
 			return true;
 		}
 		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
@@ -308,27 +313,31 @@ public class UserServiceImp implements UserService {
 	}
 
 	public static String generateFileName(MultipartFile multiPart) {
-		return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+		return new Date().getTime() + "_" + multiPart.getOriginalFilename().replace(" ", "_");
 	}
 
 	@Override
-	public void uploadFileTos3bucket(String fileName, File file) {
+	public String uploadFileTos3bucket(String fileName, File file, String isProfile) {
+		if (isProfile.equalsIgnoreCase("false")) {
+			this.bucketName = this.bookBucketName;
+		} else if (!isProfile.equalsIgnoreCase("true")) {
+			return null;
+		}
 		amazonS3.putObject(
 				new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+		return amazonS3.getUrl(bucketName, fileName).toString();
 	}
 
 	@Override
-	public String uploadFile(MultipartFile multipartFile, String token) throws IOException {
-		String fileUrl = "";
+	public String uploadFile(MultipartFile multipartFile, String token, String isProfile) {
+		String fileUrl = null;
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		try {
 			File file = convertMultiPartToFile(multipartFile);
-			System.out.println("File " + file);
 			String fileName = generateFileName(multipartFile);
-			logger.info("File Name: " + fileName);
-			fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-			uploadFileTos3bucket(fileName, file);
-			userRepository.saveImageUrl(fileUrl, id);
+			fileUrl = uploadFileTos3bucket(fileName, file, isProfile);
+			if (isProfile.equalsIgnoreCase("true"))
+				userRepository.saveImageUrl(fileUrl, id);
 			file.delete();
 		} catch (AmazonServiceException ase) {
 			ase.printStackTrace();
@@ -338,25 +347,22 @@ public class UserServiceImp implements UserService {
 			e.printStackTrace();
 		}
 		return fileUrl;
-
 	}
 
-	public boolean deleteFileFromS3Bucket(String fileUrl) {
+	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile) {
+		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-		logger.info("FileName: " + fileName);
-		logger.info("bucketName: " + bucketName);
-		amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
-		return true;
-	}
-
-	private User getSearchResult(SearchResponse response) {
-
-		SearchHit[] searchHit = response.getHits().getHits();
-		User u = new User();
-		for (SearchHit hit : searchHit) {
-			u = (objectMapper.convertValue(hit.getSourceAsMap(), User.class));
+		if (isProfile.equalsIgnoreCase("true")) {
+			amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
+			userRepository.saveImageUrl(null, id);
+			return true;
+		} else if (isProfile.equalsIgnoreCase("false")) {
+			amazonS3.deleteObject(new DeleteObjectRequest(bookBucketName, fileName));
+			return true;
 		}
-		return u;
+		return false;
 	}
+
+
 
 }

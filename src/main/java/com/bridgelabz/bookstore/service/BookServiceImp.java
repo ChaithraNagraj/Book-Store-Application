@@ -57,8 +57,8 @@ public class BookServiceImp implements BookService {
 	
 	public List<Book> findBookByAuthorNameAndTile(String text) {
 		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX1);
-		searchRequest.types(Constant.TYPE1);
+		searchRequest.indices("bookentity");
+		searchRequest.types("doc");
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder query = QueryBuilders.boolQuery()
 				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("authorName").field("bookName"))

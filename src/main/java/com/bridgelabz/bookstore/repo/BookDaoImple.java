@@ -66,7 +66,10 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public void deleteBook(Book book) {
 		Session session = entityManager.unwrap(Session.class);
-		session.delete(book);	
+//		session.delete(book);	
+		Query query = session.createQuery("DELETE FROM Book where book_id=:bookId");
+		query.setParameter("bookId", book.getBookId());
+		query.executeUpdate();
 	}
 
 	@Override
@@ -84,6 +87,14 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> sortBookDesc() {
 		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price DESC;").addEntity(Book.class).list();
+	}
+
+	@Override
+	public List<Book> findBySellerId(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("From Book where seller_id=:id");
+		query.setParameter("id", id);
+		return query.getResultList();
 	}
 	
 	

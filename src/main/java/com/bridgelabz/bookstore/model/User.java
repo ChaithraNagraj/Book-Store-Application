@@ -78,10 +78,13 @@ public class User {
 	public List<Role> roleList;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "seller_id")
 	private List<Book> sellerBooks;
+
+	// Kalpesh Review: Bad practice to pass more than 4 parameters
+	// make object and then pass it
+	// and validation is inside call not at parameter level
 
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
 			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
