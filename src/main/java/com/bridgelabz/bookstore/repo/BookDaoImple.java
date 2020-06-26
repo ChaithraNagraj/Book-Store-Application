@@ -33,7 +33,7 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> findBookByAuthorName(String authorName) {
 		Session session = entityManager.unwrap(Session.class);
-		Query<Book> q = session.createQuery("From Book where authorName=:name");
+		Query<Book> q = session.createQuery("From Book where author_name=:name");
 		q.setParameter("name", authorName);
 		return q.getResultList();
 	}
@@ -41,7 +41,7 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> findBookByTitle(String bookName) {
 		Session session = entityManager.unwrap(Session.class);
-		Query<Book> q = session.createQuery("From Book where bookName=:name");
+		Query<Book> q = session.createQuery("From Book where book_name=:name");
 		q.setParameter("name", bookName);
 		return q.getResultList();
 	}
@@ -60,34 +60,43 @@ public class BookDaoImple implements BookRepo {
 		Query<Book> q = session.createQuery("From Book where book_id=:value");
 		q.setParameter("value", bookId);
 		return q.uniqueResultOptional();
-		
+
 	}
 
 	@Override
 	public void deleteBook(Book book) {
 		Session session = entityManager.unwrap(Session.class);
-		session.delete(book);	
+//		session.delete(book);	
+		Query query = session.createQuery("DELETE FROM Book where book_id=:bookId");
+		query.setParameter("bookId", book.getBookId());
+		query.executeUpdate();
 	}
 
 	@Override
 	public void save(Book book) {
 		Session session = entityManager.unwrap(Session.class);
 		session.saveOrUpdate(book);
-		
+
 	}
 
 	@Override
 	public List<Book> sortBookAsc() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price ASC;").addEntity(Book.class).list();
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price ASC;")
+				.addEntity(Book.class).list();
 	}
 
 	@Override
 	public List<Book> sortBookDesc() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price DESC;").addEntity(Book.class).list();
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price DESC;")
+				.addEntity(Book.class).list();
 	}
-	
-	
-	
-	
-	
+
+	@Override
+	public List<Book> findBySellerId(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("From Book where seller_id=:id");
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+
 }

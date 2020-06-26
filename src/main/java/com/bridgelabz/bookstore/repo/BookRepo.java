@@ -25,4 +25,6 @@ public interface BookRepo {
 
 	public List<Book> sortBookDesc();
 
+	public List<Book> findBySellerId(Long id);
+
 }

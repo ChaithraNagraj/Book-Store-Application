@@ -1,10 +1,14 @@
 package com.bridgelabz.bookstore.controller;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +19,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.SellerService;
 
@@ -30,11 +34,20 @@ import io.swagger.annotations.Api;
 @Api(value = "Seller Controller to perform CRUD operations on book")
 public class SellerController {
 
+
 	@Autowired
 	private SellerService sellerService;
 
+	@Autowired
+	private Response response;
+
 	@PostMapping(value = "/addBook")
-	public ResponseEntity<Response> addBook(@RequestBody BookDto newBook, @RequestHeader("token") String token) {
+	public ResponseEntity<Response> addBook(@RequestBody @Valid BookDto newBook,BindingResult result, @RequestHeader("token") String token) {
+		if (result.hasErrors()) {
+			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
+			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 		Book addedbook = sellerService.addBook(newBook, token);
 		if (addedbook != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new Response(
@@ -42,11 +55,17 @@ public class SellerController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.BOOK_ADDITION_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE));
+
 	}
 
 	@PutMapping(value = "/updateBook/{bookId}", headers = "Accept=application/json")
-	public ResponseEntity<Response> updateBook(@RequestBody BookDto updatedBookInfo, @PathVariable long bookId,
-			@RequestHeader("token") String token) {
+	public ResponseEntity<Response> updateBook(@RequestBody @Valid UpdateBookDto updatedBookInfo, BindingResult result,
+			@PathVariable long bookId, @RequestHeader("token") String token) {
+		if (result.hasErrors()) {
+			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
+			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
+					HttpStatus.NOT_ACCEPTABLE);
+		}
 		Book updatedBook = sellerService.updateBook(updatedBookInfo, bookId, token);
 		if (updatedBook != null) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(new Response(
@@ -91,11 +110,22 @@ public class SellerController {
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
 	}
 
-	@PutMapping(value = "/uploadBookImage")
-	public ResponseEntity<Response> updateBookImage(@RequestParam("file") MultipartFile image) {
-		System.out.println(image.getOriginalFilename());
-		String imageUrl = sellerService.uploadImage(image);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response("Book image added sucessfully", Constant.OK_RESPONSE_CODE, imageUrl));
+	@GetMapping("/search/{input}")
+	public ResponseEntity<Response> searchNotes(@RequestHeader(value = "token") String token,
+			@PathVariable String input) throws IOException {
+
+		List<Book> books = sellerService.searchBook(token, input);
+		if (books.isEmpty())
+			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
+
+		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
+	}
+	
+	@PutMapping("/approvalSent/{bookId}")
+	public ResponseEntity<Response> sentForApproval(@RequestHeader("token") String token,@PathVariable("bookId") long bookId){
+		if(sellerService.sentForApproval(bookId,token)) {
+			return new ResponseEntity<>(new Response("Book sent For Approval Success", HttpStatus.OK.value()),HttpStatus.OK);
+		}
+		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.OK.value()),HttpStatus.OK);
 	}
 }

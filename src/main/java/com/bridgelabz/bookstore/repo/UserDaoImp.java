@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.UpdateDTO;
 import com.bridgelabz.bookstore.utils.DateUtility;
 
 @Repository
@@ -43,9 +44,12 @@ public class UserDaoImp implements UserRepo {
 		return q.getResultList();
 	}
 
-	public User update(User val, Long id) {
+	public User update(UpdateDTO updateDTO, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
+		user.setUserName(updateDTO.getUserName());
+		user.setPassword(updateDTO.getPassword());
+		user.setUpdateDateTime(DateUtility.today());
 		session.update(user);
 		return user;
 	}
