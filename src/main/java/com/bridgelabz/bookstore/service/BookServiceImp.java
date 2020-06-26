@@ -92,8 +92,8 @@ public class BookServiceImp implements BookService {
 		bookEntity.setCreatedDateAndTime(LocalDateTime.now());
 		bookEntity.setLastUpdatedDateAndTime(LocalDateTime.now());
 		bookEntity.setVerifiedDateAndTime(LocalDateTime.now());
-		bookEntity.setApproved(false);
-		bookEntity.setNoOfRejections(0);
+		bookEntity.setApprovalStatus(Constant.APPROVAL_STATUS_CREATED);
+		bookEntity.setRejectionCounts(0);
 
 		User user = userRepository.findByUserId(userId);
 		user.getSellerBooks().add(bookEntity);
