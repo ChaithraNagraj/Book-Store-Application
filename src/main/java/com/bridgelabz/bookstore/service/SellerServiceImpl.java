@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -31,7 +34,9 @@ import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
+
 import com.bridgelabz.bookstore.model.dto.UpdateBookDto;
+
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
@@ -43,9 +48,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 public class SellerServiceImpl implements SellerService {
 
+	
+
 	@Autowired
 	private UserRepo userRepository;
 
+	
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -79,6 +87,9 @@ public class SellerServiceImpl implements SellerService {
 
 	}
 
+
+	@SuppressWarnings("unchecked")
+
 	/**
 	 * Method to add a new book
 	 * 
@@ -87,6 +98,7 @@ public class SellerServiceImpl implements SellerService {
 	 * @throws - BookAlreadyExistsException => if book already exists with same name
 	 *           and price
 	 */
+
 	@Override
 	public Book addBook(BookDto newBook, String token) {
 		User seller = authentication(token);
@@ -99,7 +111,7 @@ public class SellerServiceImpl implements SellerService {
 		Book book = new Book();
 		BeanUtils.copyProperties(newBook, book);
 		book.setCreatedDateAndTime(DateUtility.today());
-		book.setNoOfRejections(0);
+		book.setApprovalStatus(Constant.APPROVAL_STATUS_CREATED);
 		book.setSeller(seller);
 		bookRepository.save(book);
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
@@ -111,6 +123,7 @@ public class SellerServiceImpl implements SellerService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return book;
 	}
 
@@ -130,16 +143,26 @@ public class SellerServiceImpl implements SellerService {
 		if (updatedBookInfo.getQuantity() > 0)
 			quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
 		else {
-			if(bookToBeUpdated.getQuantity()<(-(updatedBookInfo.getQuantity()))) {
+			if (bookToBeUpdated.getQuantity() < (-(updatedBookInfo.getQuantity()))) {
 				throw new BookQuantityException("Book Quantity is Lower than entered quantity to remove");
 			}
-			quantity = bookToBeUpdated.getQuantity()+updatedBookInfo.getQuantity();
+			quantity = bookToBeUpdated.getQuantity() + updatedBookInfo.getQuantity();
 		}
 		bookToBeUpdated.setQuantity(quantity);
 		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
-		bookToBeUpdated.setApproved(false);
+		bookToBeUpdated.setApprovalStatus(Constant.APPROVAL_STATUS_WAITING);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		bookRepository.save(bookToBeUpdated);
+
+		Map<String, Object> bookMapper = objectMapper.convertValue(bookToBeUpdated, Map.class);
+		UpdateRequest updateRequest = new UpdateRequest(Constant.INDEX, Constant.TYPE,
+				String.valueOf(bookToBeUpdated.getBookId())).doc(bookMapper);
+		try {
+			client.update(updateRequest, RequestOptions.DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return bookToBeUpdated;
 	}
 
@@ -168,6 +191,12 @@ public class SellerServiceImpl implements SellerService {
 		Book bookTobeDeleted = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		bookRepository.deleteBook(bookTobeDeleted);
+		DeleteRequest deleteRequest = new DeleteRequest(Constant.INDEX, Constant.TYPE, String.valueOf(bookId));
+		try {
+			client.delete(deleteRequest, RequestOptions.DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 
@@ -214,11 +243,31 @@ public class SellerServiceImpl implements SellerService {
 		SearchHit[] searchHit = response.getHits().getHits();
 		List<Book> books = new ArrayList<>();
 		if (searchHit.length > 0) {
-
 			Arrays.stream(searchHit)
 					.forEach(hit -> books.add(objectMapper.convertValue(hit.getSourceAsMap(), Book.class)));
 		}
 		return books;
+	}
+
+	@Override
+	public boolean sentForApproval(long bookId, String token) {
+		authentication(token);
+		Book bookSentForApproval = bookRepository.getBookById(bookId)
+				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		if (bookSentForApproval.getApprovalStatus().equalsIgnoreCase(Constant.APPROVAL_STATUS_REJECTED)
+				|| bookSentForApproval.getApprovalStatus().equalsIgnoreCase(Constant.APPROVAL_STATUS_CREATED)) {
+			bookSentForApproval.setApprovalStatus(Constant.APPROVAL_STATUS_WAITING);
+			Map<String, Object> bookMapper = objectMapper.convertValue(bookSentForApproval, Map.class);
+			UpdateRequest updateRequest = new UpdateRequest(Constant.INDEX, Constant.TYPE,
+					String.valueOf(bookSentForApproval.getBookId())).doc(bookMapper);
+			try {
+				client.update(updateRequest, RequestOptions.DEFAULT);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

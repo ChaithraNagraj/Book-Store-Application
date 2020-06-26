@@ -2,6 +2,7 @@
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,9 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,31 +21,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "book")
 public class Book {
 
-	// Kalpesh Review: Good practice is to give column name while defining variables
-	// in entity as per requirement
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id")
 	private Long bookId;
 
-	@Column
-	@NotNull
+	@Column(name = "book_name", nullable = false)
 	private String bookName;
 
-	@Column
-	@NotNull
+	@Column(name = "quantity", nullable = false)
+	@Min(value = 1)
 	private int quantity;
 
-	@Column
-	@NotNull
+	@Column(name = "price", nullable = false)
+	@Min(value = 0)
 	private Double price;
 
-	@Column
-	@NotNull
+	@Column(name = "author_name", nullable = false, columnDefinition = "varchar(255) DEFAULT 'Anonymous'")
 	private String authorName;
 
-	@Column(name = "created_date_time")
-	@NotNull
+	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
 
 	@Column(name = "lastupdated_date_time")
@@ -52,50 +49,56 @@ public class Book {
 	@Column(name = "verified_date_time")
 	private LocalDateTime verifiedDateAndTime;
 
-	// Kalpesh Review: proper name rejectionCounts
-	@Column
-	private int noOfRejections;
+	@Column(name = "rejection_counts", columnDefinition = "int default 0")
+	private int rejectionCounts;
 
-	// Kalpesh Review: proper name imageURL
-	@Column
-	private String image;
+//<<<<<<< HEAD
+//	@Column
+//	private String image;
+//	
+//	@Column
+//	private String bookDetails;
+//
+//
+//	@Column(name = "is_approved",columnDefinition = "boolean default false")
+//	@NotNull
+//	private boolean isApproved;
+//
+//	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
+//			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
+//			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
+//		super();
+//		this.bookId = bookid;
+//		this.bookName = bookName;
+//		this.quantity = quantity;
+//		this.price = price;
+//		this.authorName = authorName;
+//		this.createdDateAndTime = createdDateAndTime;
+//		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
+//		this.verifiedDateAndTime = verifiedDateAndTime;
+//		this.noOfRejections = noOfRejections;
+//		this.image = image;
+//		this.isApproved = isapproved;
+//		this.bookDetails = bookDetails;
+//	}
+//=======
+	@Column(name = "image_URL", nullable = false)
+	private String imageURL;
 
-	// Kalpesh Review: proper name description
-	@Column(length = 10000)
-	private String bookDetails;
 
-	@Column(name = "is_approved", columnDefinition = "boolean default false")
-	@NotNull
-	private boolean isApproved;
+	@Column(name = "description", length = 1000, nullable = false)
+	private String description;
+
+	@Column(name = "approval_status",nullable = false)
+	private String approvalStatus;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private User seller;
-
-	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,
-			String bookDetails) {
-		super();
-		// Kalpesh Review: No one is going to set bookId so why in constructor ?
-		this.bookId = bookid;
-		this.bookName = bookName;
-		this.quantity = quantity;
-		this.price = price;
-		this.authorName = authorName;
-		this.createdDateAndTime = createdDateAndTime;
-		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
-		this.verifiedDateAndTime = verifiedDateAndTime;
-		this.noOfRejections = noOfRejections;
-		this.image = image;
-		this.isApproved = isapproved;
-		this.bookDetails = bookDetails;
-	}
-
-	public Book() {
-		super();
-	}
+	
+	@ManyToMany(mappedBy = "bookList")
+	private List<Cart> userCarts;
 
 	public Long getBookId() {
 		return bookId;
@@ -161,36 +164,36 @@ public class Book {
 		this.verifiedDateAndTime = verifiedDateAndTime;
 	}
 
-	public int getNoOfRejections() {
-		return noOfRejections;
+	public int getRejectionCounts() {
+		return rejectionCounts;
 	}
 
-	public void setNoOfRejections(int noOfRejections) {
-		this.noOfRejections = noOfRejections;
+	public void setRejectionCounts(int rejectionCounts) {
+		this.rejectionCounts = rejectionCounts;
 	}
 
-	public String getImage() {
-		return image;
+	public String getImageURL() {
+		return imageURL;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 
-	public boolean isApproved() {
-		return isApproved;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setApproved(boolean isApproved) {
-		this.isApproved = isApproved;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getBookDetails() {
-		return bookDetails;
+	public String getApprovalStatus() {
+		return approvalStatus;
 	}
 
-	public void setBookDetails(String bookDetails) {
-		this.bookDetails = bookDetails;
+	public void setApprovalStatus(String approvalStatus) {
+		this.approvalStatus = approvalStatus;
 	}
 
 	public User getSeller() {
@@ -199,15 +202,6 @@ public class Book {
 
 	public void setSeller(User seller) {
 		this.seller = seller;
-	}
-
-	@Override
-	public String toString() {
-		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
-				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
-				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
-				+ ", isApproved=" + isApproved + "]";
 	}
 
 }

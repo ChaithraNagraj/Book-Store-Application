@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -81,6 +82,11 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
+	
+	@OneToOne(cascade= CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "cart_id")
+	private Cart userCart;
 
 	// Kalpesh Review: Bad practice to pass more than 4 parameters
 	// make object and then pass it

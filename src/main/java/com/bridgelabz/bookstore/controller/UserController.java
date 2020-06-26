@@ -139,8 +139,8 @@ public class UserController {
 		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
 	}
 
-	@PostMapping("/logout")
-	public ResponseEntity<Response> logOut(@RequestParam("token") String token) throws UserException {
+	@PutMapping("/logout")
+	public ResponseEntity<Response> logOut(@RequestHeader("token") String token) throws UserException {
 		if (userService.logOut(token)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));

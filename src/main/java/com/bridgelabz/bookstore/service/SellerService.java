@@ -21,4 +21,6 @@ public interface SellerService {
 
 	List<Book> searchBook(String token, String input) throws IOException;
 
+	boolean sentForApproval(long bookId, String token);
+
 }

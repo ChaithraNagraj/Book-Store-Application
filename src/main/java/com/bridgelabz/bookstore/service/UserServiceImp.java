@@ -58,14 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 public class UserServiceImp implements UserService {
 
-	// Kalpesh Review: Why client for user we are not applying elastic search for
-	// user.
-	@Autowired
-	private RestHighLevelClient client;
 
-	// Kalpesh Review: Remove objectMapper
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	// Kalpesh Review: RoleRepositoryImp don't have interface layer?
 	@Autowired
@@ -137,18 +130,12 @@ public class UserServiceImp implements UserService {
 			roles.add(role);
 			userEntity.setRoleList(roles);
 			userRepository.addUser(userEntity);
-//			Map<String, Object> documentMapper = objectMapper.convertValue(userEntity, Map.class);
-//			IndexRequest indexRequest = new IndexRequest(Constant.INDEX, Constant.TYPE,
-//					String.valueOf(userEntity.getId())).source(documentMapper);
-//			try {
-//				client.index(indexRequest, RequestOptions.DEFAULT);
-//			} catch (IOException e) {
-//
-//				e.printStackTrace();
-//			}
+
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
+		
+		
 	}
 
 	private void registerMail(User user, Role role, String templet) {
@@ -172,23 +159,24 @@ public class UserServiceImp implements UserService {
 	// Kalpesh Review: I don't know why findById?
 
 	public User findById(Long id) {
-		String text = Long.toString(id);
-		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
-		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		QueryBuilder query = QueryBuilders.boolQuery()
-				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
-
-		searchSourceBuilder.query(query);
-		searchRequest.source(searchSourceBuilder);
-		SearchResponse searchResponse = null;
-		try {
-			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return (User) getSearchResult(searchResponse);
+//		String text = Long.toString(id);
+//		SearchRequest searchRequest = new SearchRequest();
+//		searchRequest.indices(Constant.INDEX);
+//		searchRequest.types(Constant.TYPE);
+//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//		QueryBuilder query = QueryBuilders.boolQuery()
+//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
+//
+//		searchSourceBuilder.query(query);
+//		searchRequest.source(searchSourceBuilder);
+//		SearchResponse searchResponse = null;
+//		try {
+//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return (User) getSearchResult(searchResponse);
+		return userRepository.findByUserId(id);
 	}
 
 	// Kalpesh Review: Why to get all users? Not needed
@@ -201,7 +189,7 @@ public class UserServiceImp implements UserService {
 		return user;
 	}
 
-	// Kalpesh Review: Why user delete? Not needed
+	// Kalpesh Review: Why user delete? Not needed-->{needed for admin}
 	public void deleteUserById(Long id) {
 		userRepository.delete(id);
 	}
@@ -375,14 +363,6 @@ public class UserServiceImp implements UserService {
 		return false;
 	}
 
-	private User getSearchResult(SearchResponse response) {
 
-		SearchHit[] searchHit = response.getHits().getHits();
-		User u = new User();
-		for (SearchHit hit : searchHit) {
-			u = (objectMapper.convertValue(hit.getSourceAsMap(), User.class));
-		}
-		return u;
-	}
 
 }

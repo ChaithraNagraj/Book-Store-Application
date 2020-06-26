@@ -2,8 +2,11 @@ package com.bridgelabz.bookstore.response;
 
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+
 import com.bridgelabz.bookstore.model.User;
 
+@Component
 public class Response {
 
 	// Kalpesh Review: Create seprate response class as per requirment and what is

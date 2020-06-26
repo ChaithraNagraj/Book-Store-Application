@@ -1,8 +1,12 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import javax.validation.constraints.Min;
+
 public class UpdateBookDto {
 
 	private int quantity;
+
+	@Min(value = 0,message = "price can't be less than 0")
 	private Double price;
 
 	public int getQuantity() {

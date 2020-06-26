@@ -48,16 +48,14 @@ public class BookServiceImp implements BookService {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
 	private UserRepo userRepository;
 
-	@Override
+  
+	
 	public List<Book> findBookByAuthorNameAndTile(String text) {
 		SearchRequest searchRequest = new SearchRequest();
-		searchRequest.indices(Constant.INDEX);
-		searchRequest.types(Constant.TYPE);
+		searchRequest.indices("bookentity");
+		searchRequest.types("doc");
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		QueryBuilder query = QueryBuilders.boolQuery()
 				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("authorName").field("bookName"))
@@ -92,10 +90,11 @@ public class BookServiceImp implements BookService {
 		bookEntity.setCreatedDateAndTime(LocalDateTime.now());
 		bookEntity.setLastUpdatedDateAndTime(LocalDateTime.now());
 		bookEntity.setVerifiedDateAndTime(LocalDateTime.now());
-		bookEntity.setApproved(false);
-		bookEntity.setNoOfRejections(0);
+		bookEntity.setApprovalStatus(Constant.APPROVAL_STATUS_CREATED);
+		bookEntity.setRejectionCounts(0);
 
 		User user = userRepository.findByUserId(userId);
+		
 		user.getSellerBooks().add(bookEntity);
 		userRepository.addUser(user);
 	}
