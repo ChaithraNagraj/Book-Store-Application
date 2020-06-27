@@ -17,19 +17,19 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-@Entity
-@Table(name="cart")
+//@Entity
+//@Table(name="cart")
 public class Cart {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "cart_id")
-	private long cartId;
-	
-	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinTable(name = "cart_has_books", joinColumns = { @JoinColumn(name = "cart_id") }, inverseJoinColumns = {
-			@JoinColumn(name = "book_id") })
-	public List<Book> bookList;
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Column(name = "cart_id")
+//	private long cartId;
+//	
+//	@JsonIgnore
+//	@ManyToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinTable(name = "cart_has_books", joinColumns = { @JoinColumn(name = "cart_id") }, inverseJoinColumns = {
+//			@JoinColumn(name = "book_id") })
+//	public List<Book> bookList;
 
 }
