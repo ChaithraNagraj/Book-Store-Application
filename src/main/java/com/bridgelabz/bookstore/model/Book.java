@@ -1,4 +1,3 @@
-
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ public class Book {
 	@Min(value = 0)
 	private Double price;
 
-	@Column(name = "author_name", nullable = false, columnDefinition = "varchar(255) DEFAULT 'Anonymous'")
+	@Column(name = "author_name", nullable = false)
 	private String authorName;
 
 	@Column(name = "created_date_time", nullable = false)
@@ -52,51 +51,24 @@ public class Book {
 	@Column(name = "rejection_counts", columnDefinition = "int default 0")
 	private int rejectionCounts;
 
-//<<<<<<< HEAD
-//	@Column
-//	private String image;
-//	
-//	@Column
-//	private String bookDetails;
-//
-//
-//	@Column(name = "is_approved",columnDefinition = "boolean default false")
-//	@NotNull
-//	private boolean isApproved;
-//
-//	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-//			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-//			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
-//		super();
-//		this.bookId = bookid;
-//		this.bookName = bookName;
-//		this.quantity = quantity;
-//		this.price = price;
-//		this.authorName = authorName;
-//		this.createdDateAndTime = createdDateAndTime;
-//		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
-//		this.verifiedDateAndTime = verifiedDateAndTime;
-//		this.noOfRejections = noOfRejections;
-//		this.image = image;
-//		this.isApproved = isapproved;
-//		this.bookDetails = bookDetails;
-//	}
-//=======
 	@Column(name = "image_URL", nullable = false)
 	private String imageURL;
-
 
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
-	@Column(name = "approval_status",nullable = false)
-	private String approvalStatus;
+	@Column(name = "is_approved", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApproved;
+	
+	@Column(name = "is_approval_sent", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApprovalSent;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private User seller;
-	
+
+	@JsonIgnore
 	@ManyToMany(mappedBy = "bookList")
 	private List<Cart> userCarts;
 
@@ -188,12 +160,28 @@ public class Book {
 		this.description = description;
 	}
 
-	public String getApprovalStatus() {
-		return approvalStatus;
+	public boolean isApproved() {
+		return isApproved;
 	}
 
-	public void setApprovalStatus(String approvalStatus) {
-		this.approvalStatus = approvalStatus;
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+	public boolean isApprovalSent() {
+		return isApprovalSent;
+	}
+
+	public void setApprovalSent(boolean isApprovalSent) {
+		this.isApprovalSent = isApprovalSent;
+	}
+
+	public List<Cart> getUserCarts() {
+		return userCarts;
+	}
+
+	public void setUserCarts(List<Cart> userCarts) {
+		this.userCarts = userCarts;
 	}
 
 	public User getSeller() {
