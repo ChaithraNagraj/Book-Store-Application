@@ -99,4 +99,13 @@ public class BookDaoImple implements BookRepo {
 		return query.getResultList();
 	}
 
+	@Override
+	public Book findByBookId(Long bookId) {
+		Session session = entityManager.unwrap(Session.class);
+		Query<Book> q = session.createQuery("From Book where book_id=:value");
+		q.setParameter("value", bookId);
+		return q.uniqueResult();
+
+	}
+
 }

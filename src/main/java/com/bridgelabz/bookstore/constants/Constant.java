@@ -73,6 +73,10 @@ public class Constant {
 	public static final String APPROVAL_STATUS_APPROVED = "approved";
 	public static final String APPROVAL_STATUS_REJECTED = "rejected";
 	public static final String APPROVAL_STATUS_CREATED = "created";
+	
+	public static final String BOOK_ADD_TO_CART="book is succesfully added to the cart";
+	public static final String BOOK_ADD_TO_CART_FAILED="book couldnot/failed to add to the cart";
+
 
 
 }
