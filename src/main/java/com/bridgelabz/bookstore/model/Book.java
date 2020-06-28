@@ -75,26 +75,15 @@ public class Book {
 
 
 	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
-
     @JsonIgnore
     private List<Cart> carts;
-	
-
-	
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "book_id")
 	private List<Review> review;
-	
-	public List<Cart> getUserCarts() {
-		return userCarts;
-	}
 
-	public void setUserCarts(List<Cart> userCarts) {
-		this.userCarts = userCarts;
-	}
 
 	public List<Review> getReview() {
 		return review;
@@ -207,8 +196,6 @@ public class Book {
 	public void setApprovalSent(boolean isApprovalSent) {
 		this.isApprovalSent = isApprovalSent;
 	}
-
-//	 
 
 	public User getSeller() {
 		return seller;
