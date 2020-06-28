@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
@@ -34,7 +33,6 @@ import io.swagger.annotations.Api;
 @Api(value = "Seller Controller to perform CRUD operations on book")
 public class SellerController {
 
-
 	@Autowired
 	private SellerService sellerService;
 
@@ -42,7 +40,8 @@ public class SellerController {
 	private Response response;
 
 	@PostMapping(value = "/addBook")
-	public ResponseEntity<Response> addBook(@RequestBody @Valid BookDto newBook,BindingResult result, @RequestHeader("token") String token) {
+	public ResponseEntity<Response> addBook(@RequestBody @Valid BookDto newBook, BindingResult result,
+			@RequestHeader("token") String token) {
 		if (result.hasErrors()) {
 			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
 			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
@@ -98,18 +97,6 @@ public class SellerController {
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
 	}
 
-	@PutMapping(value = "/addQuantity/{bookId}")
-	public ResponseEntity<Response> addQuantity(@PathVariable("bookId") long bookId,
-			@RequestHeader("token") String token, @RequestParam("quantity") int quantity) {
-		Book book = sellerService.addQuantity(bookId, token, quantity);
-		if (book != null) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.BOOK_QUANTITY_ADDITION_SUCCESSFULL, Constant.OK_RESPONSE_CODE, book));
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE, book));
-	}
-
 	@GetMapping("/search/{input}")
 	public ResponseEntity<Response> searchNotes(@RequestHeader(value = "token") String token,
 			@PathVariable String input) throws IOException {
@@ -120,12 +107,15 @@ public class SellerController {
 
 		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
 	}
-	
+
 	@PutMapping("/approvalSent/{bookId}")
-	public ResponseEntity<Response> sentForApproval(@RequestHeader("token") String token,@PathVariable("bookId") long bookId){
-		if(sellerService.sentForApproval(bookId,token)) {
-			return new ResponseEntity<>(new Response("Book sent For Approval Success", HttpStatus.OK.value()),HttpStatus.OK);
+	public ResponseEntity<Response> sentForApproval(@RequestHeader("token") String token,
+			@PathVariable("bookId") long bookId) {
+		if (sellerService.sentForApproval(bookId, token)) {
+			return new ResponseEntity<>(new Response("Book sent For Approval Success", HttpStatus.OK.value()),
+					HttpStatus.OK);
 		}
-		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.ALREADY_REPORTED.value()),HttpStatus.ALREADY_REPORTED);
+		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.ALREADY_REPORTED.value()),
+				HttpStatus.ALREADY_REPORTED);
 	}
 }

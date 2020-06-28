@@ -1,4 +1,3 @@
-
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
@@ -42,7 +41,7 @@ public class Book {
 	@Min(value = 0)
 	private Double price;
 
-	@Column(name = "author_name", nullable = false, columnDefinition = "varchar(255) DEFAULT 'Anonymous'")
+	@Column(name = "author_name", nullable = false)
 	private String authorName;
 
 	@Column(name = "created_date_time", nullable = false)
@@ -60,20 +59,28 @@ public class Book {
 	@Column(name = "image_URL", nullable = false)
 	private String imageURL;
 
-
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
-	@Column(name = "approval_status",nullable = false)
-	private String approvalStatus;
+	@Column(name = "is_approved", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApproved;
+	
+	@Column(name = "is_approval_sent", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApprovalSent;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private User seller;
+
+
+	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
+
+    @JsonIgnore
+    private List<Cart> carts;
 	
-	@ManyToMany(mappedBy = "bookList")
-	private List<Cart> userCarts;
+
+	
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
@@ -185,13 +192,23 @@ public class Book {
 		this.description = description;
 	}
 
-	public String getApprovalStatus() {
-		return approvalStatus;
+	public boolean isApproved() {
+		return isApproved;
 	}
 
-	public void setApprovalStatus(String approvalStatus) {
-		this.approvalStatus = approvalStatus;
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
 	}
+
+	public boolean isApprovalSent() {
+		return isApprovalSent;
+	}
+
+	public void setApprovalSent(boolean isApprovalSent) {
+		this.isApprovalSent = isApprovalSent;
+	}
+
+//	 
 
 	public User getSeller() {
 		return seller;
@@ -201,4 +218,13 @@ public class Book {
 		this.seller = seller;
 	}
 
+	public List<Cart> getCarts() {
+		return carts;
+	}
+
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
+	}
+
+	
 }
