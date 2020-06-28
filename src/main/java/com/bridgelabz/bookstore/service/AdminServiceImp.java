@@ -67,7 +67,7 @@ public class AdminServiceImp implements AdminService {
 			}
 		
 		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
-		System.out.println("check1"+sellers.isEmpty());
+		
 		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
@@ -84,7 +84,6 @@ public class AdminServiceImp implements AdminService {
 			book.clear();
 			
 		}
-		System.out.println("check2"+sellers.isEmpty());
 		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
@@ -114,7 +113,7 @@ public class AdminServiceImp implements AdminService {
 		}
 		User seller = userRepository.findByUserId(sellerId);		
 		List<Book> books = seller.getSellerBooks();
-		System.out.println(books);
+	
 		if(books.isEmpty()) {
 			
 			throw new UserNotFoundException(AdminConstants.BOOK_NOT_FOUND,
@@ -122,13 +121,12 @@ public class AdminServiceImp implements AdminService {
 		}		
 
 		List<Book> book = books.stream().filter(b->b.isApprovalSent()).collect(Collectors.toList());
-		System.out.println(book);
+		
 		if(book.isEmpty()) {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}	
-		return null;
-
+		return book;
 	}
 
 	/**
@@ -159,13 +157,14 @@ public class AdminServiceImp implements AdminService {
 		User seller = userRepository.findByUserId(sellerId);
 		Role role = roleRepository.getRoleByName("SELLER");
 
+		book.setApprovalSent(false);
 		if (verify) {
-			book.setApproved(true); 
-
+			book.setApproved(verify); 
+			
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
 		} else {
-			book.setApproved(false); 
+			book.setApproved(verify); 
 			book.setRejectionCounts(book.getRejectionCounts() + 1);
 			if (book.getRejectionCounts() > 2) {
 				bookRepository.deleteBook(book);

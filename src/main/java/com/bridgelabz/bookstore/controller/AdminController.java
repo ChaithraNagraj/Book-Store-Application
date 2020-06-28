@@ -30,9 +30,6 @@ public class AdminController {
 	@Autowired
 	private AdminService adminService;
 	
-
-	
-
 	@GetMapping("/getSellersForVerification")
 	public ResponseEntity<Response> getSellersForVerification(@RequestHeader("token") String token) {	
 		
