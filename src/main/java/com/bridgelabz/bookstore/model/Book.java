@@ -3,7 +3,6 @@ package com.bridgelabz.bookstore.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
@@ -70,9 +68,9 @@ public class Book {
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
-	@ManyToMany(mappedBy = "bookId")
+	@ManyToMany(mappedBy = "books")
     @JsonIgnore
-    private List<Cart> cartId;
+    private List<Cart> carts;
 	
 
 	
@@ -191,12 +189,13 @@ public class Book {
 		this.seller = seller;
 	}
 
-	public List<Cart> getCartId() {
-		return cartId;
+	public List<Cart> getCarts() {
+		return carts;
 	}
 
-	public void setCartId(List<Cart> cartId) {
-		this.cartId = cartId;
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
 	}
 
+	
 }
