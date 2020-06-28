@@ -76,12 +76,12 @@ public class AdminServiceImp implements AdminService {
 		int ctr=0;
 		for(int i=0;i<size;i++) {
 			
-//			List<Book> book=sellers.get(i-ctr).getSellerBooks().stream().filter(b->b.getApprovalStatus().equals(Constant.APPROVAL_STATUS_WAITING)).collect(Collectors.toList());
-//			if(book.isEmpty()) {
-//				sellers.remove(i-ctr);
-//				ctr++;
-//			}
-//			book.clear();
+			List<Book> book=sellers.get(i-ctr).getSellerBooks().stream().filter(b->b.isApprovalSent()).collect(Collectors.toList());
+			if(book.isEmpty()) {
+				sellers.remove(i-ctr);
+				ctr++;
+			}
+			book.clear();
 			
 		}
 		System.out.println("check2"+sellers.isEmpty());
@@ -121,12 +121,12 @@ public class AdminServiceImp implements AdminService {
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}		
 
-//		List<Book> book = books.stream().filter(b->b.getApprovalStatus().equals(AdminConstants.APPROVAL_STATUS_WAITING)).collect(Collectors.toList());
-//		System.out.println(book);
-//		if(book.isEmpty()) {
-//			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
-//					AdminConstants.NOT_FOUND_RESPONSE_CODE);
-//		}	
+		List<Book> book = books.stream().filter(b->b.isApprovalSent()).collect(Collectors.toList());
+		System.out.println(book);
+		if(book.isEmpty()) {
+			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+					AdminConstants.NOT_FOUND_RESPONSE_CODE);
+		}	
 		return null;
 
 	}
@@ -160,12 +160,12 @@ public class AdminServiceImp implements AdminService {
 		Role role = roleRepository.getRoleByName("SELLER");
 
 		if (verify) {
-//			book.setApprovalStatus(AdminConstants.APPROVAL_STATUS_APPROVED);
+			book.setApproved(true); 
 
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
 		} else {
-//			book.(AdminConstants.APPROVAL_STATUS_REJECTED);
+			book.setApproved(false); 
 			book.setRejectionCounts(book.getRejectionCounts() + 1);
 			if (book.getRejectionCounts() > 2) {
 				bookRepository.deleteBook(book);
