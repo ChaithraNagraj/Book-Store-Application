@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.model;
 
-
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -12,67 +11,61 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "cart")
 public class Cart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int cartId;
-	
+	@Column(name = "cart_id")
+	private long cartId;
+
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name = "user_id") 
-	User userId;
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinTable(name = "cart_has_books", joinColumns = { @JoinColumn(name = "cart_id") },
-	inverseJoinColumns = {
-	@JoinColumn(name = "book_id") })
-	public List<Book> bookId;
+	@JoinTable(name = "cart_has_books", joinColumns = { @JoinColumn(name = "cart_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "book_id") })
+	public List<Book> books;
 
-	public int getCartId() {
+	public long getCartId() {
 		return cartId;
 	}
 
-	public void setCartId(int cartId) {
+	public void setCartId(long cartId) {
 		this.cartId = cartId;
 	}
 
-	public User getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(User userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public List<Book> getBookId() {
-		return bookId;
+	public List<Book> getBooks() {
+		return books;
 	}
 
-	public void setBookId(List<Book> bookId) {
-		this.bookId = bookId;
+	public void setBooks(List<Book> books) {
+		this.books = books;
 	}
-	
 
 	@Override
 	public String toString() {
-		return "Cart [cartId=" + cartId + ", userId=" + userId + ", bookId=" + bookId + "]";
+		return "Cart [cartId=" + cartId + ", user=" + user + ", books=" + books + "]";
 	}
-	
 
 }
-
