@@ -5,52 +5,47 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.CartRepo;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.utils.JwtValidate;
+import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
-@Component
 public class CartServiceImpl implements CartService {
-	
+
 	@Autowired
-	UserRepo userRepo;
+	private UserRepo userRepo;
+
 	@Autowired
-	BookRepo bookRepo;
+	private BookRepo bookRepo;
+
 	@Autowired
-	CartRepo cartRepo;
+	private CartRepo cartRepo;
+
+	@Autowired
+	private TokenUtility tokenUtility;
 
 	@Override
+	@Transactional
 	public boolean addtocart(String token, long bookId) {
-		
-		Long userId= (Long) JwtValidate.decodeJWT(token).get("userId");
-		
-//		Optional<Book> book = bookRepo.getBookById(bookId);
-		
-//		Long bookid=book.get().getBookId();
-		
-		Book bookk= bookRepo.findByBookId(bookId);
-		
-		 List<Book> cartBooks = new ArrayList<>();
-		 cartBooks.add(bookk);
-		
-		User user=userRepo.findByUserId(userId);
-		long userid=user.getId();
-		Cart cart=new Cart();
-		cart.setBookId(cartBooks);
-		cart.setUserId(user);
-		boolean a=cartRepo.saveToCart(cart);
-		if(a==true) {
-			return true;
-		}
-		return false;		
+
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		Book book = bookRepo.getBookById(bookId).orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
+		List<Book> booksInCart = Optional.ofNullable(cart.getBooks()).orElse(new ArrayList<>());
+		cart.setUser(buyer);
+		booksInCart.add(book);
+		cart.setBooks(booksInCart);
+		buyer.setUserCart(cart);
+		return cartRepo.saveToCart(cart);
 	}
 
 }
