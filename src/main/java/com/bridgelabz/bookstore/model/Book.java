@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
@@ -70,9 +69,9 @@ public class Book {
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
-	@ManyToMany(mappedBy = "bookId")
+	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Cart> cartId;
+    private List<Cart> carts;
 	
 
 	
@@ -191,12 +190,12 @@ public class Book {
 		this.seller = seller;
 	}
 
-	public List<Cart> getCartId() {
-		return cartId;
+	public List<Cart> getCarts() {
+		return carts;
 	}
 
-	public void setCartId(List<Cart> cartId) {
-		this.cartId = cartId;
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
 	}
 
 }
