@@ -17,6 +17,7 @@ public class Response {
 	private LocalDateTime now;
 	private String token;
 	private User userDetails;
+	private boolean value;
 
 	public LocalDateTime getNow() {
 		return now;
@@ -79,6 +80,10 @@ public class Response {
 		this.status = status;
 		this.data = data;
 		this.token = tok;
+	}
+	public Response(String message, boolean value) {
+		this.message = message;
+		this.value = value;
 	}
 
 	public int getStatus() {

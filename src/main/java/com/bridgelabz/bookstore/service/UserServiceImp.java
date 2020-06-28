@@ -297,8 +297,13 @@ public class UserServiceImp implements UserService {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User isUserExist = userRepository.findByUserId(id);
 		if (isUserExist != null) {
-			userRepository.update(updateDTO, id);
-			userRepository.updatePassword(id, encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
+			if(updateDTO.getMobileNumber().equals(null))
+				updateDTO.setMobileNumber(isUserExist.getMobileNumber());
+			if(updateDTO.getPassword().equals("")||updateDTO.getPassword().isEmpty())
+				updateDTO.setPassword(isUserExist.getPassword());
+			isUserExist.setUpdateDateTime(DateUtility.today());
+			BeanUtils.copyProperties(updateDTO, isUserExist);
+			userRepository.addUser(isUserExist);
 			return true;
 		}
 		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);

@@ -17,8 +17,6 @@ public interface SellerService {
 
 	boolean removeBook(long bookId, String token);
 
-	Book addQuantity(long bookId, String token, int quantity);
-
 	List<Book> searchBook(String token, String input) throws IOException;
 
 	boolean sentForApproval(long bookId, String token);

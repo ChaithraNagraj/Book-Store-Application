@@ -1,9 +1,9 @@
-
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,7 +41,7 @@ public class Book {
 	@Min(value = 0)
 	private Double price;
 
-	@Column(name = "author_name", nullable = false, columnDefinition = "varchar(255) DEFAULT 'Anonymous'")
+	@Column(name = "author_name", nullable = false)
 	private String authorName;
 
 	@Column(name = "created_date_time", nullable = false)
@@ -52,53 +56,42 @@ public class Book {
 	@Column(name = "rejection_counts", columnDefinition = "int default 0")
 	private int rejectionCounts;
 
-//<<<<<<< HEAD
-//	@Column
-//	private String image;
-//	
-//	@Column
-//	private String bookDetails;
-//
-//
-//	@Column(name = "is_approved",columnDefinition = "boolean default false")
-//	@NotNull
-//	private boolean isApproved;
-//
-//	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-//			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-//			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
-//		super();
-//		this.bookId = bookid;
-//		this.bookName = bookName;
-//		this.quantity = quantity;
-//		this.price = price;
-//		this.authorName = authorName;
-//		this.createdDateAndTime = createdDateAndTime;
-//		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
-//		this.verifiedDateAndTime = verifiedDateAndTime;
-//		this.noOfRejections = noOfRejections;
-//		this.image = image;
-//		this.isApproved = isapproved;
-//		this.bookDetails = bookDetails;
-//	}
-//=======
 	@Column(name = "image_URL", nullable = false)
 	private String imageURL;
-
 
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
-	@Column(name = "approval_status",nullable = false)
-	private String approvalStatus;
+	@Column(name = "is_approved", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApproved;
+	
+	@Column(name = "is_approval_sent", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApprovalSent;
 
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private User seller;
-	
-	@ManyToMany(mappedBy = "bookList")
-	private List<Cart> userCarts;
+
+
+	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Cart> carts;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "book_id")
+	private List<Review> review;
+
+
+	public List<Review> getReview() {
+		return review;
+	}
+
+	public void setReview(List<Review> review) {
+		this.review = review;
+	}
 
 	public Long getBookId() {
 		return bookId;
@@ -188,12 +181,20 @@ public class Book {
 		this.description = description;
 	}
 
-	public String getApprovalStatus() {
-		return approvalStatus;
+	public boolean isApproved() {
+		return isApproved;
 	}
 
-	public void setApprovalStatus(String approvalStatus) {
-		this.approvalStatus = approvalStatus;
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+	public boolean isApprovalSent() {
+		return isApprovalSent;
+	}
+
+	public void setApprovalSent(boolean isApprovalSent) {
+		this.isApprovalSent = isApprovalSent;
 	}
 
 	public User getSeller() {
@@ -204,4 +205,23 @@ public class Book {
 		this.seller = seller;
 	}
 
+	public List<Cart> getCarts() {
+		return carts;
+	}
+
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
+				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
+				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", carts=" + carts + ", review=" + review + "]";
+	}
+
+	
 }
