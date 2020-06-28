@@ -10,5 +10,6 @@ import com.bridgelabz.bookstore.model.Cart;
 public interface CartRepo {
 
 	boolean saveToCart(Cart cart);
+	
 
 }
