@@ -181,9 +181,7 @@ public class Book {
 	public void setApprovalSent(boolean isApprovalSent) {
 		this.isApprovalSent = isApprovalSent;
 	}
-
-//	 
-
+ 
 	public User getSeller() {
 		return seller;
 	}
