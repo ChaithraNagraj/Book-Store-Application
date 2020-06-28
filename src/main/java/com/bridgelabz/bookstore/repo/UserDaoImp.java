@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -47,9 +48,10 @@ public class UserDaoImp implements UserRepo {
 	public User update(UpdateDTO updateDTO, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
-		user.setUserName(updateDTO.getUserName());
-		user.setPassword(updateDTO.getPassword());
-		user.setUpdateDateTime(DateUtility.today());
+
+		
+		
+		
 		session.update(user);
 		return user;
 	}

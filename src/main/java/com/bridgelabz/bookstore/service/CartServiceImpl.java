@@ -31,7 +31,7 @@ public class CartServiceImpl implements CartService {
 
 	@Override
 	@Transactional
-	public boolean addtocart(String token, long bookId) {
+	public Cart addtocart(String token, long bookId) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		Book book = bookRepo.getBookById(bookId).orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
@@ -40,7 +40,8 @@ public class CartServiceImpl implements CartService {
 		booksInCart.add(book);
 		cart.setBooks(booksInCart);
 		buyer.setUserCart(cart);
-		return cartRepo.saveToCart(cart);
+		cartRepo.saveToCart(cart);
+		return cart;
 	}
 
 	@Override
@@ -55,6 +56,12 @@ public class CartServiceImpl implements CartService {
 		buyer.getUserCart().setBooks(booksInCart);
 		return cartRepo.saveToCart(buyer.getUserCart());
 
+	}
+
+	@Override
+	public List<Book> displayItems(String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		return buyer.getUserCart().getBooks();
 	}
 
 }

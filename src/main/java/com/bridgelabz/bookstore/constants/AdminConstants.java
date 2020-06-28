@@ -15,4 +15,5 @@ public class AdminConstants {
 	public static final String APPROVAL_STATUS_WAITING = "waiting";
 	public static final String APPROVAL_STATUS_APPROVED = "approved";
 	public static final String APPROVAL_STATUS_REJECTED = "rejected";
+	
 }

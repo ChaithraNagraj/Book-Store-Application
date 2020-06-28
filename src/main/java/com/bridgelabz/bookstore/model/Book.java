@@ -12,8 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -71,12 +75,23 @@ public class Book {
 
 
 	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
-
     @JsonIgnore
     private List<Cart> carts;
-	
 
-	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "book_id")
+	private List<Review> review;
+
+
+	public List<Review> getReview() {
+		return review;
+	}
+
+	public void setReview(List<Review> review) {
+		this.review = review;
+	}
 
 	public Long getBookId() {
 		return bookId;
@@ -181,7 +196,7 @@ public class Book {
 	public void setApprovalSent(boolean isApprovalSent) {
 		this.isApprovalSent = isApprovalSent;
 	}
- 
+
 	public User getSeller() {
 		return seller;
 	}
@@ -196,6 +211,16 @@ public class Book {
 
 	public void setCarts(List<Cart> carts) {
 		this.carts = carts;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
+				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
+				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", carts=" + carts + ", review=" + review + "]";
 	}
 
 	

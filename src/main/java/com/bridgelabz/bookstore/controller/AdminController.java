@@ -26,16 +26,10 @@ import com.bridgelabz.bookstore.service.UserService;
 public class AdminController {
 
 	
-	@Autowired
-	private UserService userService;
+	
 	@Autowired
 	private AdminService adminService;
-	@Autowired
-	private AdminServiceImp adminServiceimp;
-
-
 	
-
 	@GetMapping("/getSellersForVerification")
 	public ResponseEntity<Response> getSellersForVerification(@RequestHeader("token") String token) {	
 		
