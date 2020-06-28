@@ -66,7 +66,6 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public void deleteBook(Book book) {
 		Session session = entityManager.unwrap(Session.class);
-//		session.delete(book);	
 		Query query = session.createQuery("DELETE FROM Book where book_id=:bookId");
 		query.setParameter("bookId", book.getBookId());
 		query.executeUpdate();

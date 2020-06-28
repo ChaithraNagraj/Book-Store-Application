@@ -3,6 +3,7 @@ package com.bridgelabz.bookstore.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,7 +69,9 @@ public class Book {
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
-	@ManyToMany(mappedBy = "books")
+
+	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
+
     @JsonIgnore
     private List<Cart> carts;
 	
