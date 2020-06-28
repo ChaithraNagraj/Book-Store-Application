@@ -220,6 +220,15 @@ public class User {
 	public void setSellerBooks(List<Book> sellerBooks) {
 		this.sellerBooks = sellerBooks;
 	}
+	
+
+	public Cart getUserCart() {
+		return userCart;
+	}
+
+	public void setUserCart(Cart userCart) {
+		this.userCart = userCart;
+	}
 
 	@Override
 	public String toString() {
@@ -228,5 +237,6 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
+	
 
 }

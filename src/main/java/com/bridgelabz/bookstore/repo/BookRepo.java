@@ -27,4 +27,7 @@ public interface BookRepo {
 
 	public List<Book> findBySellerId(Long id);
 
+	//added:vinod;
+	public Book findByBookId(Long bookId);
+
 }

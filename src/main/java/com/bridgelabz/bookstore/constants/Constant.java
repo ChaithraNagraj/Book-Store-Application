@@ -69,6 +69,6 @@ public class Constant {
 
 	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
 	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
-
-
+	public static final String BOOK_ADD_TO_CART="book is succesfully added to the cart";
+	public static final String BOOK_ADD_TO_CART_FAILED="book couldnot/failed to add to the cart";
 }

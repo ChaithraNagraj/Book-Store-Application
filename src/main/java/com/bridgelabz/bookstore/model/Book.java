@@ -3,6 +3,7 @@ package com.bridgelabz.bookstore.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
@@ -68,9 +70,12 @@ public class Book {
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
-	@JsonIgnore
-	@ManyToMany(mappedBy = "bookList")
-	private List<Cart> userCarts;
+	@ManyToMany(mappedBy = "bookId")
+    @JsonIgnore
+    private List<Cart> cartId;
+	
+
+	
 
 	public Long getBookId() {
 		return bookId;
@@ -176,13 +181,7 @@ public class Book {
 		this.isApprovalSent = isApprovalSent;
 	}
 
-	public List<Cart> getUserCarts() {
-		return userCarts;
-	}
-
-	public void setUserCarts(List<Cart> userCarts) {
-		this.userCarts = userCarts;
-	}
+//	 
 
 	public User getSeller() {
 		return seller;
@@ -190,6 +189,14 @@ public class Book {
 
 	public void setSeller(User seller) {
 		this.seller = seller;
+	}
+
+	public List<Cart> getCartId() {
+		return cartId;
+	}
+
+	public void setCartId(List<Cart> cartId) {
+		this.cartId = cartId;
 	}
 
 }
