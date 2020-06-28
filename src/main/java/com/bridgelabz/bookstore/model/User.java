@@ -243,7 +243,6 @@ public class User {
 		this.sellerBooks = sellerBooks;
 	}
 
-
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
