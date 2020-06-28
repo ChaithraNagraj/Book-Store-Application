@@ -36,7 +36,6 @@ public class CartServiceImpl implements CartService {
 	@Override
 	@Transactional
 	public boolean addtocart(String token, long bookId) {
-
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		Book book = bookRepo.getBookById(bookId).orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
