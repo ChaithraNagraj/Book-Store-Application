@@ -67,7 +67,7 @@ public class AdminServiceImp implements AdminService {
 			}
 		
 		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
-		
+		System.out.println("check1"+sellers.isEmpty());
 		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
@@ -84,6 +84,7 @@ public class AdminServiceImp implements AdminService {
 			book.clear();
 			
 		}
+		System.out.println("check2"+sellers.isEmpty());
 		if(sellers.isEmpty()) {
 			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);

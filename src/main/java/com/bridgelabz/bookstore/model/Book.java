@@ -4,6 +4,7 @@ package com.bridgelabz.bookstore.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -52,36 +57,6 @@ public class Book {
 	@Column(name = "rejection_counts", columnDefinition = "int default 0")
 	private int rejectionCounts;
 
-//<<<<<<< HEAD
-//	@Column
-//	private String image;
-//	
-//	@Column
-//	private String bookDetails;
-//
-//
-//	@Column(name = "is_approved",columnDefinition = "boolean default false")
-//	@NotNull
-//	private boolean isApproved;
-//
-//	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-//			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-//			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
-//		super();
-//		this.bookId = bookid;
-//		this.bookName = bookName;
-//		this.quantity = quantity;
-//		this.price = price;
-//		this.authorName = authorName;
-//		this.createdDateAndTime = createdDateAndTime;
-//		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
-//		this.verifiedDateAndTime = verifiedDateAndTime;
-//		this.noOfRejections = noOfRejections;
-//		this.image = image;
-//		this.isApproved = isapproved;
-//		this.bookDetails = bookDetails;
-//	}
-//=======
 	@Column(name = "image_URL", nullable = false)
 	private String imageURL;
 
@@ -99,6 +74,28 @@ public class Book {
 	
 	@ManyToMany(mappedBy = "bookList")
 	private List<Cart> userCarts;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "book_id")
+	private List<Review> review;
+	
+	public List<Cart> getUserCarts() {
+		return userCarts;
+	}
+
+	public void setUserCarts(List<Cart> userCarts) {
+		this.userCarts = userCarts;
+	}
+
+	public List<Review> getReview() {
+		return review;
+	}
+
+	public void setReview(List<Review> review) {
+		this.review = review;
+	}
 
 	public Long getBookId() {
 		return bookId;
