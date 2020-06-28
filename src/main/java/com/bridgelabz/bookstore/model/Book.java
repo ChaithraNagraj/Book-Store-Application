@@ -213,5 +213,15 @@ public class Book {
 		this.carts = carts;
 	}
 
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
+				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
+				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", carts=" + carts + ", review=" + review + "]";
+	}
+
 	
 }
