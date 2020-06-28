@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.repo;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
@@ -10,11 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.bridgelabz.bookstore.model.Cart;
 @Repository
 @Transactional
-@SuppressWarnings("unchecked")
 public class CartRepoImpl implements CartRepo {
-
-	@Autowired
-	private EntityManager entityManager;
 
 	@Autowired
 	private SessionFactory sessionFactory;
