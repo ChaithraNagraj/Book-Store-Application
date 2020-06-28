@@ -10,6 +10,7 @@ public class Constant {
 	
 	public static final String KEY = "User";
 
+	public static final String ROLE_AS_SELLER = "SELLER";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
