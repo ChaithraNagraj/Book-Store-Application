@@ -3,6 +3,7 @@ package com.bridgelabz.bookstore.utils;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.UserAuthorizationException;
@@ -12,6 +13,7 @@ import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 
+@Component
 public class TokenUtility {
 	
 	@Autowired
