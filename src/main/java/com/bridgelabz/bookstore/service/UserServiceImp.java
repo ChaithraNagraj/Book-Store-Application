@@ -310,7 +310,7 @@ public class UserServiceImp implements UserService {
 			{
 				updateDTO.setFullName(isUserExist.getName());
 			}
-			if(!updateDTO.getPassword().equals("string") || !updateDTO.getPassword().equals("**********"))
+			if(!updateDTO.getPassword().equals("string"))
 			{
 				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
 			}
