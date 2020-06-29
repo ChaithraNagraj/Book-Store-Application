@@ -85,6 +85,19 @@ public class User {
 	
 	@OneToOne(cascade= CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "wishlist_id")
+	private Wishlist userWishlist;
+	
+	public Wishlist getUserWishlist() {
+		return userWishlist;
+	}
+
+	public void setUserWishlist(Wishlist userWishlist) {
+		this.userWishlist = userWishlist;
+	}
+
+	@OneToOne(cascade= CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "cart_id")
 	private Cart userCart;
 	
