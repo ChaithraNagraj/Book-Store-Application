@@ -1,8 +1,10 @@
 package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -18,6 +20,7 @@ import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RedisCache;
@@ -158,9 +161,9 @@ public class AdminServiceImp implements AdminService {
 		Role role = roleRepository.getRoleByName("SELLER");
 
 		book.setApprovalSent(false);
+		book.setVerifiedDateAndTime(DateUtility.today());
 		if (verify) {
 			book.setApproved(verify); 
-			
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
 		} else {
@@ -170,7 +173,6 @@ public class AdminServiceImp implements AdminService {
 				bookRepository.deleteBook(book);
 				registerMail(seller, role, environment.getProperty("book-deletion-template-path"));
 			} else {
-
 				bookRepository.save(book);
 				registerMail(seller, role, environment.getProperty("book-rejection-template-path"));
 			}
