@@ -27,6 +27,7 @@ public class RedisConfiguration extends CachingConfigurerSupport {
 	@Bean
 	protected JedisConnectionFactory jedisConnectionFactory() {
 		RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHostName, redisPort);
+		//Kalpesh Review: Do not hard code any value move password to yml file and set into env
 		configuration.setPassword(RedisPassword.of("password"));
 		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().usePooling().build();
 		JedisConnectionFactory factory = new JedisConnectionFactory(configuration, jedisClientConfiguration);

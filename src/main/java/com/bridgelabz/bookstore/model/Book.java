@@ -1,15 +1,25 @@
-
 package com.bridgelabz.bookstore.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "book")
@@ -20,24 +30,21 @@ public class Book {
 	@Column(name = "book_id")
 	private Long bookId;
 
-	@Column
-	@NotNull
+	@Column(name = "book_name", nullable = false)
 	private String bookName;
 
-	@Column
-	@NotNull
+	@Column(name = "quantity", nullable = false)
+	@Min(value = 1)
 	private int quantity;
 
-	@Column
-	@NotNull
+	@Column(name = "price", nullable = false)
+	@Min(value = 0)
 	private Double price;
 
-	@Column
-	@NotNull
+	@Column(name = "author_name", nullable = false)
 	private String authorName;
 
-	@Column(name = "created_date_time")
-	@NotNull
+	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
 
 	@Column(name = "lastupdated_date_time")
@@ -46,39 +53,44 @@ public class Book {
 	@Column(name = "verified_date_time")
 	private LocalDateTime verifiedDateAndTime;
 
-	@Column
-	private int noOfRejections;
+	@Column(name = "rejection_counts", columnDefinition = "int default 0")
+	private int rejectionCounts;
 
-	@Column
-	private String image;
-	
-	@Column(length = 10000)
-	private String bookDetails;
+	@Column(name = "image_URL", nullable = false)
+	private String imageURL;
 
-	@Column(name = "is_approved",columnDefinition = "boolean default false")
-	@NotNull
+	@Column(name = "description", length = 1000, nullable = false)
+	private String description;
+
+	@Column(name = "is_approved", nullable = false, columnDefinition = "boolean default false")
 	private boolean isApproved;
+	
+	@Column(name = "is_approval_sent", nullable = false, columnDefinition = "boolean default false")
+	private boolean isApprovalSent;
 
-	public Book(Long bookid, String bookName, int quantity, Double price, String authorName,
-			@NotNull LocalDateTime createdDateAndTime, LocalDateTime lastUpdatedDateAndTime,
-			@NotNull LocalDateTime verifiedDateAndTime, int noOfRejections, String image, @NotNull boolean isapproved,String bookDetails) {
-		super();
-		this.bookId = bookid;
-		this.bookName = bookName;
-		this.quantity = quantity;
-		this.price = price;
-		this.authorName = authorName;
-		this.createdDateAndTime = createdDateAndTime;
-		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
-		this.verifiedDateAndTime = verifiedDateAndTime;
-		this.noOfRejections = noOfRejections;
-		this.image = image;
-		this.isApproved = isapproved;
-		this.bookDetails = bookDetails;
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "seller_id")
+	private User seller;
+
+
+	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Cart> carts;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "book_id")
+	private List<Review> review;
+
+
+	public List<Review> getReview() {
+		return review;
 	}
 
-	public Book() {
-		super();
+	public void setReview(List<Review> review) {
+		this.review = review;
 	}
 
 	public Long getBookId() {
@@ -145,20 +157,28 @@ public class Book {
 		this.verifiedDateAndTime = verifiedDateAndTime;
 	}
 
-	public int getNoOfRejections() {
-		return noOfRejections;
+	public int getRejectionCounts() {
+		return rejectionCounts;
 	}
 
-	public void setNoOfRejections(int noOfRejections) {
-		this.noOfRejections = noOfRejections;
+	public void setRejectionCounts(int rejectionCounts) {
+		this.rejectionCounts = rejectionCounts;
 	}
 
-	public String getImage() {
-		return image;
+	public String getImageURL() {
+		return imageURL;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public boolean isApproved() {
@@ -169,27 +189,39 @@ public class Book {
 		this.isApproved = isApproved;
 	}
 
-
-	public String getBookDetails() {
-		return bookDetails;
+	public boolean isApprovalSent() {
+		return isApprovalSent;
 	}
 
-	public void setBookDetails(String bookDetails) {
-		this.bookDetails = bookDetails;
+	public void setApprovalSent(boolean isApprovalSent) {
+		this.isApprovalSent = isApprovalSent;
 	}
 
+	public User getSeller() {
+		return seller;
+	}
+
+	public void setSeller(User seller) {
+		this.seller = seller;
+	}
+
+	public List<Cart> getCarts() {
+		return carts;
+	}
+
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
+	}
 
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
 				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
 				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-
-	
-
-				+ ", noOfRejections=" + noOfRejections + ", image=" + image + ", bookDetails=" + bookDetails
-				+ ", isApproved=" + isApproved + "]";
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", carts=" + carts + ", review=" + review + "]";
 	}
 
-
+	
 }

@@ -9,12 +9,9 @@ import com.bridgelabz.bookstore.model.User;
 public interface AdminService {
 	
 
-	public List<User> getSellers();
+	public List<User> getSellers(String token);	
+	public List<Book> getBooksForVerification(long sellerId, String token);
+	public void bookVerification(Long bookId, Long sellerId, boolean verify, String token) throws BookException;
 
-	public List<Book> getAllBooks();
-	public List<Book> getBooksForVerification();
-	public void bookVerification(Long bookId, Long sellerId, String verify) throws BookException;
-
-	List<User> getBuyers();
-
+	
 }

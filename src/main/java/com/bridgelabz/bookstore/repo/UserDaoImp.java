@@ -1,12 +1,15 @@
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +25,9 @@ public class UserDaoImp implements UserRepo {
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	@Autowired
+	private EntityManager entityManager;
 
 	public void addUser(User user) {
 		Session currentSession = sessionFactory.getCurrentSession();
@@ -42,7 +48,6 @@ public class UserDaoImp implements UserRepo {
 	public User update(UpdateDTO updateDTO, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
-		//user.setUserName(updateDTO.getUserName());
 		user.setPassword(updateDTO.getPassword());
 		user.setUpdateDateTime(DateUtility.today());
 		session.update(user);
@@ -156,7 +161,13 @@ public class UserDaoImp implements UserRepo {
 			user.setUpdateDateTime(DateUtility.today());
 			user.setName(fullName);
 			session.update(user);
+	}
 		
+	public Optional<User> getUserById(long userId) {
+		Session session = entityManager.unwrap(Session.class);
+		Query q = session.createQuery("From User where user_id=:id");
+		q.setParameter("id", userId);
+		return  q.uniqueResultOptional();
 	}
 
 }

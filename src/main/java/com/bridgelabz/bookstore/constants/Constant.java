@@ -7,10 +7,10 @@ public class Constant {
 	private Constant() {
 	}
 
-	public static final String INDEX = "userentity";
-	public static final String TYPE = "_doc";
-	public static final String INDEX1 = "bookentity";
-	public static final String KEY="User";
+	public static final String KEY = "User";
+
+	public static final String ROLE_AS_SELLER = "SELLER";
+	public static final String ROLE_AS_BUYER = "BUYER";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -20,18 +20,17 @@ public class Constant {
 	public static final long LOGIN_EXP = (long) 24 * 60 * 60 * 10000000;
 	public static final int OK_RESPONSE_CODE = 200;
 	public static final int CREATED_RESPONSE_CODE = 201;
-
-	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY="PROFILE_IMAGE_DELETED_SUCCESSFULLY";
-	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY="PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
-
-	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
-
 	public static final int ALREADY_EXIST_EXCEPTION_STATUS = 208;
 	public static final int NOTE_NOT_FOUND_EXCEPTION_STATUS = 300;
 	public static final int BAD_REQUEST_RESPONSE_CODE = 400;
 	public static final int USER_AUTHENTICATION_EXCEPTION_STATUS = 401;
 	public static final int NOT_FOUND_RESPONSE_CODE = 404;
 	public static final int BAD_GATEWAY_RESPONSE_CODE = 502;
+	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
+	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY = "PROFILE_IMAGE_DELETED_SUCCESSFULLY";
+	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY = "PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
+	public static final String INDEX = "bookentity";
+	public static final String TYPE = "doc";
 	public static final String LOGIN_SUCCESSFULL_MESSAGE = "Login Successfull";
 	public static final String PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE = "Password Updated Successfully";
 	public static final String VALID_INPUT_MESSAGE = "Give Valid Password";
@@ -65,5 +64,20 @@ public class Constant {
 	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
 	public static final String RESET_PASSWORD = "http://localhost:4200/resetpassword/";
+
+	public static final String ADMIN_CREDENTIALS_MISMATCH = "Admin Credentials Mismatch";
+	public static final String USER_FOUND = "User Found";
+	public static final String BOOK_VERIFIED_SUCCESSFULLY_MEAASGE = "Book Verified Successfully";
+
+	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
+	
+	public static final String BOOK_ADD_TO_CART = "book is succesfully added to the cart";
+	public static final String BOOK_ADD_TO_CART_FAILED = "book couldnot/failed to add to the cart";
+
+	public static final String BOOK_REMOVED_FROM_CART = "book is sucessfully removed from cart";
+	public static final String BOOK_REMOVAL_FROM_CART_FAILED = "Failed to remove book from cart";
+
+	public static final String BOOKS_DISPLAYING_MESSAGE = "Displaying items in cart";
+	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "Displaying items in cart failed";
 
 }

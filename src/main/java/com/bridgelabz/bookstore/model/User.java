@@ -14,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -78,10 +79,40 @@ public class User {
 	public List<Role> roleList;
 
 	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Book> sellerBooks;
+	
+	@OneToOne(cascade= CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "cart_id")
+	private Cart userCart;
+	
+	public Cart getUserCart() {
+		return userCart;
+	}
+
+	public void setUserCart(Cart userCart) {
+		this.userCart = userCart;
+	}
+
+	public List<Review> getReview() {
+		return review;
+	}
+
+	public void setReview(List<Review> review) {
+		this.review = review;
+	}
+
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "seller_id")
-	private List<Book> sellerBooks;
+	@JoinColumn(name = "user_id")
+	private List<Review> review;
+
+	// Kalpesh Review: Bad practice to pass more than 4 parameters
+	// make object and then pass it
+	// and validation is inside call not at parameter level
 
 	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
 			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
@@ -219,5 +250,6 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
+	
 
 }

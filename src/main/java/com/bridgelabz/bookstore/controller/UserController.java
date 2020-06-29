@@ -142,8 +142,8 @@ public class UserController {
 		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
 	}
 
-	@PostMapping("/logout")
-	public ResponseEntity<Response> logOut(@RequestParam("token") String token) throws UserException {
+	@PutMapping("/logout")
+	public ResponseEntity<Response> logOut(@RequestHeader("token") String token) throws UserException {
 		if (userService.logOut(token)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.LOGOUT_MEAASGE, Constant.OK_RESPONSE_CODE));
@@ -152,9 +152,9 @@ public class UserController {
 				.body(new Response(Constant.LOGOUT_FAILED_MEAASGE, Constant.OK_RESPONSE_CODE));
 	}
 
-	@PostMapping("/uploadimage")
+	@PostMapping("/uploadImage")
 	public ResponseEntity<Response> uploadFile(@RequestPart("file") MultipartFile file, @RequestHeader String token,
-			@RequestParam("isProfile") boolean isProfile) {
+			@RequestParam("isProfile") String isProfile) {
 		String imageUrl = userService.uploadFile(file, token, isProfile);
 		if (imageUrl != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
@@ -166,7 +166,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/deleteimage")
-	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl,@RequestHeader("token") String token,@RequestParam("isProfile") boolean isProfile) {
+	public ResponseEntity<Response> deleteFile(@RequestParam("url") String fileUrl,@RequestHeader("token") String token,@RequestParam("isProfile") String isProfile) {
 		if (userService.deleteFileFromS3Bucket(fileUrl,token,isProfile)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_DELETED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));

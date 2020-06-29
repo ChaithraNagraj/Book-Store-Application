@@ -40,9 +40,10 @@ public interface UserService {
 
 	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException;
 
-	public String uploadFileTos3bucket(String fileName, File file, boolean isProfile);
+	public String uploadFileTos3bucket(String fileName, File file, String isProfile);
 
-	public boolean deleteFileFromS3Bucket(String fileUrl, String token, boolean isProfile);
+	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile);
 
-	public String uploadFile(MultipartFile multipartFile, String token, boolean isProfile);
+	public String uploadFile(MultipartFile multipartFile, String token, String isProfile);
+
 }
