@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+import java.util.regex.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -280,12 +281,32 @@ public class UserServiceImp implements UserService {
 	}
 
 	@Override
-	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException {
+	public boolean updateUser(UpdateDTO updateDTO, String token) throws UserException 
+	{
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User isUserExist = userRepository.findByUserId(id);
-		if (isUserExist != null) {
-			userRepository.update(updateDTO, id);
-			userRepository.updatePassword(id, encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
+		if (isUserExist != null) 
+		{
+			if(!updateDTO.getFullName().equals("string"))
+			{
+				System.out.println("Full name:"+updateDTO.getFullName());
+				updateDTO.setFullName(updateDTO.getFullName());
+				userRepository.updateFullName(id, updateDTO.getFullName());
+			}
+			else
+			{
+				updateDTO.setFullName(isUserExist.getName());
+			}
+			if(!updateDTO.getPassword().equals("string"))
+			{
+				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
+			}
+			else
+					updateDTO.setPassword(isUserExist.getPassword());
+			
+			isUserExist.setUpdateDateTime(DateUtility.today());
+			BeanUtils.copyProperties(updateDTO, isUserExist);
+			userRepository.addUser(isUserExist);
 			return true;
 		}
 		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);

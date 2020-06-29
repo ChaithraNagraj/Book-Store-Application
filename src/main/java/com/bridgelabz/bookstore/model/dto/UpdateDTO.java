@@ -7,18 +7,11 @@ public class UpdateDTO {
 	
 	@Size(min = 3)
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
-	private String userName;
+	private String fullName;
 	@Size(min = 8)
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+	//private Long mobileNumber;
 
 	public String getPassword() {
 		return password;
@@ -28,4 +21,14 @@ public class UpdateDTO {
 		this.password = password;
 	}
 
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	
+	
 }

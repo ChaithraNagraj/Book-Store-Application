@@ -64,6 +64,6 @@ public class Constant {
 	public static final String PROFILE_IMAGE_DELETED_FAILED = "Image Deleted Failed";
 	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
-	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
+	public static final String RESET_PASSWORD = "http://localhost:4200/resetpassword/";
 
 }

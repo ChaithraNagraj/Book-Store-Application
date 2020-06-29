@@ -1,5 +1,7 @@
 package com.bridgelabz.bookstore.controller;
 
+import static org.mockito.Mockito.RETURNS_DEFAULTS;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -98,6 +100,7 @@ public class UserController {
 	@PutMapping("/resetpassword")
 	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPassword,
 			@RequestParam("token") String token) throws UserException {
+		System.out.println("Hitting api  reset password");
 		if (userService.resetPassword(resetPassword, token)) {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new Response(Constant.PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE, Constant.CREATED_RESPONSE_CODE));
@@ -173,15 +176,15 @@ public class UserController {
 		}
 
 	}
-
 	@PutMapping("/update")
-	public ResponseEntity<Response> userUpdate(@Valid @RequestBody UpdateDTO updateDTO, @RequestParam("token") String token) throws UserException {
-		if (userService.updateUser(updateDTO, token)) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
-		}
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response(Constant.USER_DETAILS_UPDATED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
+	public ResponseEntity<Response> userUpdate(@RequestBody UpdateDTO updateDTO, @RequestParam("token") String token) throws UserException {
+
+	if (userService.updateUser(updateDTO, token)) {
+	return ResponseEntity.status(HttpStatus.OK)
+	.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
+	}
+	return ResponseEntity.status(HttpStatus.OK)
+	.body(new Response(Constant.USER_DETAILS_UPDATED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
 	}
 
 }

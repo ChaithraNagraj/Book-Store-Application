@@ -42,7 +42,7 @@ public class UserDaoImp implements UserRepo {
 	public User update(UpdateDTO updateDTO, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
-		user.setUserName(updateDTO.getUserName());
+		//user.setUserName(updateDTO.getUserName());
 		user.setPassword(updateDTO.getPassword());
 		user.setUpdateDateTime(DateUtility.today());
 		session.update(user);
@@ -146,6 +146,17 @@ public class UserDaoImp implements UserRepo {
 				.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
+	}
+
+	@Override
+	public void updateFullName(Long id, String fullName)
+	{
+			Session session = sessionFactory.getCurrentSession();
+			User user = session.get(User.class, id);
+			user.setUpdateDateTime(DateUtility.today());
+			user.setName(fullName);
+			session.update(user);
+		
 	}
 
 }
