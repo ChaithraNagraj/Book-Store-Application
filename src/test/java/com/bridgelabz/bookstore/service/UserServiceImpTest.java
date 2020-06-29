@@ -2,7 +2,6 @@ package com.bridgelabz.bookstore.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.anything;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import org.mockito.MockitoAnnotations;
 
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.utils.DateUtility;
 
 class UserServiceImpTest {
 	
@@ -36,13 +34,12 @@ class UserServiceImpTest {
 		user.setEmail("email@email.com");
 		user.setId(1l);
 	
-		user.setMobileNumber(1234567890l);
+		user.setMobileNumber("1234567890");
 		user.setName("pallavi");
 	    user.setUserName("Wxcvbn");
 	    user.setUserStatus(false);
 	    user.setVerify(false);
 		when(UserRepository.findByUserId(1l)).thenReturn(user);
-		userService.findById(1l);
 		assertNotNull(user);
 		assertEquals("pallavi", user.getName());
 	
@@ -55,7 +52,7 @@ class UserServiceImpTest {
 		user.setEmail("email@email.com");
 		user.setId(1l);
 	
-		user.setMobileNumber(1234567890l);
+		user.setMobileNumber("1234567890");
 		user.setName("pallavi");
 	    user.setUserName("Wxcvbn");
 	    user.setUserStatus(false);

@@ -50,7 +50,7 @@ public class User {
 
 	@Column(name = "mobile_number", unique = true, length = 10)
 	@NotNull
-	private Long mobileNumber;
+	private String mobileNumber;
 
 	@Column(name = "is_verify", columnDefinition = "boolean default false")
 	@NotNull
@@ -82,8 +82,8 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
-	
-	@OneToOne(cascade= CascadeType.ALL)
+
+	@OneToOne(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
@@ -123,29 +123,13 @@ public class User {
 	@JoinColumn(name = "user_id")
 	private List<Review> review;
 
-	// Kalpesh Review: Bad practice to pass more than 4 parameters
-	// make object and then pass it
-	// and validation is inside call not at parameter level
-
-	public User(Long id, @Size(min = 3) String fullName, String userName, @Email String email,
-			@Size(min = 3) String password, @NotNull Long mobileNumber, @NotNull boolean isVerify,
-			@NotNull LocalDateTime registrationDateTime, @NotNull LocalDateTime updateDateTime,
-			@NotNull boolean userStatus, String imageUrl, List<Role> roleList, List<Book> sellbookList) {
+	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();
-		this.id = id;
 		this.name = fullName;
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
 		this.mobileNumber = mobileNumber;
-		this.isVerify = isVerify;
-		this.registrationDateTime = registrationDateTime;
-		this.updateDateTime = updateDateTime;
-		this.userStatus = userStatus;
-		this.imageUrl = imageUrl;
-
-		this.roleList = roleList;
-		this.sellerBooks = sellbookList;
 	}
 
 	public User() {
@@ -192,11 +176,11 @@ public class User {
 		this.password = password;
 	}
 
-	public Long getMobileNumber() {
+	public String getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMobileNumber(Long mobileNumber) {
+	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
 
