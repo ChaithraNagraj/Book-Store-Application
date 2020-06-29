@@ -7,7 +7,6 @@ public class Constant {
 	private Constant() {
 	}
 
-	
 	public static final String KEY = "User";
 
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
@@ -73,6 +72,8 @@ public class Constant {
 	public static final String APPROVAL_STATUS_APPROVED = "approved";
 	public static final String APPROVAL_STATUS_REJECTED = "rejected";
 	public static final String APPROVAL_STATUS_CREATED = "created";
-
+	public static final String USER_ID = "userId";
+	public static final String ROLE_ID = "roleId";
+	
 
 }

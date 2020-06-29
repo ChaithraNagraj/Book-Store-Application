@@ -1,13 +1,18 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class LoginDTO {
-	// Kalpesh Review: Handle all validation at DTO level
 
+	@NotEmpty(message = "Enter LoginId - Registration DTO")
 	private String loginId;
+	@Size(min = 8)
 	private String password;
+	@NotEmpty(message = "Enter Role - Registration DTO")
 	private Long role;
 
 	public String getloginId() {

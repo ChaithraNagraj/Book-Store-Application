@@ -25,4 +25,7 @@ amazonProperties:
   bucketName: ${bucketname}
   bookBucketName: ${bookBucketName}
   region: ${region}
-    
+
+redis:
+  password: ${password}    
+  redisKey: ${key}
