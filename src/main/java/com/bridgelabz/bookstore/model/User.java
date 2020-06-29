@@ -87,6 +87,28 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "cart_id")
 	private Cart userCart;
+	
+	public Cart getUserCart() {
+		return userCart;
+	}
+
+	public void setUserCart(Cart userCart) {
+		this.userCart = userCart;
+	}
+
+	public List<Review> getReview() {
+		return review;
+	}
+
+	public void setReview(List<Review> review) {
+		this.review = review;
+	}
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<Review> review;
 
 	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();
@@ -212,5 +234,6 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
+	
 
 }

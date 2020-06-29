@@ -5,8 +5,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class UpdateDTO {
-	// Kalpesh Review: password is not mandatory
-	// user can't update userName once define because it is unique
 
 	@NotEmpty(message = "Enter First Name - Registration DTO")
 	@Size(min = 3)
@@ -23,6 +21,16 @@ public class UpdateDTO {
 
 	public void setUserName(String fullName) {
 		this.fullName = fullName;
+	}	
+	private Long mobileNumber;
+
+
+	public Long getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(Long mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getPassword() {

@@ -153,7 +153,6 @@ public class UserController {
 	@PutMapping("/update")
 	public ResponseEntity<Response> userUpdate(@RequestBody UpdateDTO updateDTO, @RequestParam("token") String token)
 			throws UserException {
-
 		if (userService.updateUser(updateDTO, token)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.USER_DETAILS_UPDATED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));

@@ -9,6 +9,8 @@ public class Constant {
 
 	public static final String KEY = "User";
 
+	public static final String ROLE_AS_SELLER = "SELLER";
+	public static final String ROLE_AS_BUYER = "BUYER";
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
@@ -74,6 +76,14 @@ public class Constant {
 	public static final String APPROVAL_STATUS_CREATED = "created";
 	public static final String USER_ID = "userId";
 	public static final String ROLE_ID = "roleId";
-	
+
+	public static final String BOOK_ADD_TO_CART = "book is succesfully added to the cart";
+	public static final String BOOK_ADD_TO_CART_FAILED = "book couldnot/failed to add to the cart";
+
+	public static final String BOOK_REMOVED_FROM_CART = "book is sucessfully removed from cart";
+	public static final String BOOK_REMOVAL_FROM_CART_FAILED = "Failed to remove book from cart";
+
+	public static final String BOOKS_DISPLAYING_MESSAGE = "Displaying items in cart";
+	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "Displaying items in cart failed";
 
 }
