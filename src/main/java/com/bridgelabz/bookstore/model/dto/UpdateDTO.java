@@ -12,6 +12,24 @@ public class UpdateDTO {
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number")
 	private String password;
 
+	public String getUserName() {
+		return fullName;
+	}
+
+	public void setUserName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	private Long mobileNumber;
+
+	public Long getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(Long mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
 	public String getPassword() {
 		return password;
 	}

@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.model.dto;
 
-import java.util.regex.Matcher;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -9,24 +8,18 @@ import javax.validation.constraints.Size;
 
 public class RegistrationDTO {
 
-	// Kalpesh Review: Handle all validation at DTO level
-
-	// Kalpesh Review: Apply proper validations name and user name not empty and
-	// atleast 3 char
-	// email in regex format
-	// mobile number regex format
-	// password regex format
-
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-//	@Size(min = 3)
-//	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
+	@Size(min = 3)
+	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
 	private String name;
-//
-//	@Size(min = 3)
-//	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
+
+	@Size(min = 3)
+	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
 	private String userName;
 
 	@Email
+
+	@Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", message = "Please Enter Valid Email")
 	private String email;
 
 	@Size(min = 8)
@@ -36,18 +29,15 @@ public class RegistrationDTO {
 	@NotEmpty(message = "Enter Role - Registration DTO")
 	private String role;
 
-	private Long mobileNumber;
+	@Pattern(regexp = "{1}[7-9][0-9]{9}$", message = "Enter Valid Mobile Number")
+	private String mobileNumber;
 
 	public RegistrationDTO() {
 		super();
 	}
 
-	public RegistrationDTO(
-			@NotEmpty(message = "Enter First Name - Registration DTO") @Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid FirstName") String name,
-			@Size(min = 3) @Pattern(regexp = "^[A-Z][a-z\\s]{3,}", message = "Please Enter Valid UserName") String userName,
-			@Email String email,
-			@Size(min = 3) @Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "length should be 8 must contain atleast one uppercase, lowercase, special character and number") String password,
-			@NotEmpty(message = "Enter Role - Registration DTO") String role, Long mobileNumber) {
+	public RegistrationDTO(String name, String userName, String email, String password, String role,
+			String mobileNumber) {
 		super();
 		this.name = name;
 		this.userName = userName;
@@ -74,11 +64,11 @@ public class RegistrationDTO {
 		return this;
 	}
 
-	public Long getMobileNumber() {
+	public String getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMobileNumber(Long mobileNumber) {
+	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
 
@@ -104,15 +94,6 @@ public class RegistrationDTO {
 
 	public void setRole(String role) {
 		this.role = role;
-	}
-
-	public static Boolean isValid(Long mobileNumber) {
-		// Kalpesh Review: Proper variable name
-		String phNo = Long.toString(mobileNumber);
-		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^[7-9]\\d{9}$");
-		Matcher m = pattern.matcher(phNo);
-		return m.find();
-
 	}
 
 	@Override
