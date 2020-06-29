@@ -27,6 +27,7 @@ public class WishlistServiceImp implements WishlistService {
 
 	@Autowired
 	private TokenUtility tokenUtility;
+	
 	@Transactional
 	public Wishlist addtoWishlist(String token, long bookId) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);

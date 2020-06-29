@@ -86,5 +86,14 @@ public class Constant {
 	public static final String BOOKS_DISPLAYING_MESSAGE = "Displaying items in cart";
 	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "Displaying items in cart failed";
 
+	public static final String BOOK_ADD_TO_WISHLIST = "book is succesfully added to the wishlist";
+	public static final String BOOK_ADD_TO_WISHLIST_FAILED = "failed to add to the wishlist";
+
+	public static final String BOOK_REMOVED_FROM_WISHLIST = "book is sucessfully removed from wishlist";
+	public static final String BOOK_REMOVAL_FROM_WISHLIST_FAILED = "failed to remove book from wishlist";
+
+	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
+	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
+
 
 }
