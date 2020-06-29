@@ -97,6 +97,7 @@ public class UserController {
 	@PutMapping("/resetpassword")
 	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPassword,
 			@RequestParam("token") String token) throws UserException {
+		System.out.println("Hitting api  reset password");
 		if (userService.resetPassword(resetPassword, token)) {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new Response(Constant.PASSWORD_UPTATION_SUCCESSFULLY_MESSAGE, Constant.CREATED_RESPONSE_CODE));
@@ -159,6 +160,6 @@ public class UserController {
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new Response(Constant.USER_DETAILS_UPDATED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
-	}
 
+	}
 }

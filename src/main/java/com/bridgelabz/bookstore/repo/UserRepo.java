@@ -41,7 +41,9 @@ public interface UserRepo {
 	public User findByUserIdAndRoleId(Long userId, Long roleId);
 
 	public User getusersByLoginId(String loginId);
-	
+
+	public void updateFullName(Long id, String fullName);
+
 	public Optional<User> getUserById(long userId);
 
 }

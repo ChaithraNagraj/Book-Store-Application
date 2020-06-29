@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -33,5 +34,7 @@ public interface UserService {
 	public boolean deleteFileFromS3Bucket(String fileUrl, String token, String isProfile);
 
 	public String uploadFile(MultipartFile multipartFile, String token, String isProfile);
+
+	public String uploadFileTos3bucket(String fileName, File file, String isProfile);
 
 }
