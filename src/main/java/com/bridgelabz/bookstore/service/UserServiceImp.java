@@ -75,7 +75,7 @@ public class UserServiceImp implements UserService {
 	@Value("${redis.redisKey}")
 	private String redisKey;
 
-	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
+//	private Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
 
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
@@ -121,7 +121,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			logger.info(e.getMessage());
+			//logger.info(e.getMessage());
 		}
 	}
 
