@@ -35,7 +35,7 @@ public class UserServiceTest {
 
 	@Test
 	public void sucessful_registration_user() throws UserException {
-		RegistrationDTO registrationDTO = new RegistrationDTO("Ramesh Aanji", "Aanji20@", "rameshaanji97@gmail.com", "Aanji20@", "2", 8428443096L);
+		RegistrationDTO registrationDTO = new RegistrationDTO("Ramesh Aanji", "Aanji20@", "rameshaanji97@gmail.com", "Aanji20@", "2", "8422442099");
 		boolean response = userServiceImpl.registerUser(registrationDTO);
 		Assert.assertTrue(response);
 	}

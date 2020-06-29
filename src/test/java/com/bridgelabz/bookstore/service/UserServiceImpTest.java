@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.service;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.times;
@@ -28,9 +29,12 @@ import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 
+
+
 class UserServiceImpTest {
 	
 	@InjectMocks
+
 	UserServiceImp service;
 	
 	
@@ -41,18 +45,32 @@ class UserServiceImpTest {
 	@Mock
 	RoleRepositoryImp roleRepository;
 
+
 	@BeforeEach
 	void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+
 		user=new User();
 		user.setEmail("email@email.com");
 		user.setId(1l);
 	    user.setImageUrl("imageUrl");
-		user.setMobileNumber(1234567890l);
+		user.setMobileNumber("1234567890");
+
+	}
+
+	@Test
+	final void testFindById() {
+		User user=new User();
+		user.setEmail("email@email.com");
+		user.setId(1l);
+	
+		user.setMobileNumber("1234567890");
+>>>>>>> 96a7058bd4c54aa493e64398e61ff7671c75612e
 		user.setName("pallavi");
 	    user.setUserName("Wxcvbn");
 	    user.setUserStatus(false);
 	    user.setVerify(false);
+<<<<<<< HEAD
 	}
 
 	@Test
@@ -121,4 +139,36 @@ class UserServiceImpTest {
 		
 	}
   
+=======
+		when(UserRepository.findByUserId(1l)).thenReturn(user);
+		assertNotNull(user);
+		assertEquals("pallavi", user.getName());
+	
+	}
+	
+	@Test
+	final void testgetUser(){
+		
+		User user=new User();
+		user.setEmail("email@email.com");
+		user.setId(1l);
+	
+		user.setMobileNumber("1234567890");
+		user.setName("pallavi");
+	    user.setUserName("Wxcvbn");
+	    user.setUserStatus(false);
+	    user.setVerify(false);
+	    user.setRegistrationDateTime(null);
+	    user.setSellerBooks(null);
+	    user.setRoleList(null);
+	    user.setVerify(false);
+	    
+			List<User> ListOfUsr=new ArrayList<>();
+			ListOfUsr.add(user);
+			when(UserRepository.getUser()).thenReturn(ListOfUsr);
+			assertEquals("email@email.com",ListOfUsr.get(0).getEmail());
+		
+	}
+
+>>>>>>> 96a7058bd4c54aa493e64398e61ff7671c75612e
 }

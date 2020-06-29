@@ -8,14 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonClientException;
@@ -44,25 +35,19 @@ import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.model.dto.ResetPasswordDto;
 import com.bridgelabz.bookstore.model.dto.RoleDTO;
 import com.bridgelabz.bookstore.model.dto.UpdateDTO;
-import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
+import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-//Kalpesh Review: Give transaction at method level
-@Transactional
 public class UserServiceImp implements UserService {
 
-
-
-	// Kalpesh Review: RoleRepositoryImp don't have interface layer?
 	@Autowired
-	private RoleRepositoryImp roleRepository;
+	private RoleRepository roleRepository;
 
 	@Autowired
 	private UserRepo userRepository;
@@ -76,39 +61,25 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private RedisCache<Object> redis;
 
-	// Kalpesh Review: this is bad practice to read property and env file in service
-	// layer make model for it and read it with help of encapsulation
 	@Autowired
 	private Environment environment;
 
 	@Autowired
 	private AmazonS3 amazonS3;
 
-	// Kalpesh Review: remove unused variables
-	@Value("${amazonProperties.endpointUrl}")
-	private String endpointUrl;
-
-	// Kalpesh Review: this is bad practice to read property and env file in service
-	// layer make model for it and read it with help of encapsulation
 	@Value("${amazonProperties.bucketName}")
 	private String bucketName;
 
 	@Value("${amazonProperties.bookBucketName}")
 	private String bookBucketName;
 
-	// Kalpesh Review: set key in yml and value in env
-	private String redisKey = "Key";
+	@Value("${redis.redisKey}")
+	private String redisKey;
 
 //	private Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
 
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
-
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
-
-		// Kalpesh Review: variable name refactor
-
-		// Kalpesh Review: Refactor logic to many database hits
-		// Try to make only one method in repo which takes email, and all parameters
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
 		if (userEmailExists.isPresent()) {
 			Optional.ofNullable(userRepository.findByUserIdAndRoleId(userEmailExists.get().getId(),
@@ -134,8 +105,7 @@ public class UserServiceImp implements UserService {
 			registerMail(userEntity, role, environment.getProperty("registration-template-path"));
 			return true;
 		}
-		
-		
+
 	}
 
 	private void registerMail(User user, Role role, String templet) {
@@ -156,58 +126,20 @@ public class UserServiceImp implements UserService {
 		}
 	}
 
-	// Kalpesh Review: I don't know why findById?
-
-	public User findById(Long id) {
-//		String text = Long.toString(id);
-//		SearchRequest searchRequest = new SearchRequest();
-//		searchRequest.indices(Constant.INDEX);
-//		searchRequest.types(Constant.TYPE);
-//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//		QueryBuilder query = QueryBuilders.boolQuery()
-//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
-//
-//		searchSourceBuilder.query(query);
-//		searchRequest.source(searchSourceBuilder);
-//		SearchResponse searchResponse = null;
-//		try {
-//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return (User) getSearchResult(searchResponse);
-		return userRepository.findByUserId(id);
-	}
-
-	// Kalpesh Review: Why to get all users? Not needed
-	public List<User> getUser() {
-		List<User> user = userRepository.getUser();
-		if (user.isEmpty()) {
-			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
-					Constant.NOT_FOUND_RESPONSE_CODE);
-		}
-		return user;
-	}
-
-	// Kalpesh Review: Why user delete? Not needed-->{needed for admin}
-	public void deleteUserById(Long id) {
-		userRepository.delete(id);
-	}
-
 	public boolean verify(String token) throws UserException {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
 		// Kalpesh Review: Name of variable
-		User idAvailable = userRepository.findByUserId(id);
-		if (idAvailable == null) {
+		User mayBeUser = userRepository.findByUserId(id);
+		if (mayBeUser == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		} else {
-			if (!idAvailable.isVerify()) {
-				idAvailable.setVerify(true);
-				userRepository.verify(idAvailable.getId());
-				registerMail(idAvailable, role, environment.getProperty("login-template-path"));
+			if (!mayBeUser.isVerify()) {
+				mayBeUser.setVerify(true);
+				userRepository.verify(mayBeUser.getId());
+				registerMail(mayBeUser, role, environment.getProperty("login-template-path"));
 				return true;
 			}
 			throw new UserException(Constant.USER_ALREADY_VERIFIED_MESSAGE, Constant.ALREADY_EXIST_EXCEPTION_STATUS);
@@ -267,18 +199,14 @@ public class UserServiceImp implements UserService {
 
 	@Override
 	public boolean isSessionActive(String token) {
-		// Kalpesh Review: need to check session for userID with role
-
-		long id = JwtValidate.decodeJWT(token).get("userId", Long.class);
-		User user = userRepository.findByUserId(id);
+		long userId = JwtValidate.decodeJWT(token).get("userId", Long.class);
+		long roleId = JwtValidate.decodeJWT(token).get("roleId", Long.class);
+		User user = userRepository.findByUserIdAndRoleId(userId, roleId);
 		return user.isUserStatus();
 	}
 
 	@Override
 	public boolean logOut(String token) throws UserException {
-		// Kalpesh Review: Not using redise cache? not setting id into redise after
-		// login?
-
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User user = userRepository.findByUserId(id);
 		if (user == null) {
@@ -297,10 +225,18 @@ public class UserServiceImp implements UserService {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		User isUserExist = userRepository.findByUserId(id);
 		if (isUserExist != null) {
-			if(updateDTO.getMobileNumber().equals(null))
-				updateDTO.setMobileNumber(isUserExist.getMobileNumber());
-			if(updateDTO.getPassword().equals("")||updateDTO.getPassword().isEmpty())
+			if (!updateDTO.getFullName().equals("string")) {
+				System.out.println("Full name:" + updateDTO.getFullName());
+				updateDTO.setFullName(updateDTO.getFullName());
+				userRepository.updateFullName(id, updateDTO.getFullName());
+			} else {
+				updateDTO.setFullName(isUserExist.getName());
+			}
+			if (!updateDTO.getPassword().equals("string")) {
+				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
+			} else
 				updateDTO.setPassword(isUserExist.getPassword());
+
 			isUserExist.setUpdateDateTime(DateUtility.today());
 			BeanUtils.copyProperties(updateDTO, isUserExist);
 			userRepository.addUser(isUserExist);
@@ -367,7 +303,4 @@ public class UserServiceImp implements UserService {
 		}
 		return false;
 	}
-
-
-
 }

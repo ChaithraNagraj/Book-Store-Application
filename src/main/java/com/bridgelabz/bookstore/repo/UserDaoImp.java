@@ -48,10 +48,8 @@ public class UserDaoImp implements UserRepo {
 	public User update(UpdateDTO updateDTO, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
-
-		
-		
-		
+		user.setPassword(updateDTO.getPassword());
+		user.setUpdateDateTime(DateUtility.today());
 		session.update(user);
 		return user;
 	}
@@ -156,6 +154,15 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
+	public void updateFullName(Long id, String fullName)
+	{
+			Session session = sessionFactory.getCurrentSession();
+			User user = session.get(User.class, id);
+			user.setUpdateDateTime(DateUtility.today());
+			user.setName(fullName);
+			session.update(user);
+	}
+		
 	public Optional<User> getUserById(long userId) {
 		Session session = entityManager.unwrap(Session.class);
 		Query q = session.createQuery("From User where user_id=:id");
