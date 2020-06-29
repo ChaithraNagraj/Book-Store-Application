@@ -99,7 +99,7 @@ public class UserServiceImp implements UserService {
 	// Kalpesh Review: set key in yml and value in env
 	private String redisKey = "Key";
 
-	private Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
+//	private Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
 
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 
@@ -152,7 +152,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			logger.info(e.getMessage());
+			//logger.info(e.getMessage());
 		}
 	}
 
