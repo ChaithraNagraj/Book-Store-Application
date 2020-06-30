@@ -18,9 +18,9 @@ import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
-import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -35,9 +35,6 @@ public class AdminServiceImp implements AdminService {
 	@Autowired
 	private UserRepo userRepository;
 	
-	@Autowired
-	private RedisCache<Object> redis;
-
 	@Autowired
 	private MailTempletService mailTempletService;
 
@@ -158,9 +155,9 @@ public class AdminServiceImp implements AdminService {
 		Role role = roleRepository.getRoleByName("SELLER");
 
 		book.setApprovalSent(false);
+		book.setVerifiedDateAndTime(DateUtility.today());
 		if (verify) {
 			book.setApproved(verify); 
-			
 			bookRepository.save(book);
 			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
 		} else {
@@ -170,7 +167,6 @@ public class AdminServiceImp implements AdminService {
 				bookRepository.deleteBook(book);
 				registerMail(seller, role, environment.getProperty("book-deletion-template-path"));
 			} else {
-
 				bookRepository.save(book);
 				registerMail(seller, role, environment.getProperty("book-rejection-template-path"));
 			}
