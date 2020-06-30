@@ -70,14 +70,22 @@ public class Constant {
 
 	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
 	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
-	
+
 	public static final String BOOK_ADD_TO_CART = "book is succesfully added to the cart";
 	public static final String BOOK_ADD_TO_CART_FAILED = "book couldnot/failed to add to the cart";
-
 	public static final String BOOK_REMOVED_FROM_CART = "book is sucessfully removed from cart";
 	public static final String BOOK_REMOVAL_FROM_CART_FAILED = "Failed to remove book from cart";
-
 	public static final String BOOKS_DISPLAYING_MESSAGE = "Displaying items in cart";
-	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "Displaying items in cart failed";
+	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "No Books items in cart failed";
+	public static final String ITEM_ALREADY_EXISTS_EXCEPTION_MESSAGE = "Book Already added to your cart";
+	public static final String QUANTITY_INCREASED_SUCCESS_MESSAGE = "Qauntity increased successfully";
+	public static final String QUANTITY_INCREASED_FAILED_MESSAGE = "Quantity increased Failed";
+	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";;
+	public static final String QUANTITY_DECREASED_FAILED_MESSAGE = "Quantity decreased Failed";
+	public static final String BOOK_NOT_FOUND_IN_CART_MESSAGE = "Book does not exists In your Cart";
+	public static final String BOOK_OUT_OF_STOCK_MESSAGE = "Book Out Of stock";
+	public static final String CART_ITEMS_LIMIT_EXCEEDED_MESSAGE = "Cart Items exceeded limit of 5";
+	public static final String CART_ITEM_LOW_LIMIT_MESSAGE = "Item In cart can't be less than one";
+	public static final String CART_EMPTY_MESSAGE = "No Items In cart To remove quantity";
 
 }
