@@ -27,7 +27,7 @@ public class BookDaoImple implements BookRepo {
 
 	@Override
 	public List<Book> findAllBooks() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book;").addEntity(Book.class).list();
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class).list();
 	}
 
 	@Override
