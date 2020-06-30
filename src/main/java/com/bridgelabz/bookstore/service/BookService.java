@@ -21,6 +21,8 @@ public interface BookService {
 	public List<Book> sortBookByAsc();
 
 	public List<Book> sortBookByDesc();
+
+	public List<Book> findBookCount();
 	
 	
 	

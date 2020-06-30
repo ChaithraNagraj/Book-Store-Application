@@ -42,6 +42,7 @@ public class BookController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
 	}
 	
+
 	@GetMapping("/getBooksByPriceAsc")
 	public ResponseEntity<Response> sortBookByPriceAsc(){
 		List<Book> sortBookByPriceAsc = bookservice.sortBookByAsc();
@@ -67,4 +68,13 @@ public class BookController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
 	}
    
+	@GetMapping(value="/getBookCount")
+	public ResponseEntity<Response> findBookCount(){
+	    List<Book> getBookCount = bookservice.findBookCount();
+	    if (getBookCount!=null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new Response("Books Found", HttpStatus.OK.value(), getBookCount));
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
+	
+}
 }
