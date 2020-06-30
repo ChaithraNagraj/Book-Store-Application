@@ -64,7 +64,6 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private Environment environment;
 
-	@Autowired
 	private AmazonS3 amazonS3;
 
 	@Value("${amazonProperties.bucketName}")
@@ -303,4 +302,39 @@ public class UserServiceImp implements UserService {
 		}
 		return false;
 	}
+	
+	public User findById(Long id) {
+//		String text = Long.toString(id);
+//		SearchRequest searchRequest = new SearchRequest();
+//		searchRequest.indices(Constant.INDEX);
+//		searchRequest.types(Constant.TYPE);
+//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//		QueryBuilder query = QueryBuilders.boolQuery()
+//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
+//
+//		searchSourceBuilder.query(query);
+//		searchRequest.source(searchSourceBuilder);
+//		SearchResponse searchResponse = null;
+//		try {
+//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		return (User) getSearchResult(searchResponse);
+		return userRepository.findByUserId(id);
+	}
+
+	public List<User> getUser() {
+		List<User> user = userRepository.getUser();
+		if (user.isEmpty()) {
+			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+					Constant.NOT_FOUND_RESPONSE_CODE);
+		}
+		return user;
+	}
+
+	public void deleteUserById(Long id) {
+		userRepository.delete(id);
+	}
+
 }

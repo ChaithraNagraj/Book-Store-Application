@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.service;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.times;
@@ -30,33 +29,46 @@ import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 
-
-
 class UserServiceImpTest {
-	
+
 	@InjectMocks
 
 	UserServiceImp service;
-	
-	
+
 	@Spy
 	UserRepo repo;
-	User user=new User();
-	
+	User user = new User();
+
 	@Mock
 	RoleRepositoryImp roleRepository;
 
+	@Mock
+	UserRepo userRepo;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 
-		user=new User();
+		user = new User();
 		user.setEmail("email@email.com");
 		user.setId(1l);
-	    user.setImageUrl("imageUrl");
+		user.setImageUrl("imageUrl");
 		user.setMobileNumber("1234567890");
 
+	}
+
+
+	@Test
+	final void testFindById() {
+		User user = new User();
+		user.setEmail("email@email.com");
+		user.setId(1l);
+
+		user.setMobileNumber("1234567890");
+		user.setName("pallavi");
+		user.setUserName("Wxcvbn");
+		user.setUserStatus(false);
+		user.setVerify(false);
 	}
 
 
@@ -64,6 +76,7 @@ class UserServiceImpTest {
 //	final void testFindById() {
 //		when(repo.findByUserId(1l)).thenReturn(user);
 //		service.findById(1l);
+
 //		 assertEquals("pallavi", user.getName());
 //	}
 //
@@ -136,28 +149,63 @@ class UserServiceImpTest {
   
 
 	
+
+
 	@Test
-	final void testgetUser(){
-		
-		User user=new User();
+	final void testGetUser() {
+		List<User> userlist = new ArrayList<>();
+		userlist.add(user);
+		when(repo.getUser()).thenReturn(userlist);
+		service.getUser();
+		assertEquals("pallavi", user.getName());
+	}
+
+	@Test
+	void testExpectedExceptionGetUser() {
+		List<User> userlist = new ArrayList<>();
+		when(repo.getUser()).thenReturn(userlist);
+		if (userlist.isEmpty()) {
+			Assertions.assertThrows(UserNotFoundException.class, () -> {
+				service.getUser();
+			});
+		}
+	}
+
+	@Test
+	void deleteUserByIdTest() {
+		long doseId = 42;
+
+		// perform the call
+		service.deleteUserById(doseId);
+
+		// verify the mocks
+		verify(repo, times(1)).delete((long) ((int) doseId));
+	}
+
+
+	@Test
+	final void testgetUser() {
+
+		User user = new User();
 		user.setEmail("email@email.com");
 		user.setId(1l);
-	
+
 		user.setMobileNumber("1234567890");
 		user.setName("pallavi");
-	    user.setUserName("Wxcvbn");
-	    user.setUserStatus(false);
-	    user.setVerify(false);
-	    user.setRegistrationDateTime(null);
-	    user.setSellerBooks(null);
-	    user.setRoleList(null);
-	    user.setVerify(false);
-	    
-			List<User> ListOfUsr=new ArrayList<>();
-			ListOfUsr.add(user);
-			when(repo.getUser()).thenReturn(ListOfUsr);
-			assertEquals("email@email.com",ListOfUsr.get(0).getEmail());
-		
+
+		user.setUserName("Wxcvbn");
+		user.setUserStatus(false);
+		user.setVerify(false);
+		user.setRegistrationDateTime(null);
+		user.setSellerBooks(null);
+		user.setRoleList(null);
+		user.setVerify(false);
+
+		List<User> ListOfUsr = new ArrayList<>();
+		ListOfUsr.add(user);
+		when(service.getUser()).thenReturn(ListOfUsr);
+		assertEquals("email@email.com", ListOfUsr.get(0).getEmail());
+
 	}
 
 

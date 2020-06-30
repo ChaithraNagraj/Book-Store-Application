@@ -14,13 +14,14 @@ import com.bridgelabz.bookstore.config.WebSecurityConfig;
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.service.UserServiceImp;
 
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(UserServiceImp.class)
 public class UserServiceTest {
 
 	@InjectMocks
-	private UserServiceImpTest userServiceImpl;
+	private UserServiceImp userServiceImpl;
 
 	@Mock
 	private UserRepo userRepo;
