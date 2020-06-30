@@ -3,13 +3,11 @@ package com.bridgelabz.bookstore.repo;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +23,6 @@ public class UserDaoImp implements UserRepo {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
-	@Autowired
-	private EntityManager entityManager;
 
 	public void addUser(User user) {
 		Session currentSession = sessionFactory.getCurrentSession();
@@ -112,7 +107,6 @@ public class UserDaoImp implements UserRepo {
 		return query.list();
 	}
 
-
 	public void updateUserStatus(Boolean userStatus, Long id) {
 		Session session = sessionFactory.getCurrentSession();
 		User user = session.get(User.class, id);
@@ -154,20 +148,19 @@ public class UserDaoImp implements UserRepo {
 	}
 
 	@Override
-	public void updateFullName(Long id, String fullName)
-	{
-			Session session = sessionFactory.getCurrentSession();
-			User user = session.get(User.class, id);
-			user.setUpdateDateTime(DateUtility.today());
-			user.setName(fullName);
-			session.update(user);
+	public void updateFullName(Long id, String fullName) {
+		Session session = sessionFactory.getCurrentSession();
+		User user = session.get(User.class, id);
+		user.setUpdateDateTime(DateUtility.today());
+		user.setName(fullName);
+		session.update(user);
 	}
-		
+
 	public Optional<User> getUserById(long userId) {
-		Session session = entityManager.unwrap(Session.class);
+		Session session = sessionFactory.getCurrentSession();
 		Query q = session.createQuery("From User where user_id=:id");
 		q.setParameter("id", userId);
-		return  q.uniqueResultOptional();
+		return q.uniqueResultOptional();
 	}
 
 }
