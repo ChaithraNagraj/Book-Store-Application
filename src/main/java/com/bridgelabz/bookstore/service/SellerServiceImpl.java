@@ -169,10 +169,10 @@ public class SellerServiceImpl implements SellerService {
 
 	@Override
 	public boolean sentForApproval(long bookId, String token) {
-		tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
-		Book bookSentForApproval = bookRepository.getBookById(bookId)
+		User seller = tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
+		Book bookSentForApproval = seller.getSellerBooks().stream().filter(book -> book.getBookId() == bookId).findAny()
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		if (!bookSentForApproval.isApproved() || !bookSentForApproval.isApprovalSent()) {
+		if (!bookSentForApproval.isApproved() && !bookSentForApproval.isApprovalSent()) {
 			bookSentForApproval.setApprovalSent(true);
 			updateBookInElasticSearch(bookSentForApproval);
 			return true;
