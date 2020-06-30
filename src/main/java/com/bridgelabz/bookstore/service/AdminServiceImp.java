@@ -127,7 +127,7 @@ public class AdminServiceImp implements AdminService {
 			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}	
-		return null;
+		return book;
 
 	}
 
