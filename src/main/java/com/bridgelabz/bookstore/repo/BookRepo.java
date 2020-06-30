@@ -30,4 +30,5 @@ public interface BookRepo {
 	//added:vinod;
 	public Book findByBookId(Long bookId);
 
+ public List<Book> findBookCount();
 }
