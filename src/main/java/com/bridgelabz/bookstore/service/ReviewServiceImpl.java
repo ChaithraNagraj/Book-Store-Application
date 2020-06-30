@@ -26,12 +26,14 @@ public class ReviewServiceImpl implements ReviewService {
 	BookRepo bookRepository;
 
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
+		
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
 		Book book = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.BOOK_NOT_FOUND,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
+		if(getReview(token, bookId)==null) {
 		Review review = new Review();
 		BeanUtils.copyProperties(reviewDTO, review);
 		user.getReview().add(review);
@@ -39,6 +41,16 @@ public class ReviewServiceImpl implements ReviewService {
 		book.getReview().add(review);
 		bookRepository.save(book);
 		return review;
+		}
+		else {
+			Review review = getReview(token, bookId);
+			BeanUtils.copyProperties(reviewDTO, review);
+			user.getReview().add(review);
+			userRepository.addUser(user);
+			book.getReview().add(review);
+			bookRepository.save(book);
+			return review;
+		}
 	}
 
 	@Override
