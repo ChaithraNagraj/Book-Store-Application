@@ -83,9 +83,8 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
 	
-	@OneToOne(cascade= CascadeType.ALL)
+	@OneToOne(cascade= CascadeType.ALL,optional = true,mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "cart_id")
 	private Cart userCart;
 	
 	public Cart getUserCart() {
@@ -243,13 +242,13 @@ public class User {
 		this.sellerBooks = sellerBooks;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
-				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
-				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
-				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
+//				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+//				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+//				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
+//	}
 	
 
 }
