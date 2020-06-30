@@ -1,10 +1,8 @@
 package com.bridgelabz.bookstore.service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -23,7 +21,6 @@ import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 import com.bridgelabz.bookstore.utils.MailTempletService;
-import com.bridgelabz.bookstore.utils.RedisCache;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -38,9 +35,6 @@ public class AdminServiceImp implements AdminService {
 	@Autowired
 	private UserRepo userRepository;
 	
-	@Autowired
-	private RedisCache<Object> redis;
-
 	@Autowired
 	private MailTempletService mailTempletService;
 
