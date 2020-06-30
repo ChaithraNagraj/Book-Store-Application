@@ -63,14 +63,19 @@ public class Constant {
 	public static final String PROFILE_IMAGE_DELETED_FAILED = "Image Deleted Failed";
 	public static final String PROFILE_IMAGE_UPLOADED_FAILED = "Image Uploaded Failed";
 	public static final String USER_DETAILS_UPDATED_FAILED = "User Details Updated Failed";
+	public static final String RESET_PASSWORD = "http://localhost:4200/resetpassword/";
 
 	public static final String ADMIN_CREDENTIALS_MISMATCH = "Admin Credentials Mismatch";
 	public static final String USER_FOUND = "User Found";
 	public static final String BOOK_VERIFIED_SUCCESSFULLY_MEAASGE = "Book Verified Successfully";
 
 	public static final String UNAUTHORIZED_EXCEPTION_MESSAGE = "You are not Authorized";
-	public static final String RESET_PASSWORD = "http://localhost:8080/users/resetpassword?token=";
-
+	public static final String APPROVAL_STATUS_WAITING = "waiting";
+	public static final String APPROVAL_STATUS_APPROVED = "approved";
+	public static final String APPROVAL_STATUS_REJECTED = "rejected";
+	public static final String APPROVAL_STATUS_CREATED = "created";
+	public static final String USER_ID = "userId";
+	public static final String ROLE_ID = "roleId";
 	public static final String BOOK_ADD_TO_CART = "book is succesfully added to the cart";
 	public static final String BOOK_ADD_TO_CART_FAILED = "book couldnot/failed to add to the cart";
 	public static final String BOOK_REMOVED_FROM_CART = "book is sucessfully removed from cart";
@@ -87,5 +92,15 @@ public class Constant {
 	public static final String CART_ITEMS_LIMIT_EXCEEDED_MESSAGE = "Cart Items exceeded limit of 5";
 	public static final String CART_ITEM_LOW_LIMIT_MESSAGE = "Item In cart can't be less than one";
 	public static final String CART_EMPTY_MESSAGE = "No Items In cart To remove quantity";
+
+	public static final String BOOK_ADD_TO_WISHLIST = "book is succesfully added to the wishlist";
+	public static final String BOOK_ADD_TO_WISHLIST_FAILED = "failed to add to the wishlist";
+
+	public static final String BOOK_REMOVED_FROM_WISHLIST = "book is sucessfully removed from wishlist";
+	public static final String BOOK_REMOVAL_FROM_WISHLIST_FAILED = "failed to remove book from wishlist";
+
+	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
+	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
+
 
 }
