@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,7 @@ public class CartController {
 
 	@PostMapping(value = "/addToCart/{bookId}", headers = "Accept=application/json")
 	public ResponseEntity<Response> addtocart(@RequestHeader("token") String token,
-			@PathVariable("bookId") long bookId) {
+			@PathVariable("bookId") long bookId,BindingResult result) {
 		Cart cart = cartService.addtocart(token, bookId);
 		if (cart != null) {
 			return ResponseEntity.status(HttpStatus.OK)
