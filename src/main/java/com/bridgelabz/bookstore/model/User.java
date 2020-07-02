@@ -88,6 +88,7 @@ public class User {
 	@JoinColumn(name = "cart_id")
 	private Cart userCart;
 	
+
 	public Cart getUserCart() {
 		return userCart;
 	}
@@ -234,6 +235,5 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
-	
 
 }

@@ -64,7 +64,7 @@ public class Book {
 
 	@Column(name = "is_approved", nullable = false, columnDefinition = "boolean default false")
 	private boolean isApproved;
-	
+
 	@Column(name = "is_approval_sent", nullable = false, columnDefinition = "boolean default false")
 	private boolean isApprovalSent;
 
@@ -73,17 +73,15 @@ public class Book {
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
-
-	@ManyToMany(mappedBy = "books",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Cart> carts;
+	@ManyToMany(mappedBy = "books", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Cart> carts;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "book_id")
 	private List<Review> review;
-
 
 	public List<Review> getReview() {
 		return review;
@@ -223,5 +221,4 @@ public class Book {
 				+ ", carts=" + carts + ", review=" + review + "]";
 	}
 
-	
 }

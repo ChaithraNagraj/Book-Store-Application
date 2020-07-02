@@ -75,7 +75,6 @@ public class UserServiceImp implements UserService {
 	@Value("${redis.redisKey}")
 	private String redisKey;
 
-//	private Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
 
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
@@ -129,7 +128,6 @@ public class UserServiceImp implements UserService {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
-		// Kalpesh Review: Name of variable
 		User mayBeUser = userRepository.findByUserId(id);
 		if (mayBeUser == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
