@@ -104,4 +104,8 @@ public class Constant {
 	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
 
 
+	public static final String ORDER_PLACED_SUCCESSFULLY = "Order placed Successfully";
+
+	public static final String ORDER_PLACED_FAILED = "Order placed Failed";
+
 }
