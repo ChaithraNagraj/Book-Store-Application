@@ -13,7 +13,6 @@ import com.bridgelabz.bookstore.model.Order;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.OrderRepo;
-import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.RandomUtility;
