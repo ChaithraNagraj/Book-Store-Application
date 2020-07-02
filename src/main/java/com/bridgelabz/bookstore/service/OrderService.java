@@ -1,7 +1,9 @@
 package com.bridgelabz.bookstore.service;
 
+import com.bridgelabz.bookstore.model.Order;
+
 public interface OrderService {
 
-	public boolean checkOut(Long id, int quantity, String token);
+	public Order checkOut(Long id, int quantity, String token);
 
 }

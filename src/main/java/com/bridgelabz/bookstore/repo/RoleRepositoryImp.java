@@ -15,7 +15,6 @@ import com.bridgelabz.bookstore.model.Role;
 @Transactional
 public class RoleRepositoryImp implements RoleRepository {
 
-	// Kalpesh Review: need to use session factory and hibernet only not JPA
 
 	@Autowired
 	private SessionFactory sessionFactory;
