@@ -31,7 +31,7 @@ public class CartController {
 
 	@PostMapping(value = "/addToCart/{bookId}", headers = "Accept=application/json")
 	public ResponseEntity<Response> addtocart(@RequestHeader("token") String token,
-			@PathVariable("bookId") long bookId,BindingResult result) {
+			@PathVariable("bookId") long bookId) {
 		Cart cart = cartService.addtocart(token, bookId);
 		if (cart != null) {
 			return ResponseEntity.status(HttpStatus.OK)
