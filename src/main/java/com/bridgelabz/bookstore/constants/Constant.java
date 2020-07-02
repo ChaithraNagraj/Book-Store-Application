@@ -53,6 +53,7 @@ public class Constant {
 	public static final String BOOK_NOT_FOUND = "Book Not found";
 	public static final String USER_VERIFIED_FAILD_MEAASGE = "User Verification Failed";
 	public static final String USER_REGISTER_FAILED = "User Registration Failed";
+	public static final String DISPLAYING_BOOKS="Displaying Books";
 	public static final String BOOK_FOUND = "book found";
 	public static final String BOOK_ADDITION_SUCCESSFULL_MESSAGE = "Book Added Successfully";
 	public static final String BOOK_ADDITION_FAILED_MESSAGE = "Book Adding Failed";
@@ -102,5 +103,9 @@ public class Constant {
 	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
 	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
 
+
+	public static final String ORDER_PLACED_SUCCESSFULLY = "Order placed Successfully";
+
+	public static final String ORDER_PLACED_FAILED = "Order placed Failed";
 
 }

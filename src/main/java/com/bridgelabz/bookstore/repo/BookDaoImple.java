@@ -109,7 +109,7 @@ public class BookDaoImple implements BookRepo {
 
 	public List<Book> findBookCount() {
      Session session =entityManager.unwrap(Session.class);
-      Query<Book> q= session.createQuery("SELECT count( * ) as total_record FROM Book ");
+      Query<Book> q= session.createQuery(" SELECT count( * ) as total_record FROM Book where is_approved=1");
 //     q.setParameter("value", bookName);
      return q.getResultList();
 	}
