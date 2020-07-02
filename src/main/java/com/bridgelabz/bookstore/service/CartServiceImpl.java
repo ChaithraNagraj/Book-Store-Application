@@ -76,11 +76,9 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public List<Book> displayItems(String token) {
+	public Cart displayItems(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-		List<Book> booksInCart = new ArrayList<>();
-		buyer.getUserCart().getCartBooks().stream().forEach(book -> booksInCart.add(book.getBook()));
-		return booksInCart;
+		return buyer.getUserCart();
 	}
 
 	@Override
