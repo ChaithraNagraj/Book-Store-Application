@@ -31,7 +31,7 @@ public class CartBooks {
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
 
-	@JsonIgnore
+//	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "book_id")
 	private Book book;
