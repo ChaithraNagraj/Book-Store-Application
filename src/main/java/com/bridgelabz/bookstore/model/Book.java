@@ -83,6 +83,11 @@ public class Book {
 	@JoinColumn(name = "book_id")
 	private List<Review> review;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "book")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<CartBooks> cartBooks;
+
 	public List<Review> getReview() {
 		return review;
 	}
@@ -203,22 +208,12 @@ public class Book {
 		this.seller = seller;
 	}
 
-	public List<Cart> getCarts() {
-		return carts;
+	public List<CartBooks> getCartBooks() {
+		return cartBooks;
 	}
 
-	public void setCarts(List<Cart> carts) {
-		this.carts = carts;
-	}
-
-	@Override
-	public String toString() {
-		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
-				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
-				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
-				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
-				+ ", carts=" + carts + ", review=" + review + "]";
+	public void setCartBooks(List<CartBooks> cartBooks) {
+		this.cartBooks = cartBooks;
 	}
 
 }
