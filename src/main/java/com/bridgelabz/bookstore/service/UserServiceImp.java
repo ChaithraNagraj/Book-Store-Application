@@ -64,6 +64,7 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private Environment environment;
 
+	@Autowired
 	private AmazonS3 amazonS3;
 
 	@Value("${amazonProperties.bucketName}")
