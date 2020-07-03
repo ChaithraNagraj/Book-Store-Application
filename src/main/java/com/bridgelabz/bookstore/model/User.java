@@ -238,6 +238,26 @@ public class User {
 	public void setSellerBooks(List<Book> sellerBooks) {
 		this.sellerBooks = sellerBooks;
 	}
+	@JsonIgnore
+@OneToMany(mappedBy="user",
+           cascade= {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH} )
+	@LazyCollection(LazyCollectionOption.FALSE)
+
+private List<Address> address;
+
+
+
+
+
+
+
+	public List<Address> getAddress() {
+		return address;
+	}
+
+	public void setAddress(List<Address> address) {
+		this.address = address;
+	}
 
 	@Override
 	public String toString() {
