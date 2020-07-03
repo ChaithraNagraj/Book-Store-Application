@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -72,10 +71,6 @@ public class Book {
 	@ManyToOne
 	@JoinColumn(name = "seller_id")
 	private User seller;
-
-	@ManyToMany(mappedBy = "books", cascade = CascadeType.ALL)
-	@JsonIgnore
-	private List<Cart> carts;
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
