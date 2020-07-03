@@ -86,4 +86,9 @@ public class Constant {
 	public static final String BOOKS_DISPLAYING_MESSAGE = "Displaying items in cart";
 	public static final String BOOKS_DISPLAYING_FAILED_MESSAGE = "Displaying items in cart failed";
 
+	public static final String ORDER_PLACED_SUCCESSFULLY = "Order Placed Successfully";
+
+	public static final String ORDER_PLACED_FAILED = "Order Failed";
+
+
 }
