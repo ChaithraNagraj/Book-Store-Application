@@ -1,6 +1,8 @@
 package com.bridgelabz.bookstore.service;
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +49,18 @@ public class OrderServiceImpl implements OrderService {
 		order.setBookImage(book.getImageURL());
 		order.setAuthor(book.getAuthorName());
 		order.setVenderName(sellerDetails.getName());
+		order.setBook(book);
 		orderRepository.addOrder(order);
 		book.setQuantity(book.getQuantity() - quantity);
 		System.out.println("Added successfully");
 		return order;
 
+	}
+
+	@Override
+	public List<Order> myOrder(String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		return orderRepository.findMyOrder(buyer.getId());
 	}
 
 }

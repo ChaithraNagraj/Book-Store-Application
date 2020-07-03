@@ -61,6 +61,20 @@ public class Order {
 	@OneToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+	
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "book_id")
+	private Book book;
+
+
+	public Book getBook() {
+		return book;
+	}
+
+	public void setBook(Book book) {
+		this.book = book;
+	}
 
 	public User getUser() {
 		return user;
