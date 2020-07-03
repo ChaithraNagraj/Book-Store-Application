@@ -55,6 +55,17 @@ public class AddressServiceImpl implements AddressService {
 //		return   addressRepository.save(add);
 		
 	}
+	@Override
+	public Address getAddressByType(String addressType, String token) {
+//		Long id = generate.parseJWT(token);
+		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+	    long userId=user.getId();
+
+		Address address=addressRepo.findAddressByType(addressType,userId);
+		System.out.println("printing address from addressServiceimpl");
+		System.out.println(address);
+		return address;
+	}
 
 }
 
