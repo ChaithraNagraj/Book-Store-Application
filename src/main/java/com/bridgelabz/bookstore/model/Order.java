@@ -36,16 +36,12 @@ public class Order {
 
 	@Column(name = "total", nullable = false)
 	private double total;
-
-<<<<<<< HEAD
-=======
 	@Column(name = "OrderNumber", nullable = false)
 	private String orderNumber;
 
 	@Column(name = "bookImage", nullable = false)
 	private String bookImage;
 
->>>>>>> 744ddf309893dec48046693bef9ca75b0460b76e
 	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
 
@@ -118,8 +114,6 @@ public class Order {
 		this.createdDateAndTime = createdDateAndTime;
 	}
 
-<<<<<<< HEAD
-=======
 	public String getOrderNumber() {
 		return orderNumber;
 	}
@@ -136,7 +130,6 @@ public class Order {
 		this.bookImage = bookImage;
 	}
 
->>>>>>> 744ddf309893dec48046693bef9ca75b0460b76e
 	@Override
 	public String toString() {
 		return "Order [orderId=" + orderId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price

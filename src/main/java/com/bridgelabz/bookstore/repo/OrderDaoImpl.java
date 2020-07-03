@@ -23,8 +23,5 @@ public class OrderDaoImpl implements OrderRepo {
 		currentSession.saveOrUpdate(order);
 	}
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 744ddf309893dec48046693bef9ca75b0460b76e
+

@@ -61,7 +61,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Response> userVerification(@RequestHeader("token") String token) throws UserException {
+	public ResponseEntity<Response> userVerification(@RequestParam("token") String token) throws UserException {
 		if (userService.verify(token)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(DateUtility.today(),
 					Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
