@@ -83,11 +83,23 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
 
+	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private Cart userCart;
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "cart_id")
-	private Cart userCart;
-	
+	@JoinColumn(name = "wishlist_id")
+	private Wishlist userWishlist;
+
+	public Wishlist getUserWishlist() {
+		return userWishlist;
+	}
+
+	public void setUserWishlist(Wishlist userWishlist) {
+		this.userWishlist = userWishlist;
+	}
+
 	public Cart getUserCart() {
 		return userCart;
 	}
@@ -234,6 +246,5 @@ public class User {
 				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
 				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
 	}
-	
 
 }

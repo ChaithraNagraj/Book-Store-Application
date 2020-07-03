@@ -79,7 +79,7 @@ public class SellerController {
 		List<Book> sellerBooks = sellerService.getAllBooks(token);
 		if (!sellerBooks.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.BOOK_FOUND, Constant.OK_RESPONSE_CODE, sellerBooks));
+					.body(new Response(Constant.DISPLAYING_BOOKS, Constant.OK_RESPONSE_CODE, sellerBooks));
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
 				.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
@@ -103,9 +103,10 @@ public class SellerController {
 
 		List<Book> books = sellerService.searchBook(token, input);
 		if (books.isEmpty())
-			return new ResponseEntity<>(new Response("book not found", 200, books), HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
 
-		return new ResponseEntity<>(new Response("found notes", 200, books), HttpStatus.OK);
+		return  ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.BOOK_FOUND,Constant.OK_RESPONSE_CODE,books));
 	}
 
 	@PutMapping("/approvalSent/{bookId}")

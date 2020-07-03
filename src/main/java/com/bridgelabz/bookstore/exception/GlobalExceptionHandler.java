@@ -110,4 +110,38 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return new ResponseEntity<>(customErrorDetails, HttpStatus.BAD_REQUEST);
 	}
+	
+	
+	@ExceptionHandler(ItemAlreadyExistsInCartException.class)
+	public ResponseEntity<Response> handleItemAlreadyExistsInCartException(ItemAlreadyExistsInCartException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.ALREADY_REPORTED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+	}
+	
+	@ExceptionHandler(CartItemsLimitException.class)
+	public ResponseEntity<Response> handleCarItemsLimitExceededException(CartItemsLimitException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.EXPECTATION_FAILED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.EXPECTATION_FAILED);
+	}
+	
+	
+	@ExceptionHandler(BookNotFoundInCartException.class)
+	public ResponseEntity<Response> handleBookNotFoundInCartException(BookNotFoundInCartException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.NOT_FOUND.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(BookOutOfStockException.class)
+	public ResponseEntity<Response> handleBookOutOfStockException(BookOutOfStockException ex) {
+		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
+				HttpStatus.EXPECTATION_FAILED.value());
+
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.EXPECTATION_FAILED);
+	}
 }

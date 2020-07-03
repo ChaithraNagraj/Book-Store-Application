@@ -118,4 +118,13 @@ public class BookServiceImp implements BookService {
 		}
 		return u;
 	}
+
+
+
+	@Override
+	public List<Book> findBookCount() {
+		return bookRepository.findBookCount();
+	}
+	
+	
 }
