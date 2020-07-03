@@ -86,7 +86,7 @@ public class Constant {
 	public static final String ITEM_ALREADY_EXISTS_EXCEPTION_MESSAGE = "Book Already added to your cart";
 	public static final String QUANTITY_INCREASED_SUCCESS_MESSAGE = "Qauntity increased successfully";
 	public static final String QUANTITY_INCREASED_FAILED_MESSAGE = "Quantity increased Failed";
-	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";;
+	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";
 	public static final String QUANTITY_DECREASED_FAILED_MESSAGE = "Quantity decreased Failed";
 	public static final String BOOK_NOT_FOUND_IN_CART_MESSAGE = "Book does not exists In your Cart";
 	public static final String BOOK_OUT_OF_STOCK_MESSAGE = "Book Out Of stock";

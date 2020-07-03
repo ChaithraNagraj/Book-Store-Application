@@ -42,6 +42,9 @@ public class Order {
 
 	@Column(name = "bookImage", nullable = false)
 	private String bookImage;
+	
+	@Column(name = "venderName" , nullable = false)
+	private String venderName;
 
 	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
@@ -137,6 +140,16 @@ public class Order {
 
 	public void setBookImage(String bookImage) {
 		this.bookImage = bookImage;
+	}
+	
+	
+
+	public String getVenderName() {
+		return venderName;
+	}
+
+	public void setVenderName(String venderName) {
+		this.venderName = venderName;
 	}
 
 	@Override
