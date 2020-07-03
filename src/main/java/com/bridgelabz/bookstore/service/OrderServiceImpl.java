@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	@Transactional
-	public boolean checkOut(Long bookId, int quantity, String token) {
+	public Order checkOut(Long bookId, int quantity, String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		System.out.println(buyer);
 		Book book = bookRepository.findByBookId(bookId);
@@ -63,10 +63,11 @@ public class OrderServiceImpl implements OrderService {
 		order.setCreatedDateAndTime(DateUtility.today());
 		order.setOrderNumber(RandomUtility.getRandomNumber());
 		order.setBookImage(book.getImageURL());
+		order.setAuthor(book.getAuthorName());
 		orderRepository.addOrder(order);
 		book.setQuantity(book.getQuantity() - quantity);
 		System.out.println("Added successfully");
-		return true;
+		return order;
 
 	}
 

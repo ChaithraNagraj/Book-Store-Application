@@ -25,7 +25,8 @@ public class Order {
 
 	@Column(name = "book_name", nullable = false)
 	private String bookName;
-
+	@Column(name="author",nullable = false)
+	private String author;
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
 	private int quantity;
@@ -64,6 +65,14 @@ public class Order {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public Long getOrderId() {
