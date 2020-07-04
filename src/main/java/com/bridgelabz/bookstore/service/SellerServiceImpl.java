@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookAlreadyExistsException;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
-import com.bridgelabz.bookstore.exception.BookQuantityException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.BookDto;
@@ -89,18 +88,11 @@ public class SellerServiceImpl implements SellerService {
 		tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
 		Book bookToBeUpdated = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		int quantity = 0;
-		if (updatedBookInfo.getQuantity() > 0)
-			quantity = updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity();
-		else {
-			if (bookToBeUpdated.getQuantity() < (-(updatedBookInfo.getQuantity()))) {
-				throw new BookQuantityException("Book Quantity is Lower than entered quantity to remove");
-			}
-			quantity = bookToBeUpdated.getQuantity() + updatedBookInfo.getQuantity();
+		bookToBeUpdated.setQuantity(updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity());
+		if (!bookToBeUpdated.getPrice().equals(updatedBookInfo.getPrice())) {
+			bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
+			bookToBeUpdated.setApproved(false);
 		}
-		bookToBeUpdated.setQuantity(quantity);
-		bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
-		bookToBeUpdated.setApproved(false);
 		bookToBeUpdated.setLastUpdatedDateAndTime(DateUtility.today());
 		bookRepository.save(bookToBeUpdated);
 
