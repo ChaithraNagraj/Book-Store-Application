@@ -1,0 +1,56 @@
+package com.bridgelabz.bookstore.controller;
+
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.model.Address;
+import com.bridgelabz.bookstore.model.dto.AddressDTO;
+import com.bridgelabz.bookstore.response.Response;
+import com.bridgelabz.bookstore.service.AddressService;
+
+@RestController
+@RequestMapping(value = { "/address" })
+
+public class AddressController {
+	
+	@Autowired
+	AddressService addressService;
+
+	
+	
+
+	public AddressController() {
+		System.out.println("addresscontroller working");
+	}
+
+
+
+
+	@PostMapping(value="/addAddress", headers = "Accept=application/json")
+	public ResponseEntity<Response> addAddress(@RequestBody AddressDTO address,@RequestHeader("token") String token)
+		 {
+		System.out.println("address data is cmng to adrees controller api");
+		System.out.println("address values recieved from frontend is"+ address);
+		Address addresss = addressService.addAddress(address, token);
+
+		if (addresss != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.ADDRESS_DETAILS_ADDED, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new Response(Constant.ADDRESS_DETAILS_FAIL, Constant.BAD_REQUEST_RESPONSE_CODE));
+
+	}
+	
+
+}
+

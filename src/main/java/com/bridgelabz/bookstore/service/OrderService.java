@@ -1,7 +1,12 @@
 package com.bridgelabz.bookstore.service;
 
-public interface OrderService {
+import java.util.List;
 
-	public boolean checkOut(Long id, int quantity, String token);
+import com.bridgelabz.bookstore.model.Order;
+
+public interface OrderService {
+	public List<Order> myOrder(String token);
+
+	public Order checkOut(Long id, int quantity, String token);
 
 }

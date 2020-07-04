@@ -25,7 +25,8 @@ public class Order {
 
 	@Column(name = "book_name", nullable = false)
 	private String bookName;
-
+	@Column(name="author",nullable = false)
+	private String author;
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
 	private int quantity;
@@ -36,12 +37,14 @@ public class Order {
 
 	@Column(name = "total", nullable = false)
 	private double total;
-
 	@Column(name = "OrderNumber", nullable = false)
 	private String orderNumber;
 
 	@Column(name = "bookImage", nullable = false)
 	private String bookImage;
+	
+	@Column(name = "venderName" , nullable = false)
+	private String venderName;
 
 	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
@@ -56,8 +59,22 @@ public class Order {
 
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "userid")
 	private User user;
+	
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "bookid")
+	private Book book;
+
+
+	public Book getBook() {
+		return book;
+	}
+
+	public void setBook(Book book) {
+		this.book = book;
+	}
 
 	public User getUser() {
 		return user;
@@ -65,6 +82,14 @@ public class Order {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public Long getOrderId() {
@@ -129,6 +154,16 @@ public class Order {
 
 	public void setBookImage(String bookImage) {
 		this.bookImage = bookImage;
+	}
+	
+	
+
+	public String getVenderName() {
+		return venderName;
+	}
+
+	public void setVenderName(String venderName) {
+		this.venderName = venderName;
 	}
 
 	@Override

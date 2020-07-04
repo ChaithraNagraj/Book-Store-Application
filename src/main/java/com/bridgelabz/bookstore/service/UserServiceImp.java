@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -234,7 +232,6 @@ public class UserServiceImp implements UserService {
 				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
 			} else
 				updateDTO.setPassword(isUserExist.getPassword());
-
 			isUserExist.setUpdateDateTime(DateUtility.today());
 			BeanUtils.copyProperties(updateDTO, isUserExist);
 			userRepository.addUser(isUserExist);

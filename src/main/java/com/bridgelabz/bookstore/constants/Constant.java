@@ -86,7 +86,7 @@ public class Constant {
 	public static final String ITEM_ALREADY_EXISTS_EXCEPTION_MESSAGE = "Book Already added to your cart";
 	public static final String QUANTITY_INCREASED_SUCCESS_MESSAGE = "Qauntity increased successfully";
 	public static final String QUANTITY_INCREASED_FAILED_MESSAGE = "Quantity increased Failed";
-	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";;
+	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";
 	public static final String QUANTITY_DECREASED_FAILED_MESSAGE = "Quantity decreased Failed";
 	public static final String BOOK_NOT_FOUND_IN_CART_MESSAGE = "Book does not exists In your Cart";
 	public static final String BOOK_OUT_OF_STOCK_MESSAGE = "Book Out Of stock";
@@ -102,10 +102,15 @@ public class Constant {
 
 	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
 	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
+	
+	public static final String ADDRESS_DETAILS_ADDED="address details added succefully";
+	public static final String ADDRESS_DETAILS_FAIL=" address details failed to add ";
 
 
 	public static final String ORDER_PLACED_SUCCESSFULLY = "Order placed Successfully";
 
 	public static final String ORDER_PLACED_FAILED = "Order placed Failed";
+
+
 
 }
