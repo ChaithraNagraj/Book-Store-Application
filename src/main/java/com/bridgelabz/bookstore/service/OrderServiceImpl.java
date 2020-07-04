@@ -60,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> myOrder(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		System.out.println(buyer.getId());
 		return orderRepository.findMyOrder(buyer.getId());
 	}
 

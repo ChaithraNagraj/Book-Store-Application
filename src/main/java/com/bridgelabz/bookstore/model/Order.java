@@ -59,12 +59,12 @@ public class Order {
 
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "userid")
 	private User user;
 	
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name = "book_id")
+	@JoinColumn(name = "bookid")
 	private Book book;
 
 

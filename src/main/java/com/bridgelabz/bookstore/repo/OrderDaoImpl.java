@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.bridgelabz.bookstore.model.Order;
 
 @Repository
-
+@SuppressWarnings("unchecked")
 public class OrderDaoImpl implements OrderRepo {
 
 	@Autowired
@@ -25,14 +25,13 @@ public class OrderDaoImpl implements OrderRepo {
 		Session currentSession = sessionFactory.getCurrentSession();
 		currentSession.saveOrUpdate(order);
 	}
+
 	@Override
-	public List<Order> findMyOrder(Long id) {
+	@Transactional
+	public List<Order> findMyOrder(Long buyerId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Order> q = session.createQuery("From order where user_id=:id");
-		q.setParameter("user_id", id);
+		Query<Order> q = session.createQuery("from userorder where userid= :buyerId");
+	    q.setParameter("buyerId", buyerId);
 		return q.getResultList();
 	}
-	
-	
 }
-
