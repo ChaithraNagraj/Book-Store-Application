@@ -4,6 +4,7 @@ import javax.validation.constraints.Min;
 
 public class UpdateBookDto {
 
+	@Min(value = 0, message = "Quantity can't be less than 0")
 	private int quantity;
 
 	@Min(value = 0,message = "price can't be less than 0")
