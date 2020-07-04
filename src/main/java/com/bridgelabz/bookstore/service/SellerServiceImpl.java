@@ -88,7 +88,7 @@ public class SellerServiceImpl implements SellerService {
 		tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
 		Book bookToBeUpdated = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
-		bookToBeUpdated.setQuantity(updatedBookInfo.getQuantity() + bookToBeUpdated.getQuantity());
+		bookToBeUpdated.setQuantity(updatedBookInfo.getQuantity());
 		if (!bookToBeUpdated.getPrice().equals(updatedBookInfo.getPrice())) {
 			bookToBeUpdated.setPrice(updatedBookInfo.getPrice());
 			bookToBeUpdated.setApproved(false);
