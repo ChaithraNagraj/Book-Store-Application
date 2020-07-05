@@ -8,5 +8,7 @@ public interface AddressService {
 
 	Address addAddress(AddressDTO address, String token);
 
+	Address getAddressByType(String addressType, String token);
+
 }
 
