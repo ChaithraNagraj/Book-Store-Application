@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
@@ -26,7 +27,7 @@ public class OrderController {
 
 	@PostMapping(value = "/checkout/{bookId}/{quantity}")
 	public ResponseEntity<Response> checkOut(@PathVariable("bookId") long bookId,
-			@PathVariable("quantity") int quantity, @RequestHeader("token") String token) {
+			@PathVariable("quantity") int quantity, @RequestParam("token") String token) {
 		Order order = orderService.checkOut(bookId, quantity, token);
 		if (order != null) {
 			return ResponseEntity.status(HttpStatus.OK)
