@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bridgelabz.bookstore.constants.AdminConstants;
 import com.bridgelabz.bookstore.constants.ReviewConstants;
 import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 import com.bridgelabz.bookstore.response.Response;
@@ -31,5 +30,11 @@ public class ReviewController {
 	@GetMapping("/review/{bookId}")
 	public ResponseEntity<Response> getReview(@PathVariable("bookId") long bookId,@RequestHeader("token") String token){		
 		return ResponseEntity.status(HttpStatus.OK).body(new Response(ReviewConstants.REVIEW_FOUND, HttpStatus.OK.value(), reviewService.getReview(token, bookId)));
+	}
+	
+	@PostMapping("/reviewApp")
+	public ResponseEntity<Response> addReviewApp(long bookId,@RequestHeader("token") String token, @RequestBody ReviewDTO reviewDTO) {
+		reviewService.addRatingApp(token, reviewDTO);
+		return ResponseEntity.status(HttpStatus.OK).body(new Response(ReviewConstants.REVIEW_ADDED_SUCCESSFULLY, HttpStatus.OK.value(), reviewDTO));
 	}
 }
