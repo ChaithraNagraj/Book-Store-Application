@@ -34,7 +34,7 @@ public class AdminServiceImp implements AdminService {
 
 	@Autowired
 	private UserRepo userRepository;
-	
+
 	@Autowired
 	private MailTempletService mailTempletService;
 
@@ -175,7 +175,7 @@ public class AdminServiceImp implements AdminService {
 	}
 
 	/**
-	 * Method to register mail in rabbitmq for imforming seller about verification status
+	 * Method to register mail in rabbitmq for informing seller about verification status
 	 * 
 	 * @param User, Role, Template
 	 * @return void
@@ -186,7 +186,7 @@ public class AdminServiceImp implements AdminService {
 		sendMail(user, token, templet);
 	}
 	/**
-	 * Method to send mail for imforming seller about verification status
+	 * Method to send mail for informing seller about verification status
 	 * 
 	 * @param User, Role, Template
 	 * @return void

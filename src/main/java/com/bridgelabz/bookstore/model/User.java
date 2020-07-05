@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "user")
 public class User {
+	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
@@ -121,6 +123,50 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "user_id")
 	private List<Review> review;
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<ReviewApp> reviewApp;
+	
+	
+
+	public List<ReviewApp> getReviewApp() {
+		return reviewApp;
+	}
+
+	public void setReviewApp(List<ReviewApp> reviewApp) {
+		this.reviewApp = reviewApp;
+	}
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<MyOrder> myOrder;
+
+	public List<MyOrder> getMyOrder() {
+		return myOrder;
+	}
+
+	public void setMyOrder(List<MyOrder> myOrder) {
+		this.myOrder = myOrder;
+	}
+	
+	public List<MyOrderItems> getMyOrderItems() {
+		return myOrderItems;
+	}
+
+	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
+		this.myOrderItems = myOrderItems;
+	}
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<MyOrderItems> myOrderItems;
 
 	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();

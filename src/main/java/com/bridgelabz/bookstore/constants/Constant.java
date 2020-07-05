@@ -105,6 +105,9 @@ public class Constant {
 	
 	public static final String ADDRESS_DETAILS_ADDED="address details added succefully";
 	public static final String ADDRESS_DETAILS_FAIL=" address details failed to add ";
+	public static final String ADDRESS_DETAILS_FOUND="address details found for required type succefully";
+	public static final String ADDRESS_DETAILS_NOT_fOUND=" not found address details for required type ";
+
 
 
 	public static final String ORDER_PLACED_SUCCESSFULLY = "Order placed Successfully";
