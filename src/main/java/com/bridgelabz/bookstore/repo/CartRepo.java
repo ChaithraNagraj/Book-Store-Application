@@ -14,4 +14,6 @@ public interface CartRepo {
 	Optional<Cart> findByUserId(Long id);
 
 	boolean removeByCartBookId(Long cartBookId);
+
+	boolean deleteByCartId(long cartId);
 }
