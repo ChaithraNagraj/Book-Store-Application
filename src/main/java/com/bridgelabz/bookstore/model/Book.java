@@ -82,6 +82,21 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<CartBooks> cartBooks;
+	
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "bookId")
+	private List<MyOrderItems> myOrderItems;
+
+	public List<MyOrderItems> getMyOrderItems() {
+		return myOrderItems;
+	}
+
+	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
+		this.myOrderItems = myOrderItems;
+	}
 
 	public List<Review> getReview() {
 		return review;
