@@ -7,7 +7,7 @@ spring:
     username: ${rabbitUser}
     password: ${rabbitPass}
     
-url: jdbc:mysql://localhost:${port}/${dbName}?useSSL=false
+url: jdbc:mysql://localhost:${port}/${dbName}? allowPublicKeyRetrieval=true&useSSL=false
 dbUserName: ${dbUser}
 dbPassword: ${dbPass}
 driverClassName: com.mysql.cj.jdbc.Driver
@@ -25,4 +25,7 @@ amazonProperties:
   bucketName: ${bucketname}
   bookBucketName: ${bookBucketName}
   region: ${region}
-    
+
+redis:
+  password: ${password}    
+  redisKey: ${key}

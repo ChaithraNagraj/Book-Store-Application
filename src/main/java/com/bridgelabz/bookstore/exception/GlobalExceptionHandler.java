@@ -132,9 +132,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(BookNotFoundInCartException.class)
 	public ResponseEntity<Response> handleBookNotFoundInCartException(BookNotFoundInCartException ex) {
 		Response customErrorDetails = new Response(LocalDateTime.now(), ex.getLocalizedMessage(),
-				HttpStatus.ALREADY_REPORTED.value());
+				HttpStatus.NOT_FOUND.value());
 
-		return new ResponseEntity<>(customErrorDetails, HttpStatus.ALREADY_REPORTED);
+		return new ResponseEntity<>(customErrorDetails, HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(BookOutOfStockException.class)

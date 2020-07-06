@@ -76,11 +76,9 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public List<Book> displayItems(String token) {
+	public Cart displayItems(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-		List<Book> booksInCart = new ArrayList<>();
-		buyer.getUserCart().getCartBooks().stream().forEach(book -> booksInCart.add(book.getBook()));
-		return booksInCart;
+		return buyer.getUserCart();
 	}
 
 	@Override
@@ -89,7 +87,7 @@ public class CartServiceImpl implements CartService {
 		CartBooks bookToBeAddQuantity = buyer.getUserCart().getCartBooks().stream()
 				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
 				.orElseThrow(() -> new BookNotFoundInCartException(Constant.BOOK_NOT_FOUND_IN_CART_MESSAGE));
-		if (buyer.getUserCart().getTotalBooksInCart() < 4) {
+		if (buyer.getUserCart().getTotalBooksInCart() <=4) {
 			if (bookToBeAddQuantity.getBook().getQuantity() <= bookToBeAddQuantity.getBookQuantity()) {
 				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
 			}
