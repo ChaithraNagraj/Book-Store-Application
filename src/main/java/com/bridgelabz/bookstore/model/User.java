@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "user")
 public class User {
+	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id")
@@ -82,6 +84,7 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
+	
 
 	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -91,6 +94,7 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
+	
 
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
@@ -126,6 +130,48 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "user_id")
 	private List<Review> review;
+	
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<ReviewApp> reviewApp;
+	
+	
+
+	public List<ReviewApp> getReviewApp() {
+		return reviewApp;
+	}
+
+	public void setReviewApp(List<ReviewApp> reviewApp) {
+		this.reviewApp = reviewApp;
+	}
+	
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinColumn(name = "user_id")
+//	private List<MyOrder> myOrder;
+//
+//	public List<MyOrder> getMyOrder() {
+//		return myOrder;
+//	}
+//
+//	public void setMyOrder(List<MyOrder> myOrder) {
+//		this.myOrder = myOrder;
+//	}
+	
+//	public List<MyOrderItems> getMyOrderItems() {
+//		return myOrderItems;
+//	}
+//
+//	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
+//		this.myOrderItems = myOrderItems;
+//	}
+//
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinColumn(name = "user_id")
+//	private List<MyOrderItems> myOrderItems;
 
 	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();

@@ -10,6 +10,7 @@ import com.bridgelabz.bookstore.constants.ReviewConstants;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Review;
+import com.bridgelabz.bookstore.model.ReviewApp;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 import com.bridgelabz.bookstore.repo.BookRepo;
@@ -70,6 +71,20 @@ public class ReviewServiceImpl implements ReviewService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
+		
+		
+		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
+				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
+		ReviewApp review = new ReviewApp();
+		BeanUtils.copyProperties(reviewDTO, review);
+		user.getReviewApp().add(review);
+		userRepository.addUser(user);
+		return review;
 	}
 
 }
