@@ -55,6 +55,13 @@ public class AddressServiceImpl implements AddressService {
 //		return   addressRepository.save(add);
 		
 	}
+	@Override
+	public Address getAddress(String token, String type) 
+	{
+		User buyer=tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		
+		return addressRepo.getAddress(buyer.getId(), type);
+	}
 
 }
 

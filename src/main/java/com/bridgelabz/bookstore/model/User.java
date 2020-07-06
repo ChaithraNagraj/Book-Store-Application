@@ -92,6 +92,20 @@ public class User {
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
 
+	/*@OneToOne(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name="order_id")
+	private Order order;
+	
+	
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}*/
+
 	public Wishlist getUserWishlist() {
 		return userWishlist;
 	}

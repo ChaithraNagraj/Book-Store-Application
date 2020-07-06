@@ -9,6 +9,7 @@ public interface AddressRepo {
 	boolean save(Address add);
 
 	boolean save(User user);
+	Address getAddress(Long id,String type);
 
 }
 

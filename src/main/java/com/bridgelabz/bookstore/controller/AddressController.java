@@ -5,6 +5,7 @@ package com.bridgelabz.bookstore.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -49,6 +50,12 @@ public class AddressController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ADDRESS_DETAILS_FAIL, Constant.BAD_REQUEST_RESPONSE_CODE));
 
+	}
+	@GetMapping(value = "/getAddress")
+	public ResponseEntity<Response> getAddress(@RequestHeader String token,String type)
+	{
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response("Successfull", Constant.OK_RESPONSE_CODE,addressService.getAddress(token,type)));
 	}
 	
 
