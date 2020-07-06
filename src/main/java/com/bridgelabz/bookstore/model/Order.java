@@ -25,7 +25,7 @@ public class Order {
 
 	@Column(name = "book_name", nullable = false)
 	private String bookName;
-	@Column(name="author",nullable = false)
+	@Column(name = "author", nullable = false)
 	private String author;
 	@Column(name = "quantity", nullable = false)
 	@Min(value = 1)
@@ -42,12 +42,25 @@ public class Order {
 
 	@Column(name = "bookImage", nullable = false)
 	private String bookImage;
-	
-	@Column(name = "venderName" , nullable = false)
+
+	@Column(name = "venderName", nullable = false)
 	private String venderName;
 
 	@Column(name = "created_date_time", nullable = false)
 	private LocalDateTime createdDateAndTime;
+
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name = "book_id")
+	private Book book;
+
+	@Column(name = "buyername", nullable = false)
+	private String buyerName;
 
 	public Order(String bookName, int quantity, Double price, double total) {
 		super();
@@ -57,16 +70,17 @@ public class Order {
 		this.total = total;
 	}
 
-	@JsonIgnore
-	@OneToOne
-	@JoinColumn(name = "userid")
-	private User user;
-	
-	@JsonIgnore
-	@OneToOne
-	@JoinColumn(name = "bookid")
-	private Book book;
+	public Order() {
+		super();
+	}
 
+	public String getBuyerName() {
+		return buyerName;
+	}
+
+	public void setBuyerName(String buyerName) {
+		this.buyerName = buyerName;
+	}
 
 	public Book getBook() {
 		return book;
@@ -83,7 +97,7 @@ public class Order {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
 	public String getAuthor() {
 		return author;
 	}
@@ -155,8 +169,6 @@ public class Order {
 	public void setBookImage(String bookImage) {
 		this.bookImage = bookImage;
 	}
-	
-	
 
 	public String getVenderName() {
 		return venderName;

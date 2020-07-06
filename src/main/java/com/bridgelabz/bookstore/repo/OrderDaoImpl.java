@@ -28,10 +28,10 @@ public class OrderDaoImpl implements OrderRepo {
 
 	@Override
 	@Transactional
-	public List<Order> findMyOrder(Long buyerId) {
+	public List<Order> findMyOrder(String buyerName) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Order> q = session.createQuery("from userorder where userid= :buyerId");
-	    q.setParameter("buyerId", buyerId);
+		Query<Order> q = session.createQuery("from userorder where buyername= :buyerName");
+		q.setParameter("buyerName", buyerName);
 		return q.getResultList();
 	}
 }

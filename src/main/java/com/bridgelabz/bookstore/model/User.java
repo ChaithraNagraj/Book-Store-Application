@@ -82,6 +82,7 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
+	
 
 	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -91,6 +92,19 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "order_id")
+	private Order userOrder;
+
+	public Order getUserOrder() {
+		return userOrder;
+	}
+
+	public void setUserOrder(Order userOrder) {
+		this.userOrder = userOrder;
+	}
 
 	public Wishlist getUserWishlist() {
 		return userWishlist;

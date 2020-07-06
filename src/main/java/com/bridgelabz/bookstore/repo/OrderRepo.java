@@ -8,7 +8,7 @@ public interface OrderRepo {
 	
 	public void addOrder(Order order);
 
-	public List<Order> findMyOrder(Long id);
+	public List<Order> findMyOrder(String buyerName);
 
 
 }

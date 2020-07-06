@@ -50,6 +50,8 @@ public class OrderServiceImpl implements OrderService {
 		order.setAuthor(book.getAuthorName());
 		order.setVenderName(sellerDetails.getName());
 		order.setBook(book);
+		order.setBuyerName(buyer.getUserName());
+		buyer.setUserOrder(order);
 		orderRepository.addOrder(order);
 		book.setQuantity(book.getQuantity() - quantity);
 		System.out.println("Added successfully");
@@ -58,10 +60,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@Transactional
 	public List<Order> myOrder(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		System.out.println(buyer.getId());
-		return orderRepository.findMyOrder(buyer.getId());
+		return orderRepository.findMyOrder(buyer.getUserName());
 	}
 
 }
