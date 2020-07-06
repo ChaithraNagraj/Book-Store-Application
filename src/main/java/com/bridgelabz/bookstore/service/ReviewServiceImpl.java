@@ -76,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
 		
+		
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
