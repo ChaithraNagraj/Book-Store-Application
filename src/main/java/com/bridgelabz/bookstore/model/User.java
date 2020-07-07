@@ -84,6 +84,7 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
+	
 
 	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -93,6 +94,12 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
+	
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Order> orders;
 
 	public Wishlist getUserWishlist() {
 		return userWishlist;
@@ -140,33 +147,31 @@ public class User {
 		this.reviewApp = reviewApp;
 	}
 	
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<MyOrder> myOrder;
-
-	public List<MyOrder> getMyOrder() {
-		return myOrder;
-	}
-
-	public void setMyOrder(List<MyOrder> myOrder) {
-		this.myOrder = myOrder;
-	}
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinColumn(name = "user_id")
+//	private List<MyOrder> myOrder;
+//
+//	public List<MyOrder> getMyOrder() {
+//		return myOrder;
+//	}
+//
+//	public void setMyOrder(List<MyOrder> myOrder) {
+//		this.myOrder = myOrder;
+//	}
 	
-	public List<MyOrderItems> getMyOrderItems() {
-		return myOrderItems;
-	}
-
-	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
-		this.myOrderItems = myOrderItems;
-	}
-
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<MyOrderItems> myOrderItems;
+//	public List<MyOrderItems> getMyOrderItems() {
+//		return myOrderItems;
+//	}
+//
+//	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
+//		this.myOrderItems = myOrderItems;
+//	}
+//
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinColumn(name = "user_id")
+//	private List<MyOrderItems> myOrderItems;
 
 	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();
@@ -284,18 +289,13 @@ public class User {
 	public void setSellerBooks(List<Book> sellerBooks) {
 		this.sellerBooks = sellerBooks;
 	}
+
 	@JsonIgnore
-@OneToMany(mappedBy="user",
-           cascade= {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH} )
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
 	@LazyCollection(LazyCollectionOption.FALSE)
 
-private List<Address> address;
-
-
-
-
-
-
+	private List<Address> address;
 
 	public List<Address> getAddress() {
 		return address;
@@ -305,12 +305,20 @@ private List<Address> address;
 		this.address = address;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
-				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
-				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
-				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
+	public List<Order> getOrders() {
+		return orders;
 	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+//	@Override
+//	public String toString() {
+//		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
+//				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+//				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+//				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
+//	}
 
 }
