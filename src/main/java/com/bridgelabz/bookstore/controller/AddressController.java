@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
@@ -50,14 +51,17 @@ public class AddressController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ADDRESS_DETAILS_FAIL, Constant.BAD_REQUEST_RESPONSE_CODE));
 
+	}	
+	@GetMapping( "/getAddressByType") 
+	public ResponseEntity<Response> getAddressByType(@RequestParam("addressType") String addressType,@RequestHeader("token") String token) {
+		Address address = addressService.getAddressByType(addressType,token);
+		System.out.println("-----address"+address);
+		if (address != null) {
+			return  ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.ADDRESS_DETAILS_FOUND, Constant.OK_RESPONSE_CODE, address));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new Response(Constant.ADDRESS_DETAILS_NOT_fOUND, Constant.BAD_REQUEST_RESPONSE_CODE));
 	}
-	@GetMapping(value = "/getAddress")
-	public ResponseEntity<Response> getAddress(@RequestHeader String token,String type)
-	{
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new Response("Successfull", Constant.OK_RESPONSE_CODE,addressService.getAddress(token,type)));
-	}
-	
 
 }
 
