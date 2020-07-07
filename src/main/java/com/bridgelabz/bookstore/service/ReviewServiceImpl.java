@@ -14,6 +14,7 @@ import com.bridgelabz.bookstore.model.ReviewApp;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 import com.bridgelabz.bookstore.repo.BookRepo;
+import com.bridgelabz.bookstore.repo.ReviewRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 
@@ -25,6 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	BookRepo bookRepository;
+	
+	@Autowired
+	ReviewRepository reviewRepository;
 
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
 		
@@ -46,10 +50,9 @@ public class ReviewServiceImpl implements ReviewService {
 		else {
 			Review review = getReview(token, bookId);
 			BeanUtils.copyProperties(reviewDTO, review);
-			user.getReview().add(review);
-			userRepository.addUser(user);
-			book.getReview().add(review);
-			bookRepository.save(book);
+			reviewRepository.update(review);
+//			book.getReview().add(review);
+//			bookRepository.save(book);
 			return review;
 		}
 	}
@@ -75,7 +78,6 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
-		
 		
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,

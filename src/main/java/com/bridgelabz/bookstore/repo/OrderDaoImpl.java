@@ -1,53 +1,45 @@
-//package com.bridgelabz.bookstore.repo;
-//
-//import java.util.List;
-//
-//import javax.transaction.Transactional;
-//
-//import org.hibernate.Session;
-//import org.hibernate.SessionFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Repository;
-//import org.hibernate.query.Query;
-//
-//import com.bridgelabz.bookstore.model.Book;
-//import com.bridgelabz.bookstore.model.MyOrder;
-//import com.bridgelabz.bookstore.model.MyOrderList;
-//
-//@Repository
-//public class OrderDaoImpl implements OrderRepo {
-//
-//	@Autowired
-//	private SessionFactory sessionFactory;
-//
-//	@Transactional
-//	public void save(MyOrder order) {
-//		Session currentSession = sessionFactory.getCurrentSession();
-//		currentSession.saveOrUpdate(order);
-//	}
-//	
-////	@Transactional
-////	public void saveOrders(MyOrderList order) {
-////		Session currentSession = sessionFactory.getCurrentSession();
-////		currentSession.saveOrUpdate(order);
-////	}
-//
-////	@Override
-////	@Transactional
-////	public List<MyOrderList> findOrderByUserId(long userId) {
-////		Session session=sessionFactory.getCurrentSession();
-////		Query<MyOrderList> query=session.createQuery("From myorderlist where user_id=:userId");
-////		query.setParameter("userId", userId);
-////		return query.getResultList();
-////	}
-//
-////	@Override
-////	public List<MyOrderList> findOrderByUserId(long id) {
-////		Session session = sessionFactory.getCurrentSession();
-////		Query query = session.createQuery("From myorderlist where user_id=:id");
-////		query.setParameter("id", id);
-////		return query.getResultList();
-////	}
-//
-//	
-//}
+package com.bridgelabz.bookstore.repo;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.bridgelabz.bookstore.model.Book;
+import com.bridgelabz.bookstore.model.MyOrderList;
+import com.bridgelabz.bookstore.model.Order;
+
+@Repository
+public class OrderDaoImpl implements OrderRepo {
+
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Override
+	@Transactional
+	public void addOrder(Order order) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(order);
+	}
+	
+	@Override
+	@Transactional
+	public void addOrder(MyOrderList order) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(order);
+	}
+	
+	@Override
+	@Transactional
+	public List<MyOrderList> findOrderByUserId(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("From MyOrderList where user_id=:id");
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+}

@@ -84,14 +84,34 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
 
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private Cart userCart;
 
+	@JsonIgnore
 	@OneToOne(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Order> orders;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<MyOrderList> myOrderList;
+
+	public List<MyOrderList> getMyOrderList() {
+		return myOrderList;
+	}
+
+	public void setMyOrderList(List<MyOrderList> myOrderList) {
+		this.myOrderList = myOrderList;
+	}
 
 	public Wishlist getUserWishlist() {
 		return userWishlist;
@@ -136,32 +156,6 @@ public class User {
 	public void setReviewApp(List<ReviewApp> reviewApp) {
 		this.reviewApp = reviewApp;
 	}
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<MyOrder> myOrder;
-
-	public List<MyOrder> getMyOrder() {
-		return myOrder;
-	}
-
-	public void setMyOrder(List<MyOrder> myOrder) {
-		this.myOrder = myOrder;
-	}
-
-	public List<MyOrderItems> getMyOrderItems() {
-		return myOrderItems;
-	}
-
-	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
-		this.myOrderItems = myOrderItems;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<MyOrderItems> myOrderItems;
 
 	public User(String fullName, String userName, String email, String password, String mobileNumber) {
 		super();
@@ -287,20 +281,6 @@ public class User {
 
 	private List<Address> address;
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@LazyCollection(LazyCollectionOption.FALSE)
-	private List<MyOrderList> orderList;
-
-	public List<MyOrderList> getOrderList() {
-		return orderList;
-	}
-
-	public void setOrderList(List<MyOrderList> orderList) {
-		this.orderList = orderList;
-	}
-
 	public List<Address> getAddress() {
 		return address;
 	}
@@ -309,12 +289,12 @@ public class User {
 		this.address = address;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="
-				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
-				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
-				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", books=" + sellerBooks + "]";
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 
 }

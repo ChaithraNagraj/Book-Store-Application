@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "myorderlist")
 public class MyOrderList {
@@ -34,10 +36,11 @@ public class MyOrderList {
 	@Column(name = "totel_price")
 	private double totelPrice;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+	@JsonIgnore
+	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private User user;
-
+	private User buyer;
+	
 	public long getMyOrderId() {
 		return myOrderId;
 	}
@@ -47,11 +50,11 @@ public class MyOrderList {
 	}
 
 	public User getUser() {
-		return user;
+		return buyer;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUser(User buyer) {
+		this.buyer = buyer;
 	}
 
 	public int getQunatity() {

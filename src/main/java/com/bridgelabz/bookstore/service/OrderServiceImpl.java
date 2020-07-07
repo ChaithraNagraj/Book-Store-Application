@@ -1,82 +1,77 @@
 package com.bridgelabz.bookstore.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.exception.CartException;
 import com.bridgelabz.bookstore.model.Book;
-import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.CartBooks;
-import com.bridgelabz.bookstore.model.MyOrder;
-import com.bridgelabz.bookstore.model.MyOrderItems;
 import com.bridgelabz.bookstore.model.MyOrderList;
+import com.bridgelabz.bookstore.model.Order;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
-//import com.bridgelabz.bookstore.repo.OrderRepo;
-import com.bridgelabz.bookstore.repo.OrderRepository;
-import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.repo.CartRepo;
+import com.bridgelabz.bookstore.repo.OrderRepo;
+import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
 	@Autowired
+	private OrderRepo orderRepository;
+	@Autowired
 	private BookRepo bookRepository;
+	private CartRepo cartRepository;
 
-	@Autowired
-	private UserRepo userRepository;
-
-//	@Autowired
-//	private OrderRepo orderRepo;
-	
-	@Autowired
-	private OrderRepository orderRepository;
-	
 	@Autowired
 	private TokenUtility tokenUtility;
 
-	public void addOrder(String token) {
+	@Override
+	@Transactional
+	public Order checkOut(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-		Cart cart = buyer.getUserCart();
-		MyOrder myOrder = new MyOrder();
-		myOrder.setBookQuantity(cart.getTotalBooksInCart());
-		myOrder.setUser(buyer);
-		buyer.getMyOrder().add(myOrder);
-		userRepository.addUser(buyer);
-
-		List<CartBooks> cartBooks = cart.getCartBooks();
-		for (int i = 0; i < cartBooks.size(); i++) {
-			MyOrderItems items = new MyOrderItems();
-			items.setBookQuantity(cartBooks.get(i).getBookQuantity());
-			Book book = cartBooks.get(i).getBook();
-			book.getMyOrderItems().add(items);
-			bookRepository.save(book);
-			buyer.getMyOrderItems().add(items);
-			userRepository.addUser(buyer);
-		}
-
-		for (int i = 0; i < cartBooks.size(); i++) {
+		List<CartBooks> booksFromCart = Optional.ofNullable(buyer.getUserCart().getCartBooks())
+				.orElseThrow(() -> new CartException("You don't have any items in cart"));
+		List<Order> orders = Optional.ofNullable(buyer.getOrders()).orElse(new ArrayList<>());
+		List<Book> booksToBeOrdered = new ArrayList<>();
+		Order order = new Order();
+		booksFromCart.forEach(cartBook -> {
+			booksToBeOrdered.add(cartBook.getBook());
+			Book book = bookRepository.findByBookId(cartBook.getBook().getBookId());
+			book.setQuantity(cartBook.getBook().getQuantity() - cartBook.getBookQuantity());
+		});
+		order.setBooks(booksToBeOrdered);
+		order.setBuyer(buyer);
+		order.setPurchaseDateTime(DateUtility.today());
+		orders.add(order);
+		buyer.getUserCart().setTotalBooksInCart(0);
+		orderRepository.addOrder(order);
+		for (int i = 0; i < booksToBeOrdered.size(); i++) {
 			MyOrderList items = new MyOrderList();
-			items.setQunatity(cartBooks.get(i).getBookQuantity());
-			Book book = cartBooks.get(i).getBook();
+			items.setQunatity(booksToBeOrdered.get(i).getQuantity());
+			Book book = bookRepository.findByBookId(booksToBeOrdered.get(i).getBookId());
 			items.setBookName(book.getBookName());
 			items.setTotelPrice(book.getQuantity() * book.getPrice());
 			items.setUser(buyer);
 			items.setVenderName(buyer.getName());
-			//buyer.getOrderList().add(items);
-			System.out.println(buyer.getOrderList().toString());
-			orderRepository.save(items);
+			orderRepository.addOrder(items);
 		}
-
+		cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
+		return order;
 	}
 
 	@Override
 	public List<MyOrderList> getOrders(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		long userId = buyer.getId();
-		return orderRepository.getAll(userId);
+		return orderRepository.findOrderByUserId(userId);
 	}
 
 }

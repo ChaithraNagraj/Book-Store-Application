@@ -1,7 +1,10 @@
 package com.bridgelabz.bookstore.service;
 
+import javax.validation.Valid;
+
 import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.CartBooks;
+import com.bridgelabz.bookstore.model.dto.CartDto;
 
 public interface CartService {
 
@@ -14,5 +17,7 @@ public interface CartService {
 	CartBooks addQuantity(long cartBookId, String token);
 
 	CartBooks removeQuantity(long cartBookId, String token);
+
+	boolean placeOrder(@Valid CartDto cart, String token);
 
 }
