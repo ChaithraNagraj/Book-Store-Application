@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.MyOrder;
 import com.bridgelabz.bookstore.model.MyOrderItems;
+import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.OrderService;
 
@@ -33,7 +34,7 @@ public class OrderController {
 	
 	@GetMapping("/getMyOrder")
 	public ResponseEntity<Response> getMyOrder(@RequestHeader("token") String token) {
-		List<MyOrder> order =orderService.getOrders(token);
+		List<MyOrderList> order =orderService.getOrders(token);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new Response(Constant.ORDER_PLACED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE,order));
 	}

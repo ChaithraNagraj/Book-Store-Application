@@ -11,9 +11,11 @@ import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.CartBooks;
 import com.bridgelabz.bookstore.model.MyOrder;
 import com.bridgelabz.bookstore.model.MyOrderItems;
+import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
-import com.bridgelabz.bookstore.repo.OrderRepo;
+//import com.bridgelabz.bookstore.repo.OrderRepo;
+import com.bridgelabz.bookstore.repo.OrderRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
@@ -25,9 +27,12 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private UserRepo userRepository;
+
+//	@Autowired
+//	private OrderRepo orderRepo;
 	
 	@Autowired
-	private OrderRepo orderRepo;
+	private OrderRepository orderRepository;
 	
 	@Autowired
 	private TokenUtility tokenUtility;
@@ -35,10 +40,9 @@ public class OrderServiceImpl implements OrderService {
 	public void addOrder(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		Cart cart = buyer.getUserCart();
-		List<MyOrderItems> orders = buyer.getMyOrderItems();
 		MyOrder myOrder = new MyOrder();
 		myOrder.setBookQuantity(cart.getTotalBooksInCart());
-		///myOrder.setCart(orders);
+		myOrder.setUser(buyer);
 		buyer.getMyOrder().add(myOrder);
 		userRepository.addUser(buyer);
 
@@ -53,13 +57,26 @@ public class OrderServiceImpl implements OrderService {
 			userRepository.addUser(buyer);
 		}
 
+		for (int i = 0; i < cartBooks.size(); i++) {
+			MyOrderList items = new MyOrderList();
+			items.setQunatity(cartBooks.get(i).getBookQuantity());
+			Book book = cartBooks.get(i).getBook();
+			items.setBookName(book.getBookName());
+			items.setTotelPrice(book.getQuantity() * book.getPrice());
+			items.setUser(buyer);
+			items.setVenderName(buyer.getName());
+			//buyer.getOrderList().add(items);
+			System.out.println(buyer.getOrderList().toString());
+			orderRepository.save(items);
+		}
+
 	}
 
 	@Override
-	public List<MyOrder> getOrders(String token) {
+	public List<MyOrderList> getOrders(String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-		List<MyOrder> myOrder = buyer.getMyOrder();
-		return myOrder;
+		long userId = buyer.getId();
+		return orderRepository.getAll(userId);
 	}
 
 }

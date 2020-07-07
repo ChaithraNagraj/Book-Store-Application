@@ -10,12 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 public class MyOrder {
@@ -52,9 +48,9 @@ public class MyOrder {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
-	@JoinColumn(name = "book_id")
-	private Book book;
+//	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+//	@JoinColumn(name = "cart_book_id")
+//	private List<CartBooks> book;
 
 	public User getUser() {
 		return user;
@@ -64,12 +60,12 @@ public class MyOrder {
 		this.user = user;
 	}
 
-	public Book getBook() {
-		return book;
-	}
-
-	public void setBook(Book book) {
-		this.book = book;
-	}
+//	public List<CartBooks> getBook() {
+//		return book;
+//	}
+//
+//	public void setBook(List<CartBooks> list) {
+//		this.book = list;
+//	}
 
 }

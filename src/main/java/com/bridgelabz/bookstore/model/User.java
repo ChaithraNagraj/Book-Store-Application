@@ -28,7 +28,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "user")
 public class User {
-	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,7 +83,6 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
-	
 
 	@OneToOne(cascade = CascadeType.ALL, optional = true, mappedBy = "user")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -94,7 +92,6 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
-	
 
 	public Wishlist getUserWishlist() {
 		return userWishlist;
@@ -125,14 +122,12 @@ public class User {
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "user_id")
 	private List<Review> review;
-	
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "user_id")
 	private List<ReviewApp> reviewApp;
-	
-	
 
 	public List<ReviewApp> getReviewApp() {
 		return reviewApp;
@@ -141,7 +136,7 @@ public class User {
 	public void setReviewApp(List<ReviewApp> reviewApp) {
 		this.reviewApp = reviewApp;
 	}
-	
+
 	@OneToMany(cascade = CascadeType.ALL)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "user_id")
@@ -154,7 +149,7 @@ public class User {
 	public void setMyOrder(List<MyOrder> myOrder) {
 		this.myOrder = myOrder;
 	}
-	
+
 	public List<MyOrderItems> getMyOrderItems() {
 		return myOrderItems;
 	}
@@ -284,18 +279,27 @@ public class User {
 	public void setSellerBooks(List<Book> sellerBooks) {
 		this.sellerBooks = sellerBooks;
 	}
+
 	@JsonIgnore
-@OneToMany(mappedBy="user",
-           cascade= {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH} )
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
 	@LazyCollection(LazyCollectionOption.FALSE)
 
-private List<Address> address;
+	private List<Address> address;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<MyOrderList> orderList;
 
+	public List<MyOrderList> getOrderList() {
+		return orderList;
+	}
 
-
-
-
+	public void setOrderList(List<MyOrderList> orderList) {
+		this.orderList = orderList;
+	}
 
 	public List<Address> getAddress() {
 		return address;

@@ -1,15 +1,16 @@
-package com.bridgelabz.bookstore.repo;
-
-
-import com.bridgelabz.bookstore.model.MyOrder;
-
-public interface OrderRepo {
-	
-
-	public void save(MyOrder order);
-	//public List<MyOrder> getOrders(Long id);
-	MyOrder getMyOrder(long userId);
-
-	
-
-}
+//package com.bridgelabz.bookstore.repo;
+//
+//import java.util.List;
+//
+//import com.bridgelabz.bookstore.model.MyOrder;
+//import com.bridgelabz.bookstore.model.MyOrderList;
+//
+//public interface OrderRepo {
+//
+//	public void save(MyOrder order);
+//
+////	public void saveOrders(MyOrderList order);
+////
+////    public 	List<MyOrderList> findOrderByUserId(long userId);
+//
+//}
