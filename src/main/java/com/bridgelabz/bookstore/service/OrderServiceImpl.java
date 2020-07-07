@@ -12,17 +12,13 @@ import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.CartException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.CartBooks;
+import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
-import com.bridgelabz.bookstore.model.Cart;
-import com.bridgelabz.bookstore.model.CartBooks;
-//import com.bridgelabz.bookstore.model.MyOrder;
-//import com.bridgelabz.bookstore.model.MyOrderItems;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.CartRepo;
 import com.bridgelabz.bookstore.repo.OrderRepo;
 import com.bridgelabz.bookstore.utils.DateUtility;
-import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -30,14 +26,8 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private OrderRepo orderRepository;
-	
 	@Autowired
 	private BookRepo bookRepository;
-	
-	@Autowired
-	private UserRepo userRepository;
-	
-	@Autowired
 	private CartRepo cartRepository;
 
 	@Autowired
@@ -55,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 		booksFromCart.forEach(cartBook -> {
 			booksToBeOrdered.add(cartBook.getBook());
 			Book book = bookRepository.findByBookId(cartBook.getBook().getBookId());
-			book.setQuantity(cartBook.getBook().getQuantity()-cartBook.getBookQuantity());
+			book.setQuantity(cartBook.getBook().getQuantity() - cartBook.getBookQuantity());
 		});
 		order.setBooks(booksToBeOrdered);
 		order.setBuyer(buyer);
@@ -63,38 +53,25 @@ public class OrderServiceImpl implements OrderService {
 		orders.add(order);
 		buyer.getUserCart().setTotalBooksInCart(0);
 		orderRepository.addOrder(order);
+		for (int i = 0; i < booksToBeOrdered.size(); i++) {
+			MyOrderList items = new MyOrderList();
+			items.setQunatity(booksToBeOrdered.get(i).getQuantity());
+			Book book = bookRepository.findByBookId(booksToBeOrdered.get(i).getBookId());
+			items.setBookName(book.getBookName());
+			items.setTotelPrice(book.getQuantity() * book.getPrice());
+			items.setUser(buyer);
+			items.setVenderName(buyer.getName());
+			orderRepository.addOrder(items);
+		}
 		cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
 		return order;
-//=======
 	}
 
-//	public void addOrder(String token) {
-//		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-//		Cart cart = buyer.getUserCart();
-//		List<MyOrderItems> orders = buyer.getMyOrderItems();
-//		MyOrder myOrder = new MyOrder();
-//		myOrder.setBookQuantity(cart.getTotalBooksInCart());
-//		///myOrder.setCart(orders);
-//		buyer.getMyOrder().add(myOrder);
-//		userRepository.addUser(buyer);
-//
-//		List<CartBooks> cartBooks = cart.getCartBooks();
-//		for (int i = 0; i < cartBooks.size(); i++) {
-//			MyOrderItems items = new MyOrderItems();
-//			items.setBookQuantity(cartBooks.get(i).getBookQuantity());
-//			Book book = cartBooks.get(i).getBook();
-//			book.getMyOrderItems().add(items);
-//			bookRepository.save(book);
-//			buyer.getMyOrderItems().add(items);
-//			userRepository.addUser(buyer);
-//		}
-//	}
-
-//	@Override
-//	public List<MyOrder> getOrders(String token) {
-//		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
-//		List<MyOrder> myOrder = buyer.getMyOrder();
-//		return myOrder;
-//	}
+	@Override
+	public List<MyOrderList> getOrders(String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		long userId = buyer.getId();
+		return orderRepository.findOrderByUserId(userId);
+	}
 
 }
