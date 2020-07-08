@@ -35,6 +35,27 @@ public class MyOrderList {
 
 	@Column(name = "totel_price")
 	private double totelPrice;
+	
+	@ManyToOne
+	@JoinColumn(name = "bookId")
+	private Book book;
+	
+
+	public Book getBook() {
+		return book;
+	}
+
+	public void setBook(Book book) {
+		this.book = book;
+	}
+
+	public User getBuyer() {
+		return buyer;
+	}
+
+	public void setBuyer(User buyer) {
+		this.buyer = buyer;
+	}
 
 	@JsonIgnore
 	@ManyToOne

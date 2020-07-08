@@ -95,6 +95,7 @@ public class User {
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
 
+
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
 	@LazyCollection(LazyCollectionOption.FALSE)

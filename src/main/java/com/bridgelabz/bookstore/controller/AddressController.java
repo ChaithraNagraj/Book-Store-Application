@@ -51,8 +51,7 @@ public class AddressController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ADDRESS_DETAILS_FAIL, Constant.BAD_REQUEST_RESPONSE_CODE));
 
-	}
-	
+	}	
 	@GetMapping( "/getAddressByType") 
 	public ResponseEntity<Response> getAddressByType(@RequestParam("addressType") String addressType,@RequestHeader("token") String token) {
 		Address address = addressService.getAddressByType(addressType,token);
