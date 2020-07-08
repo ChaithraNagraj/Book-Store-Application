@@ -26,6 +26,10 @@ public class CartBooks {
 	@Min(value = 1)
 	private int bookQuantity;
 
+	@Column(name = "total_price", nullable = false)
+	@Min(value = 0)
+	private Double totalBookPrice;
+
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")
@@ -65,6 +69,14 @@ public class CartBooks {
 
 	public void setBook(Book book) {
 		this.book = book;
+	}
+
+	public Double getTotalBookPrice() {
+		return totalBookPrice;
+	}
+
+	public void setTotalBookPrice(Double totalBookPrice) {
+		this.totalBookPrice = totalBookPrice;
 	}
 
 }

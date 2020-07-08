@@ -49,4 +49,12 @@ public class CartRepoImpl implements CartRepo {
 		return (query.executeUpdate() > 0);
 	}
 
+	@Override
+	public boolean deleteByCartId(long cartId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<CartBooks> query = session.createQuery(" DELETE From CartBooks where cart_id=:cartId");
+		query.setParameter("cartId", cartId);
+		return (query.executeUpdate() > 0);
+	}
+
 }

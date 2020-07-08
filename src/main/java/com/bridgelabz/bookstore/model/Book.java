@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -33,7 +35,7 @@ public class Book {
 	private String bookName;
 
 	@Column(name = "quantity", nullable = false)
-	@Min(value = 1)
+	@Min(value = 0)
 	private int quantity;
 
 	@Column(name = "price", nullable = false)
@@ -82,7 +84,29 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<CartBooks> cartBooks;
+	
+	
+//	@JsonIgnore
+//	@OneToMany(cascade = CascadeType.ALL)
+//	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinColumn(name = "bookId")
+//	private List<MyOrderItems> myOrderItems;
+//
+//	public List<MyOrderItems> getMyOrderItems() {
+//		return myOrderItems;
+//	}
+//
+//	public void setMyOrderItems(List<MyOrderItems> myOrderItems) {
+//		this.myOrderItems = myOrderItems;
+//	}
 
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.ALL,mappedBy = "books")
+	@LazyCollection(LazyCollectionOption.FALSE)
+//	@JoinTable(name = "ordered_books",joinColumns = { @JoinColumn(name = "order_id") }, inverseJoinColumns = {
+//			@JoinColumn(name = "book_id") })
+	private List<Order> orders;
+	
 	public List<Review> getReview() {
 		return review;
 	}
@@ -211,4 +235,13 @@ public class Book {
 		this.cartBooks = cartBooks;
 	}
 
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	
 }

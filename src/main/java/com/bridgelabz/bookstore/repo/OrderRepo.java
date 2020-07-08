@@ -1,15 +1,18 @@
+
 package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
+import com.bridgelabz.bookstore.model.Book;
+import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
 
 public interface OrderRepo {
-	
-	public void addOrder(Order order);
 
-	public List<Order> findMyOrder(Long id);
+	void addOrder(Order order);
 
+	void addOrder(MyOrderList order);
+
+	List<MyOrderList> findOrderByUserId(Long id);
 
 }
-

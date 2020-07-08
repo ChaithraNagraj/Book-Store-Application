@@ -10,9 +10,11 @@ import com.bridgelabz.bookstore.constants.ReviewConstants;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Review;
+import com.bridgelabz.bookstore.model.ReviewApp;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 import com.bridgelabz.bookstore.repo.BookRepo;
+import com.bridgelabz.bookstore.repo.ReviewRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.JwtValidate;
 
@@ -24,6 +26,9 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	BookRepo bookRepository;
+	
+	@Autowired
+	ReviewRepository reviewRepository;
 
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
 		
@@ -45,10 +50,9 @@ public class ReviewServiceImpl implements ReviewService {
 		else {
 			Review review = getReview(token, bookId);
 			BeanUtils.copyProperties(reviewDTO, review);
-			user.getReview().add(review);
-			userRepository.addUser(user);
-			book.getReview().add(review);
-			bookRepository.save(book);
+			reviewRepository.update(review);
+//			book.getReview().add(review);
+//			bookRepository.save(book);
 			return review;
 		}
 	}
@@ -70,6 +74,19 @@ public class ReviewServiceImpl implements ReviewService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
+		
+		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
+				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
+		ReviewApp review = new ReviewApp();
+		BeanUtils.copyProperties(reviewDTO, review);
+		user.getReviewApp().add(review);
+		userRepository.addUser(user);
+		return review;
 	}
 
 }

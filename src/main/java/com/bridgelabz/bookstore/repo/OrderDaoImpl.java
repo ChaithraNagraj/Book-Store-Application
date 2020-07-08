@@ -10,10 +10,11 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bridgelabz.bookstore.model.Book;
+import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class OrderDaoImpl implements OrderRepo {
 
 	@Autowired
@@ -25,13 +26,20 @@ public class OrderDaoImpl implements OrderRepo {
 		Session currentSession = sessionFactory.getCurrentSession();
 		currentSession.saveOrUpdate(order);
 	}
-
+	
 	@Override
 	@Transactional
-	public List<Order> findMyOrder(Long buyerId) {
+	public void addOrder(MyOrderList order) {
+		Session currentSession = sessionFactory.getCurrentSession();
+		currentSession.saveOrUpdate(order);
+	}
+	
+	@Override
+	@Transactional
+	public List<MyOrderList> findOrderByUserId(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Order> q = session.createQuery("from userorder where userid= :buyerId");
-	    q.setParameter("buyerId", buyerId);
-		return q.getResultList();
+		Query query = session.createQuery("From MyOrderList where user_id=:id");
+		query.setParameter("id", id);
+		return query.getResultList();
 	}
 }
