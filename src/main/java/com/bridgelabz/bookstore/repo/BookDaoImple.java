@@ -27,7 +27,8 @@ public class BookDaoImple implements BookRepo {
 
 	@Override
 	public List<Book> findAllBooks() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class).list();
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book where is_approved=\"1\" ")
+				.addEntity(Book.class).list();
 	}
 
 	@Override
@@ -66,7 +67,7 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public void deleteBook(Book book) {
 		Session session = entityManager.unwrap(Session.class);
-		Query query = session.createQuery("DELETE FROM Book where book_id=:bookId");
+		Query<Book> query = session.createQuery("DELETE FROM Book where book_id=:bookId");
 		query.setParameter("bookId", book.getBookId());
 		query.executeUpdate();
 	}
@@ -93,7 +94,7 @@ public class BookDaoImple implements BookRepo {
 	@Override
 	public List<Book> findBySellerId(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("From Book where seller_id=:id");
+		Query<Book> query = session.createQuery("From Book where seller_id=:id");
 		query.setParameter("id", id);
 		return query.getResultList();
 	}
@@ -108,11 +109,9 @@ public class BookDaoImple implements BookRepo {
 	}
 
 	public List<Book> findBookCount() {
-     Session session =entityManager.unwrap(Session.class);
-      Query<Book> q= session.createQuery(" SELECT count( * ) as total_record FROM Book where is_approved=1");
-//     q.setParameter("value", bookName);
-     return q.getResultList();
+		Session session = entityManager.unwrap(Session.class);
+		Query<Book> q = session.createQuery(" SELECT count( * ) as total_record FROM Book where is_approved=1");
+		return q.getResultList();
 	}
 
-	
 }

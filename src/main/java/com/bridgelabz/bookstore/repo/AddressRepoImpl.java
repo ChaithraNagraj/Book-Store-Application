@@ -1,16 +1,16 @@
 package com.bridgelabz.bookstore.repo;
 
+import java.util.List;
+
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.model.Address;
-import com.bridgelabz.bookstore.model.Book;
-import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.User;
 
 @Repository
@@ -41,4 +41,5 @@ public class AddressRepoImpl implements AddressRepo {
 		query.setParameter("addressType", addressType);
 		return query.uniqueResult();
 	}
+
 }

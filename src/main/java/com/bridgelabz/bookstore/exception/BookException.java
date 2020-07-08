@@ -2,15 +2,10 @@ package com.bridgelabz.bookstore.exception;
 
 public class BookException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private String message;
 	private int status;
-
-	
 
 	public BookException() {
 		super();
