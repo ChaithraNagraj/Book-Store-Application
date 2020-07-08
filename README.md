@@ -164,3 +164,6 @@ forgot-password-template-path = {In_Your_System_Templet_Path_For_Forgot_Password
 
 ### Conclusion:
 Online book store is an online web application where the customer can purchase books online. Through a web browser the customers can search for a book by it's title or author or cost, later can add to the shopping cart and finally purchase the books. After purchasing the book, users can give ratings for that book.
+
+
+# Update
