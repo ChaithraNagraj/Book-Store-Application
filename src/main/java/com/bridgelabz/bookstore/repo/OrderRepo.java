@@ -3,7 +3,6 @@ package com.bridgelabz.bookstore.repo;
 
 import java.util.List;
 
-import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
 

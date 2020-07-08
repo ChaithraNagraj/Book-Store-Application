@@ -1,7 +1,5 @@
 package com.bridgelabz.bookstore.repo;
 
-import javax.persistence.EntityManager;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -14,7 +12,6 @@ import com.bridgelabz.bookstore.model.Role;
 @Repository
 @Transactional
 public class RoleRepositoryImp implements RoleRepository {
-
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -38,7 +35,7 @@ public class RoleRepositoryImp implements RoleRepository {
 	@Transactional
 	public Role getRoleById(int rid) {
 		Session currentSession = sessionFactory.getCurrentSession();
-		Query q = currentSession.createQuery("From Role where role_id=:id");
+		Query<Role> q = currentSession.createQuery("From Role where role_id=:id");
 		q.setParameter("id", rid);
 		return (Role) q.uniqueResult();
 	}

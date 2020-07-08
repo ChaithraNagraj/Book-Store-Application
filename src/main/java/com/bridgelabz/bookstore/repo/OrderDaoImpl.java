@@ -10,7 +10,6 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
 
@@ -38,7 +37,7 @@ public class OrderDaoImpl implements OrderRepo {
 	@Transactional
 	public List<MyOrderList> findOrderByUserId(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("From MyOrderList where user_id=:id");
+		Query<MyOrderList> query = session.createQuery("From MyOrderList where user_id=:id");
 		query.setParameter("id", id);
 		return query.getResultList();
 	}

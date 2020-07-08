@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class RandomUtility {
 
-	public RandomUtility() {
+	private RandomUtility() {
 		super();
 	}
 
