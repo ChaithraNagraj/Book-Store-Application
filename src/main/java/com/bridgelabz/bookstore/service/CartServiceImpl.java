@@ -3,7 +3,11 @@ package com.bridgelabz.bookstore.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +16,14 @@ import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.exception.BookNotFoundInCartException;
 import com.bridgelabz.bookstore.exception.BookOutOfStockException;
+import com.bridgelabz.bookstore.exception.CartException;
 import com.bridgelabz.bookstore.exception.CartItemsLimitException;
 import com.bridgelabz.bookstore.exception.ItemAlreadyExistsInCartException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.CartBooks;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.CartDto;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.CartRepo;
 import com.bridgelabz.bookstore.utils.TokenUtility;
@@ -47,10 +53,14 @@ public class CartServiceImpl implements CartService {
 					.ifPresent(action -> {
 						throw new ItemAlreadyExistsInCartException(Constant.ITEM_ALREADY_EXISTS_EXCEPTION_MESSAGE);
 					});
+			if (bookToAddInCart.getQuantity() <= 0) {
+				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
+			}
 			CartBooks bookItemToBeAddedInCart = new CartBooks();
 			bookItemToBeAddedInCart.setBook(bookToAddInCart);
 			bookItemToBeAddedInCart.setCart(cart);
 			bookItemToBeAddedInCart.setBookQuantity(1);
+			bookItemToBeAddedInCart.setTotalBookPrice(bookToAddInCart.getPrice());
 			listofItemsInCart.add(bookItemToBeAddedInCart);
 			cart.setUser(buyer);
 			cartRepo.saveToCartBooks(bookItemToBeAddedInCart);
@@ -92,6 +102,7 @@ public class CartServiceImpl implements CartService {
 				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
 			}
 			bookToBeAddQuantity.setBookQuantity(bookToBeAddQuantity.getBookQuantity() + 1);
+			bookToBeAddQuantity.setTotalBookPrice(bookToBeAddQuantity.getBook().getPrice()*bookToBeAddQuantity.getBookQuantity());
 			cartRepo.saveToCartBooks(bookToBeAddQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() + 1);
 			cartRepo.saveToCart(buyer.getUserCart());
@@ -111,12 +122,44 @@ public class CartServiceImpl implements CartService {
 				throw new CartItemsLimitException(Constant.CART_ITEM_LOW_LIMIT_MESSAGE);
 			}
 			bookToBeRemoveQuantity.setBookQuantity(bookToBeRemoveQuantity.getBookQuantity() - 1);
+			bookToBeRemoveQuantity.setTotalBookPrice(bookToBeRemoveQuantity.getBook().getPrice()*bookToBeRemoveQuantity.getBookQuantity());
 			cartRepo.saveToCartBooks(bookToBeRemoveQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() - 1);
 			cartRepo.saveToCart(buyer.getUserCart());
 			return bookToBeRemoveQuantity;
 		}
 		throw new CartItemsLimitException(Constant.CART_EMPTY_MESSAGE);
+	}
+
+	@Override
+	public boolean placeOrder(@Valid CartDto cartDto, String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
+		List<CartBooks> listofItemsInCart = Optional.ofNullable(cart.getCartBooks()).orElse(new ArrayList<>());
+		
+		List<CartBooks> booksToCart = cartDto.getCartBooks().stream()
+			      .filter(cartBook -> listofItemsInCart.stream()
+			        .noneMatch(book -> 
+			          book.getBook().getBookId().equals(cartBook.getBook().getBookId()) ))
+			        .collect(Collectors.toList());
+				
+		booksToCart.forEach(cartBookToBeChecked -> {
+			if(cart.getTotalBooksInCart()<5) {
+				CartBooks bookToBeAdded = new CartBooks();
+				BeanUtils.copyProperties(cartBookToBeChecked, bookToBeAdded);
+				bookToBeAdded.setCart(cart);
+				bookToBeAdded.setBookQuantity(1);
+				bookToBeAdded
+						.setTotalBookPrice(cartBookToBeChecked.getBook().getPrice() * bookToBeAdded.getBookQuantity());
+				cartRepo.saveToCartBooks(bookToBeAdded);
+				cart.setTotalBooksInCart(cart.getTotalBooksInCart() + 1);
+				cart.setUser(buyer);
+				cartRepo.saveToCart(cart);
+			}else {
+				throw new CartItemsLimitException(Constant.CART_ITEMS_LIMIT_EXCEEDED_MESSAGE);
+			}
+		});
+		return true;
 	}
 
 }

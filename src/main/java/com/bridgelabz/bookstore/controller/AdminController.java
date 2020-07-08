@@ -40,7 +40,6 @@ public class AdminController {
 	@GetMapping("/getBooksForVerification/{sellerId}")
 	public ResponseEntity<Response> getBooksForVerification(@PathVariable("sellerId") long sellerId,@RequestHeader("token") String token) {	
 		List<Book> books = adminService.getBooksForVerification(sellerId, token);
-		System.out.println(books.size());
 			return ResponseEntity.status(HttpStatus.OK).body(new Response(AdminConstants.BOOK_FOUND, HttpStatus.OK.value(), books));
 		}
 	
