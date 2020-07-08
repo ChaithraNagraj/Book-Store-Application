@@ -101,7 +101,7 @@ public class Book {
 //	}
 
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL,mappedBy = "books")
+	@ManyToMany(mappedBy = "books")
 	@LazyCollection(LazyCollectionOption.FALSE)
 //	@JoinTable(name = "ordered_books",joinColumns = { @JoinColumn(name = "order_id") }, inverseJoinColumns = {
 //			@JoinColumn(name = "book_id") })
