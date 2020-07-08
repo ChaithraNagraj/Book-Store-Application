@@ -56,7 +56,7 @@ public class Role {
 	}
 
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roleList")
+	@ManyToMany( mappedBy = "roleList")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<User> users;
 

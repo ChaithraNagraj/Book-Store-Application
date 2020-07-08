@@ -118,6 +118,8 @@ public class Constant {
 	public static final String PLACE_ORDER_SUCCESSFUL_MESSAGE = "Order placed";
 	public static final String PLACE_ORDER_FAILED_MESSAGE = "Order placing Failed";
 
+	public static final String LIST_OF_ORDERS = "List of orders";
+	public static final String ORDER_EMPTY = "Order Empty";
 	
 
 
