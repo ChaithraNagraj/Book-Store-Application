@@ -1,6 +1,8 @@
 package com.bridgelabz.bookstore.repo;
 
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -58,6 +60,14 @@ public class AddressRepoImpl implements AddressRepo{
 		query.setParameter("addressType", addressType);
 		
 		return query.uniqueResult();
+	}
+	public List<Address> findAddressByTypea(String addressType, long userId) {
+		Session session=sessionFactory.getCurrentSession();
+		Query<Address> query=session.createQuery("From Address where user_id=:userId and address_type=:addressType");
+		query.setParameter("userId", userId);
+		query.setParameter("addressType", addressType);
+		
+		return query.getResultList();
 	}
 }
 
