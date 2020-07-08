@@ -2,7 +2,6 @@ package com.bridgelabz.bookstore.model;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,7 +55,7 @@ public class Role {
 	}
 
 	@JsonIgnore
-	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "roleList")
+	@ManyToMany(mappedBy = "roleList")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<User> users;
 
