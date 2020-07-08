@@ -55,10 +55,10 @@ public class OrderServiceImpl implements OrderService {
 		orderRepository.addOrder(order);
 		for (int i = 0; i < booksToBeOrdered.size(); i++) {
 			MyOrderList items = new MyOrderList();
-			items.setQunatity(booksToBeOrdered.get(i).getQuantity());
+			items.setQunatity(booksToBeOrdered.get(i).getCartBooks().get(i).getBookQuantity());
 			Book book = bookRepository.findByBookId(booksToBeOrdered.get(i).getBookId());
 			items.setBookName(book.getBookName());
-			items.setTotelPrice(book.getQuantity() * book.getPrice());
+			items.setTotelPrice(booksToBeOrdered.get(i).getCartBooks().get(i).getBookQuantity() * book.getPrice());
 			items.setUser(buyer);
 			items.setVenderName(buyer.getName());
 			orderRepository.addOrder(items);
