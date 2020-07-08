@@ -139,7 +139,6 @@ public class Address {
 
 	public Address() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Address(long addressId, String pincode, String locality, String address, String city, String landmark,
