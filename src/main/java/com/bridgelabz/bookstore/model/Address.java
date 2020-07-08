@@ -18,31 +18,30 @@ public class Address {
 	@Column(name = "address_id")
 	private long addressId;
 
-	@Column(name = "customer_pincode")
+	@Column(name = "customer_pincode",nullable=false)
 	private String pincode;
 
-	@Column(name = "customer_locality")
+	@Column(name = "customer_locality",nullable=false)
 	private String locality;
 
-	@Column(name = "customer_address")
+	@Column(name = "customer_address",nullable=false)
 	private String address;
 
-	@Column(name = "customer_city")
+	@Column(name = "customer_city",nullable=false)
 	private String city;
 
-	@Column(name = "customer_landmark")
+	@Column(name = "customer_landmark",nullable=false)
 	private String landmark;
 	
-	@Column(name = "country")
-    private String country;
+
 	
-	@Column(name = "address_type")
+	@Column(name = "address_type",nullable=false)
     private String addressType;
 	
-	@Column
+	@Column(name = "phoneNumber",nullable=false)
 	private String phoneNumber;
 	
-	@Column
+	@Column(name = "name",nullable=false)
 	private String name;
 	
 	@ManyToOne(cascade= {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
@@ -97,13 +96,6 @@ public class Address {
 		this.landmark = landmark;
 	}
 
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
 
 	public String getAddressType() {
 		return addressType;
@@ -142,7 +134,7 @@ public class Address {
 	}
 
 	public Address(long addressId, String pincode, String locality, String address, String city, String landmark,
-			String country, String addressType, String phoneNumber, String name, User user) {
+ String addressType, String phoneNumber, String name, User user) {
 		
 		this.addressId = addressId;
 		this.pincode = pincode;
@@ -150,12 +142,20 @@ public class Address {
 		this.address = address;
 		this.city = city;
 		this.landmark = landmark;
-		this.country = country;
 		this.addressType = addressType;
 		this.phoneNumber = phoneNumber;
 		this.name = name;
 		this.user = user;
 	}
+
+	@Override
+	public String toString() {
+		return "Address [addressId=" + addressId + ", pincode=" + pincode + ", locality=" + locality + ", address="
+				+ address + ", city=" + city + ", landmark=" + landmark + ", addressType=" + addressType
+				+ ", phoneNumber=" + phoneNumber + ", name=" + name + ", user=" + user + "]";
+	}
+
+
 	
 	
 

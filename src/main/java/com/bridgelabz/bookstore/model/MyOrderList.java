@@ -30,7 +30,7 @@ public class MyOrderList {
 	private String bookName;
 
 	@Column(name = "review")
-	private String review;
+	private int review;
 
 	@Column(name = "totel_price")
 	private double totelPrice;
@@ -100,11 +100,11 @@ public class MyOrderList {
 		this.bookName = bookName;
 	}
 
-	public String getReview() {
+	public int getReview() {
 		return review;
 	}
 
-	public void setReview(String review) {
+	public void setReview(int review) {
 		this.review = review;
 	}
 

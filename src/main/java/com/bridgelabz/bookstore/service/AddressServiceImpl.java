@@ -29,13 +29,20 @@ public class AddressServiceImpl implements AddressService {
 	public Address addAddress(AddressDTO address, String token) {
 
 		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		String type = address.getaddressType();
+		Address add2 = addressRepo.findAddressByType(type, user.getId());
 		Address add = new Address();
-		BeanUtils.copyProperties(address, add);
-		add.setUser(user);
-		user.getAddress().add(add);
-		addressRepo.save(add);
 
-		return add;
+		if (add2 != null) {
+			return add2;
+		} else {
+
+			BeanUtils.copyProperties(address, add);
+			add.setUser(user);
+			user.getAddress().add(add);
+			addressRepo.save(add);
+			return add;
+		}
 
 	}
 
