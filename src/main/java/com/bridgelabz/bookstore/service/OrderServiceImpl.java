@@ -28,8 +28,8 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepo orderRepository;
 	@Autowired
 	private BookRepo bookRepository;
+	@Autowired
 	private CartRepo cartRepository;
-
 	@Autowired
 	private TokenUtility tokenUtility;
 
@@ -55,16 +55,16 @@ public class OrderServiceImpl implements OrderService {
 		orderRepository.addOrder(order);
 		for (int i = 0; i < booksToBeOrdered.size(); i++) {
 			MyOrderList items = new MyOrderList();
-			items.setQunatity(booksToBeOrdered.get(i).getQuantity());
+			items.setQunatity(booksFromCart.get(i).getBookQuantity());
 			Book book = bookRepository.findByBookId(booksToBeOrdered.get(i).getBookId());
 			items.setBook(book);
 			items.setBookName(book.getBookName());
-			items.setTotelPrice(book.getQuantity() * book.getPrice());
-			items.setUser(buyer);
+			items.setTotelPrice(booksFromCart.get(i).getBookQuantity() * book.getPrice());
+			items.setBuyer(buyer);
 			items.setVenderName(buyer.getName());
 			orderRepository.addOrder(items);
 		}
-		cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
+      cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
 		return order;
 	}
 

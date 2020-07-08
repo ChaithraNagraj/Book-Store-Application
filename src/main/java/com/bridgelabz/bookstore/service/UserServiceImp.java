@@ -74,7 +74,6 @@ public class UserServiceImp implements UserService {
 	@Value("${redis.redisKey}")
 	private String redisKey;
 
-
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
 		Optional<User> userEmailExists = Optional.ofNullable(userRepository.getusersByemail(userDetails.getEmail()));
@@ -119,7 +118,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			//logger.info(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -298,25 +297,9 @@ public class UserServiceImp implements UserService {
 		}
 		return false;
 	}
-	
+
 	public User findById(Long id) {
-//		String text = Long.toString(id);
-//		SearchRequest searchRequest = new SearchRequest();
-//		searchRequest.indices(Constant.INDEX);
-//		searchRequest.types(Constant.TYPE);
-//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//		QueryBuilder query = QueryBuilders.boolQuery()
-//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
-//
-//		searchSourceBuilder.query(query);
-//		searchRequest.source(searchSourceBuilder);
-//		SearchResponse searchResponse = null;
-//		try {
-//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return (User) getSearchResult(searchResponse);
+
 		return userRepository.findByUserId(id);
 	}
 
