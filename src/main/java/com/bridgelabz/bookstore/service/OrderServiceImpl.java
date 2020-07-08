@@ -28,8 +28,8 @@ public class OrderServiceImpl implements OrderService {
 	private OrderRepo orderRepository;
 	@Autowired
 	private BookRepo bookRepository;
+	@Autowired
 	private CartRepo cartRepository;
-
 	@Autowired
 	private TokenUtility tokenUtility;
 
