@@ -14,6 +14,7 @@ import com.bridgelabz.bookstore.model.ReviewApp;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 import com.bridgelabz.bookstore.repo.BookRepo;
+import com.bridgelabz.bookstore.repo.OrderRepo;
 import com.bridgelabz.bookstore.repo.ReviewRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
 import com.bridgelabz.bookstore.utils.JwtValidate;
@@ -29,6 +30,9 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	@Autowired
 	ReviewRepository reviewRepository;
+	
+	@Autowired
+	private OrderRepo orderRepository;
 
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
 		
@@ -45,6 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
 		userRepository.addUser(user);
 		book.getReview().add(review);
 		bookRepository.save(book);
+		orderRepository.addReview(bookId, reviewDTO.getRating());
 		return review;
 		}
 		else {
@@ -53,6 +58,7 @@ public class ReviewServiceImpl implements ReviewService {
 			reviewRepository.update(review);
 //			book.getReview().add(review);
 //			bookRepository.save(book);
+			orderRepository.addReview(bookId, reviewDTO.getRating());
 			return review;
 		}
 	}
