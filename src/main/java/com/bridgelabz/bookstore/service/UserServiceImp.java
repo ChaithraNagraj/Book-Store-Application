@@ -8,8 +8,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +62,7 @@ public class UserServiceImp implements UserService {
 	@Autowired
 	private Environment environment;
 
+	@Autowired
 	private AmazonS3 amazonS3;
 
 	@Value("${amazonProperties.bucketName}")
@@ -74,8 +73,6 @@ public class UserServiceImp implements UserService {
 
 	@Value("${redis.redisKey}")
 	private String redisKey;
-
-//	private Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
 
 	public boolean registerUser(RegistrationDTO userDetails) throws UserException {
 		Role role = roleRepository.getRoleById(Integer.parseInt(userDetails.getRole()));
@@ -121,7 +118,7 @@ public class UserServiceImp implements UserService {
 		try {
 			mailTempletService.getTemplate(user, token, templet);
 		} catch (IOException e) {
-			//logger.info(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -129,7 +126,6 @@ public class UserServiceImp implements UserService {
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("roleId"));
 		Role role = roleRepository.getRoleById((int) roleId);
-		// Kalpesh Review: Name of variable
 		User mayBeUser = userRepository.findByUserId(id);
 		if (mayBeUser == null) {
 			throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -235,7 +231,6 @@ public class UserServiceImp implements UserService {
 				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
 			} else
 				updateDTO.setPassword(isUserExist.getPassword());
-
 			isUserExist.setUpdateDateTime(DateUtility.today());
 			BeanUtils.copyProperties(updateDTO, isUserExist);
 			userRepository.addUser(isUserExist);
@@ -302,25 +297,9 @@ public class UserServiceImp implements UserService {
 		}
 		return false;
 	}
-	
+
 	public User findById(Long id) {
-//		String text = Long.toString(id);
-//		SearchRequest searchRequest = new SearchRequest();
-//		searchRequest.indices(Constant.INDEX);
-//		searchRequest.types(Constant.TYPE);
-//		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//		QueryBuilder query = QueryBuilders.boolQuery()
-//				.should(QueryBuilders.queryStringQuery(text).lenient(true).field("id"));
-//
-//		searchSourceBuilder.query(query);
-//		searchRequest.source(searchSourceBuilder);
-//		SearchResponse searchResponse = null;
-//		try {
-//			searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		return (User) getSearchResult(searchResponse);
+
 		return userRepository.findByUserId(id);
 	}
 

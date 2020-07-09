@@ -1,101 +1,70 @@
 package com.bridgelabz.bookstore.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-@Table(name="orders")
 @Entity
+@Table(name = "orders")
 public class Order {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long OrderId;
-	
-	@Column
-	@NotNull
-	private Long bookId;
-	
-	@Column
-	private Long userId;
-	
-	@Column
-	@NotNull
-	private String bookName;
-	
-	@Column
-	@NotNull
-	private int quantity;
-	
-	@Column
-	@NotNull
-	private double price;
-	
-	@Column
-	@NotNull
-	private double total;
+	@Column(name = "order_id")
+	private Long orderId;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	private List<Book> books;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "buyer_id")
+	private User buyer;
+	
+	@Column(name = "purchase_date_time",nullable = false)
+	private LocalDateTime purchaseDateTime;
+	
 	public Long getOrderId() {
-		return OrderId;
+		return orderId;
 	}
 
 	public void setOrderId(Long orderId) {
-		OrderId = orderId;
+		this.orderId = orderId;
 	}
 
-	public Long getBookId() {
-		return bookId;
+	public List<Book> getBooks() {
+		return books;
 	}
 
-	public void setBookId(Long bookId) {
-		this.bookId = bookId;
+	public void setBooks(List<Book> books) {
+		this.books = books;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getBuyer() {
+		return buyer;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setBuyer(User buyer) {
+		this.buyer = buyer;
 	}
 
-	public String getBookName() {
-		return bookName;
+	public LocalDateTime getPurchaseDateTime() {
+		return purchaseDateTime;
 	}
 
-	public void setBookName(String bookName) {
-		this.bookName = bookName;
+	public void setPurchaseDateTime(LocalDateTime purchaseDateTime) {
+		this.purchaseDateTime = purchaseDateTime;
 	}
 
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public void setPrice(double price) {
-		this.price = price;
-	}
-
-	public double getTotal() {
-		return total;
-	}
-
-	public void setTotal(double total) {
-		this.total = total;
-	}
 	
 	
-		
 }

@@ -18,38 +18,38 @@ import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.AdminService;
-import com.bridgelabz.bookstore.service.AdminServiceImp;
-import com.bridgelabz.bookstore.service.UserService;
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
 
-	
-	
 	@Autowired
 	private AdminService adminService;
-	
+
 	@GetMapping("/getSellersForVerification")
-	public ResponseEntity<Response> getSellersForVerification(@RequestHeader("token") String token) {	
-		
-		List <User> sellers = adminService.getSellers(token);
-		return ResponseEntity.status(HttpStatus.OK).body(new Response(AdminConstants.USER_FOUND, HttpStatus.OK.value(), sellers));
+	public ResponseEntity<Response> getSellersForVerification(@RequestHeader("token") String token) {
+
+		List<User> sellers = adminService.getSellers(token);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(AdminConstants.USER_FOUND, HttpStatus.OK.value(), sellers));
 	}
-	
+
 	@GetMapping("/getBooksForVerification/{sellerId}")
-	public ResponseEntity<Response> getBooksForVerification(@PathVariable("sellerId") long sellerId,@RequestHeader("token") String token) {	
+	public ResponseEntity<Response> getBooksForVerification(@PathVariable("sellerId") long sellerId,
+			@RequestHeader("token") String token) {
 		List<Book> books = adminService.getBooksForVerification(sellerId, token);
-		System.out.println(books.size());
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(AdminConstants.BOOK_FOUND, HttpStatus.OK.value(), books));
-		}
-	
-	
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(AdminConstants.BOOK_FOUND, HttpStatus.OK.value(), books));
+	}
+
 	@PutMapping("/bookVerification/{bookId}/{sellerId}/{verify}")
-	public ResponseEntity<Response> bookVerification( @PathVariable("bookId") Long bookId, @PathVariable("sellerId") Long sellerId, @PathVariable("verify") boolean verify, @RequestHeader("token") String token) throws BookException {
-		
+	public ResponseEntity<Response> bookVerification(@PathVariable("bookId") Long bookId,
+			@PathVariable("sellerId") Long sellerId, @PathVariable("verify") boolean verify,
+			@RequestHeader("token") String token) throws BookException {
+
 		adminService.bookVerification(bookId, sellerId, verify, token);
-		return ResponseEntity.status(HttpStatus.OK).body(new Response(AdminConstants.BOOK_VERIFIED_SUCCESSFULLY_MEAASGE, HttpStatus.OK.value()));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(new Response(AdminConstants.BOOK_VERIFIED_SUCCESSFULLY_MEAASGE, HttpStatus.OK.value()));
 
 	}
 }

@@ -27,6 +27,7 @@ public class Constant {
 	public static final int NOT_FOUND_RESPONSE_CODE = 404;
 	public static final int BAD_GATEWAY_RESPONSE_CODE = 502;
 	public static final int ACCEPT_RESPONSE_CODE = HttpStatus.ACCEPTED.value();
+	public static final int EXPECTATION_FAILED_RESPONSE_CODE = HttpStatus.EXPECTATION_FAILED.value();
 	public static final String PROFILE_IMAGE_DELETED_SUCCESSFULLY = "PROFILE_IMAGE_DELETED_SUCCESSFULLY";
 	public static final String PROFILE_IMAGE_UPLOADED_SUCCESSFULLY = "PROFILE_IMAGE_UPLOADED_SUCCESSFULLY";
 	public static final String INDEX = "bookentity";
@@ -53,7 +54,7 @@ public class Constant {
 	public static final String BOOK_NOT_FOUND = "Book Not found";
 	public static final String USER_VERIFIED_FAILD_MEAASGE = "User Verification Failed";
 	public static final String USER_REGISTER_FAILED = "User Registration Failed";
-	public static final String DISPLAYING_BOOKS="Displaying Books";
+	public static final String DISPLAYING_BOOKS = "Displaying Books";
 	public static final String BOOK_FOUND = "book found";
 	public static final String BOOK_ADDITION_SUCCESSFULL_MESSAGE = "Book Added Successfully";
 	public static final String BOOK_ADDITION_FAILED_MESSAGE = "Book Adding Failed";
@@ -86,7 +87,7 @@ public class Constant {
 	public static final String ITEM_ALREADY_EXISTS_EXCEPTION_MESSAGE = "Book Already added to your cart";
 	public static final String QUANTITY_INCREASED_SUCCESS_MESSAGE = "Qauntity increased successfully";
 	public static final String QUANTITY_INCREASED_FAILED_MESSAGE = "Quantity increased Failed";
-	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";;
+	public static final String QUANTITY_DECREASED_SUCCESS_MESSAGE = "Qauntity decreased successfully";
 	public static final String QUANTITY_DECREASED_FAILED_MESSAGE = "Quantity decreased Failed";
 	public static final String BOOK_NOT_FOUND_IN_CART_MESSAGE = "Book does not exists In your Cart";
 	public static final String BOOK_OUT_OF_STOCK_MESSAGE = "Book Out Of stock";
@@ -103,5 +104,19 @@ public class Constant {
 	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
 	public static final String BOOKS_DISPLAY_FAILED_MESSAGE = "Displaying items in wishlist failed";
 
+	public static final String ADDRESS_DETAILS_ADDED = "address details added succefully";
+	public static final String ADDRESS_DETAILS_FAIL = " address details failed to add ";
+	public static final String ADDRESS_DETAILS_FOUND = "address details found for required type succefully";
+	public static final String ADDRESS_DETAILS_NOT_fOUND = " not found address details for required type ";
+
+	public static final String ORDER_PLACED_SUCCESSFULLY = "Order placed Successfully";
+
+	public static final String ORDER_PLACED_FAILED = "Order placed Failed";
+
+	public static final String PLACE_ORDER_SUCCESSFUL_MESSAGE = "Order placed";
+	public static final String PLACE_ORDER_FAILED_MESSAGE = "Order placing Failed";
+
+	public static final String LIST_OF_ORDERS = "List of orders";
+	public static final String ORDER_EMPTY = "Order Empty";
 
 }

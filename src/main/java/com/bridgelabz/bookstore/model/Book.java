@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -33,7 +34,7 @@ public class Book {
 	private String bookName;
 
 	@Column(name = "quantity", nullable = false)
-	@Min(value = 1)
+	@Min(value = 0)
 	private int quantity;
 
 	@Column(name = "price", nullable = false)
@@ -82,6 +83,11 @@ public class Book {
 	@OneToMany(mappedBy = "book")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<CartBooks> cartBooks;
+
+	@JsonIgnore
+	@ManyToMany(mappedBy = "books")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Order> orders;
 
 	public List<Review> getReview() {
 		return review;
@@ -211,6 +217,7 @@ public class Book {
 		this.cartBooks = cartBooks;
 	}
 
+<<<<<<< HEAD
 	@Override
 	public String toString() {
 		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
@@ -222,4 +229,14 @@ public class Book {
 	}
 	
 	
+=======
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+>>>>>>> 661f1fe6a66c54696e54a7837b88e617d73cc1bf
 }

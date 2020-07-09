@@ -1,23 +1,25 @@
 package com.bridgelabz.bookstore.controller;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
-import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Cart;
 import com.bridgelabz.bookstore.model.CartBooks;
+import com.bridgelabz.bookstore.model.dto.CartDto;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.CartService;
 
@@ -27,6 +29,9 @@ public class CartController {
 
 	@Autowired
 	private CartService cartService;
+	
+	@Autowired
+	private Response response;
 
 	@PostMapping(value = "/addToCart/{bookId}", headers = "Accept=application/json")
 	public ResponseEntity<Response> addtocart(@RequestHeader("token") String token,
@@ -42,10 +47,10 @@ public class CartController {
 
 	@GetMapping("/displayItems")
 	public ResponseEntity<Response> displayItems(@RequestHeader("token") String token) {
-		List<Book> books = cartService.displayItems(token);
-		if (!books.isEmpty()) {
+		Cart cart = cartService.displayItems(token);
+		if (cart!=null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.BOOKS_DISPLAYING_MESSAGE, Constant.OK_RESPONSE_CODE, books));
+					.body(new Response(Constant.BOOKS_DISPLAYING_MESSAGE, Constant.OK_RESPONSE_CODE, cart));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.BOOKS_DISPLAYING_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE));
@@ -84,5 +89,21 @@ public class CartController {
 		} else
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
 					.body(new Response(Constant.BOOK_REMOVAL_FROM_CART_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
+	}
+	
+	@PostMapping("/placeOrder")
+	public ResponseEntity<Response> placeOrder(@RequestBody @Valid CartDto cart,BindingResult result,@RequestHeader("token") String token){
+		if(result.hasErrors()) {
+			response.setMessage(result.getAllErrors().get(0).getDefaultMessage());
+			return new ResponseEntity<>(new Response(response.getMessage(), HttpStatus.NOT_ACCEPTABLE.value()),
+					HttpStatus.NOT_ACCEPTABLE);
+		}
+		boolean status = cartService.placeOrder(cart,token);
+		if(status) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.PLACE_ORDER_SUCCESSFUL_MESSAGE, Constant.OK_RESPONSE_CODE));
+		}
+		return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+				.body(new Response(Constant.PLACE_ORDER_FAILED_MESSAGE, Constant.EXPECTATION_FAILED_RESPONSE_CODE));
 	}
 }

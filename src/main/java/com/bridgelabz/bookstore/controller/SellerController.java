@@ -106,7 +106,7 @@ public class SellerController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new Response(Constant.BOOK_NOT_FOUND, Constant.NOT_FOUND_RESPONSE_CODE));
 
-		return  ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.BOOK_FOUND,Constant.OK_RESPONSE_CODE));
+		return  ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.BOOK_FOUND,Constant.OK_RESPONSE_CODE,books));
 	}
 
 	@PutMapping("/approvalSent/{bookId}")
