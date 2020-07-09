@@ -158,7 +158,7 @@ public class UserDaoImp implements UserRepo {
 
 	public Optional<User> getUserById(long userId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query q = session.createQuery("From User where user_id=:id");
+		Query<User> q = session.createQuery("From User where user_id=:id");
 		q.setParameter("id", userId);
 		return q.uniqueResultOptional();
 	}

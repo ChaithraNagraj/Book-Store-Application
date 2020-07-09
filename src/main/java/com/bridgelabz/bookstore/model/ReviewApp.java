@@ -16,12 +16,12 @@ public class ReviewApp {
 
 	public ReviewApp() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Column
 	private int rating;
-	
+
 	public long getReviewAppId() {
 		return reviewAppId;
 	}

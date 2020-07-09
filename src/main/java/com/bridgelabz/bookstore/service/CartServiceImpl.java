@@ -16,7 +16,6 @@ import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
 import com.bridgelabz.bookstore.exception.BookNotFoundInCartException;
 import com.bridgelabz.bookstore.exception.BookOutOfStockException;
-import com.bridgelabz.bookstore.exception.CartException;
 import com.bridgelabz.bookstore.exception.CartItemsLimitException;
 import com.bridgelabz.bookstore.exception.ItemAlreadyExistsInCartException;
 import com.bridgelabz.bookstore.model.Book;
@@ -97,12 +96,13 @@ public class CartServiceImpl implements CartService {
 		CartBooks bookToBeAddQuantity = buyer.getUserCart().getCartBooks().stream()
 				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
 				.orElseThrow(() -> new BookNotFoundInCartException(Constant.BOOK_NOT_FOUND_IN_CART_MESSAGE));
-		if (buyer.getUserCart().getTotalBooksInCart() <=4) {
+		if (buyer.getUserCart().getTotalBooksInCart() <= 4) {
 			if (bookToBeAddQuantity.getBook().getQuantity() <= bookToBeAddQuantity.getBookQuantity()) {
 				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
 			}
 			bookToBeAddQuantity.setBookQuantity(bookToBeAddQuantity.getBookQuantity() + 1);
-			bookToBeAddQuantity.setTotalBookPrice(bookToBeAddQuantity.getBook().getPrice()*bookToBeAddQuantity.getBookQuantity());
+			bookToBeAddQuantity.setTotalBookPrice(
+					bookToBeAddQuantity.getBook().getPrice() * bookToBeAddQuantity.getBookQuantity());
 			cartRepo.saveToCartBooks(bookToBeAddQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() + 1);
 			cartRepo.saveToCart(buyer.getUserCart());
@@ -122,7 +122,8 @@ public class CartServiceImpl implements CartService {
 				throw new CartItemsLimitException(Constant.CART_ITEM_LOW_LIMIT_MESSAGE);
 			}
 			bookToBeRemoveQuantity.setBookQuantity(bookToBeRemoveQuantity.getBookQuantity() - 1);
-			bookToBeRemoveQuantity.setTotalBookPrice(bookToBeRemoveQuantity.getBook().getPrice()*bookToBeRemoveQuantity.getBookQuantity());
+			bookToBeRemoveQuantity.setTotalBookPrice(
+					bookToBeRemoveQuantity.getBook().getPrice() * bookToBeRemoveQuantity.getBookQuantity());
 			cartRepo.saveToCartBooks(bookToBeRemoveQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() - 1);
 			cartRepo.saveToCart(buyer.getUserCart());
@@ -136,15 +137,14 @@ public class CartServiceImpl implements CartService {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
 		List<CartBooks> listofItemsInCart = Optional.ofNullable(cart.getCartBooks()).orElse(new ArrayList<>());
-		
+
 		List<CartBooks> booksToCart = cartDto.getCartBooks().stream()
-			      .filter(cartBook -> listofItemsInCart.stream()
-			        .noneMatch(book -> 
-			          book.getBook().getBookId().equals(cartBook.getBook().getBookId()) ))
-			        .collect(Collectors.toList());
-				
+				.filter(cartBook -> listofItemsInCart.stream()
+						.noneMatch(book -> book.getBook().getBookId().equals(cartBook.getBook().getBookId())))
+				.collect(Collectors.toList());
+
 		booksToCart.forEach(cartBookToBeChecked -> {
-			if(cart.getTotalBooksInCart()<5) {
+			if (cart.getTotalBooksInCart() < 5) {
 				CartBooks bookToBeAdded = new CartBooks();
 				BeanUtils.copyProperties(cartBookToBeChecked, bookToBeAdded);
 				bookToBeAdded.setCart(cart);
@@ -155,7 +155,7 @@ public class CartServiceImpl implements CartService {
 				cart.setTotalBooksInCart(cart.getTotalBooksInCart() + 1);
 				cart.setUser(buyer);
 				cartRepo.saveToCart(cart);
-			}else {
+			} else {
 				throw new CartItemsLimitException(Constant.CART_ITEMS_LIMIT_EXCEEDED_MESSAGE);
 			}
 		});
