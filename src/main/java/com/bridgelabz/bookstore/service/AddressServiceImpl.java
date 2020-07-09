@@ -18,6 +18,7 @@ import com.bridgelabz.bookstore.utils.TokenUtility;
 @Transactional
 public class AddressServiceImpl implements AddressService {
 
+
 	@Autowired
 	UserRepo userRepo;
 	@Autowired
@@ -27,13 +28,23 @@ public class AddressServiceImpl implements AddressService {
 
 	@Override
 	public Address addAddress(AddressDTO address, String token) {
-
 		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		long userId = user.getId();
 		String type = address.getaddressType();
 		Address add2 = addressRepo.findAddressByType(type, user.getId());
 		Address add = new Address();
-
 		if (add2 != null) {
+			add2.setAddress(address.getAddress());
+			add2.setAddressType(address.getaddressType());
+			add2.setCity(address.getCity());
+			add2.setLandmark(address.getLandmark());
+			add2.setLocality(address.getLocality());
+			add2.setName(address.getName());
+			add2.setPhoneNumber(address.getPhoneNumber());
+			add2.setPincode(address.getPincode());
+			add2.setUser(user);
+			user.getAddress().add(add2);
+			addressRepo.save(add2);
 			return add2;
 		} else {
 
@@ -46,9 +57,11 @@ public class AddressServiceImpl implements AddressService {
 
 	}
 
+
 	@Override
 	public Address getAddressByType(String addressType, String token) {
 		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+
 		return addressRepo.findAddressByType(addressType, user.getId());
 
 	}
