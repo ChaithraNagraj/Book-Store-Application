@@ -64,7 +64,7 @@ public class OrderServiceImpl implements OrderService {
 			items.setVenderName(buyer.getName());
 			orderRepository.addOrder(items);
 		}
-		cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
+		//cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
 		return order;
 	}
 
