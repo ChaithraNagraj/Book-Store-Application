@@ -27,37 +27,35 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	BookRepo bookRepository;
-	
+
 	@Autowired
 	ReviewRepository reviewRepository;
-	
+
 	@Autowired
 	private OrderRepo orderRepository;
 
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
-		
+
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
 		Book book = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.BOOK_NOT_FOUND,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
-		if(getReview(token, bookId)==null) {
-		Review review = new Review();
-		BeanUtils.copyProperties(reviewDTO, review);
-		user.getReview().add(review);
-		userRepository.addUser(user);
-		book.getReview().add(review);
-		bookRepository.save(book);
-		orderRepository.addReview(bookId, reviewDTO.getRating());
-		return review;
-		}
-		else {
+		if (getReview(token, bookId) == null) {
+			Review review = new Review();
+			BeanUtils.copyProperties(reviewDTO, review);
+			user.getReview().add(review);
+			userRepository.addUser(user);
+			book.getReview().add(review);
+			bookRepository.save(book);
+			orderRepository.addReview(bookId, reviewDTO.getRating());
+			return review;
+		} else {
 			Review review = getReview(token, bookId);
 			BeanUtils.copyProperties(reviewDTO, review);
 			reviewRepository.update(review);
-//			book.getReview().add(review);
-//			bookRepository.save(book);
+
 			orderRepository.addReview(bookId, reviewDTO.getRating());
 			return review;
 		}
@@ -84,7 +82,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
-		
+
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
