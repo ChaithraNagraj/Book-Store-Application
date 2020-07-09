@@ -104,11 +104,7 @@ class UserServiceImpTest {
 		  service.getUser();
 	  });
 		}
-	}
-
-
-
-	
+	}	
 	@Test
 	void RegisterUserTest() throws UserException {
 		UserServiceImp Urepo= mock(UserServiceImp.class);
@@ -116,14 +112,8 @@ class UserServiceImpTest {
 	    RegistrationDTO reg= (new RegistrationDTO("Pallavi Kumari","S_1tringa","pallavikumari2207@gmail.com","A_1tring","2", "9122449097"));
 		Urepo.registerUser(reg);
 		verify(Urepo).registerUser(argumentCaptor.capture());
-	
 		 assertEquals("Pallavi Kumari",argumentCaptor.getValue().getName());
-	}
-	
-
- 
-	
-	
+	}	
 	@Test
 	void deleteUserByIdTest() {
 		long doseId = 42;
