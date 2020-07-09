@@ -70,7 +70,7 @@ public class Role {
 
 	@Override
 	public String toString() {
-		return "Role [roleId=" + ", role=" + role + "]";
+		return "Role [roleId=" + roleId +", role=" + role + "]";
 	}
 
 }

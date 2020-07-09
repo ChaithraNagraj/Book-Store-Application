@@ -239,6 +239,15 @@ public class User {
 		this.sellerBooks = sellerBooks;
 	}
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", userName=" + userName + ", email=" + email + ", password="
+				+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+				+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+				+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", sellerBooks=" + sellerBooks + ", userCart="
+				+ userCart + ", userWishlist=" + userWishlist + ", review=" + review + "]";
+	}
+
 //	@Override
 //	public String toString() {
 //		return "User [id=" + id + ", fullName=" + name + ", userName=" + userName + ", email=" + email + ", password="

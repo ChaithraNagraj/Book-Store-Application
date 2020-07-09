@@ -74,6 +74,21 @@ public class BookDto {
 		this.description = description;
 	}
 
+	public BookDto(@NotBlank(message = "Book Name can not be empty") String bookName,
+			@Min(value = 1, message = "Quantity can't be less than 1") int quantity,
+			@Min(value = 0, message = "price can't be less than 0") Double price,
+			@NotBlank(message = "Author Name can not be empty") String authorName,
+			@NotBlank(message = "provide an image for book") String imageURL,
+			@NotBlank(message = "Book Description can not be empty") String description) {
+		super();
+		this.bookName = bookName;
+		this.quantity = quantity;
+		this.price = price;
+		this.authorName = authorName;
+		this.imageURL = imageURL;
+		this.description = description;
+	}
+
 	@Override
 	public String toString() {
 		return "BookDto [bookName=" + bookName + ", quantity=" + quantity + ", price=" + price + ", authorName="

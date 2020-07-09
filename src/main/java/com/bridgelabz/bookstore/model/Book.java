@@ -210,4 +210,16 @@ public class Book {
 	public void setCartBooks(List<CartBooks> cartBooks) {
 		this.cartBooks = cartBooks;
 	}
+
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
+				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
+				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", review=" + review + ", cartBooks=" + cartBooks + "]";
+	}
+	
+	
 }
