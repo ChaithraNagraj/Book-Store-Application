@@ -27,14 +27,9 @@ public class AddressController {
 	@Autowired
 	AddressService addressService;
 
-	
-	
-
 	public AddressController() {
 		System.out.println("addresscontroller working");
 	}
-
-
 
 
 	@PostMapping(value="/addAddress", headers = "Accept=application/json")

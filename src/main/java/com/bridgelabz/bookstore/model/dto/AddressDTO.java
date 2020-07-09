@@ -1,9 +1,8 @@
 package com.bridgelabz.bookstore.model.dto;
 
-
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 public class AddressDTO {
 	private String address;
 	private String locality;
@@ -55,7 +54,7 @@ public class AddressDTO {
 	public String getaddressType() {
 		return addressType;
 	}
-	public void setType(String addressType) {
+	public void setaddressType(String addressType) {
 		this.addressType = addressType;
 	}
 	public String getPhoneNumber() {
@@ -66,4 +65,3 @@ public class AddressDTO {
 	}
 	
 }
-

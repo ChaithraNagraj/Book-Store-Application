@@ -148,11 +148,13 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.PROFILE_IMAGE_DELETED_FAILED, Constant.OK_RESPONSE_CODE));
 		}
-
 	}
 
 	@PutMapping("/update")
-	public ResponseEntity<Response> userUpdate(@RequestBody UpdateDTO updateDTO, @RequestParam("token") String token)
+//	public ResponseEntity<Response> userUpdate(@RequestBody UpdateDTO updateDTO, @RequestParam("token") String token)
+	//backend token not accepting so i changes header requestparam to requestHeader
+	public ResponseEntity<Response> userUpdate(@RequestBody UpdateDTO updateDTO,@RequestHeader("token") String token)
+
 			throws UserException {
 		if (userService.updateUser(updateDTO, token)) {
 			return ResponseEntity.status(HttpStatus.OK)
