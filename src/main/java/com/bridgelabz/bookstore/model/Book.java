@@ -217,19 +217,7 @@ public class Book {
 		this.cartBooks = cartBooks;
 	}
 
-<<<<<<< HEAD
-	@Override
-	public String toString() {
-		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
-				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
-				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
-				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
-				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
-				+ ", review=" + review + ", cartBooks=" + cartBooks + "]";
-	}
-	
-	
-=======
+
 	public List<Order> getOrders() {
 		return orders;
 	}
@@ -238,5 +226,5 @@ public class Book {
 		this.orders = orders;
 	}
 
->>>>>>> 661f1fe6a66c54696e54a7837b88e617d73cc1bf
+
 }
