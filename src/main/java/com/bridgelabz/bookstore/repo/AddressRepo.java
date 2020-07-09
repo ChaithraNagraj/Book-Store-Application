@@ -9,7 +9,6 @@ public interface AddressRepo {
 	boolean save(Address add);
 
 	boolean save(User user);
-
 	Address findAddressByType(String addressType, long userId);
 
 }

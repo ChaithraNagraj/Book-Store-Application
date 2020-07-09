@@ -3,18 +3,17 @@ package com.bridgelabz.bookstore.model.dto;
 
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class AddressDTO {
 	private String address;
 	private String locality;
 	private String name;
 	private String city;
 	private String landmark;
-	private String state;
 	private String pincode;
-	private String country;
 	private String addressType;
 	private String phoneNumber;
+	
 	public String getAddress() {
 		return address;
 	}
@@ -45,24 +44,14 @@ public class AddressDTO {
 	public void setLandmark(String landmark) {
 		this.landmark = landmark;
 	}
-	public String getState() {
-		return state;
-	}
-	public void setState(String state) {
-		this.state = state;
-	}
+	
 	public String getPincode() {
 		return pincode;
 	}
 	public void setPincode(String pincode) {
 		this.pincode = pincode;
 	}
-	public String getCountry() {
-		return country;
-	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
+	
 	public String getaddressType() {
 		return addressType;
 	}

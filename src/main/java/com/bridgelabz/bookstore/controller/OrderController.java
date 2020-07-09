@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
 //import com.bridgelabz.bookstore.model.MyOrder;
+//import com.bridgelabz.bookstore.model.MyOrderItems;
+import com.bridgelabz.bookstore.model.MyOrderList;
+//import com.bridgelabz.bookstore.model.MyOrder;
 import com.bridgelabz.bookstore.model.Order;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.OrderService;
@@ -35,18 +38,16 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ORDER_PLACED_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
 	}
+	
+	@GetMapping(value = "/myorders")
+	public ResponseEntity<Response> myOrder(@RequestHeader("token") String token) {
+		List<MyOrderList> myorders = orderService.getOrders(token);
+		if (myorders != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.LIST_OF_ORDERS, Constant.OK_RESPONSE_CODE, myorders));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new Response(Constant.ORDER_EMPTY, Constant.BAD_REQUEST_RESPONSE_CODE));
+	}
 
-//	@PostMapping("/addMyOrder")
-//	public ResponseEntity<Response> addMyOrder(@RequestHeader("token") String token) {
-//		orderService.addOrder(token);
-//		return ResponseEntity.status(HttpStatus.OK)
-//				.body(new Response(Constant.ORDER_PLACED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE));
-//	}
-//	
-//	@GetMapping("/getMyOrder")
-//	public ResponseEntity<Response> getMyOrder(@RequestHeader("token") String token) {
-//		List<MyOrder> order =orderService.getOrders(token);
-//		return ResponseEntity.status(HttpStatus.OK)
-//				.body(new Response(Constant.ORDER_PLACED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE,order));
-//	}
 }
