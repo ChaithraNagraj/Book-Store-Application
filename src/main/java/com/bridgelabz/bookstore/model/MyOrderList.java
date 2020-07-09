@@ -1,6 +1,5 @@
 package com.bridgelabz.bookstore.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,11 +34,10 @@ public class MyOrderList {
 
 	@Column(name = "totel_price")
 	private double totelPrice;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "bookId")
 	private Book book;
-	
 
 	public Book getBook() {
 		return book;
@@ -61,21 +59,13 @@ public class MyOrderList {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User buyer;
-	
+
 	public long getMyOrderId() {
 		return myOrderId;
 	}
 
 	public void setMyOrderId(long myOrderId) {
 		this.myOrderId = myOrderId;
-	}
-
-	public User getUser() {
-		return buyer;
-	}
-
-	public void setUser(User buyer) {
-		this.buyer = buyer;
 	}
 
 	public int getQunatity() {
