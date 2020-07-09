@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.bridgelabz.bookstore.constants.AdminConstants;
 import com.bridgelabz.bookstore.constants.Constant;
+import com.bridgelabz.bookstore.exception.AdminException;
 import com.bridgelabz.bookstore.exception.BookException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
@@ -55,18 +56,18 @@ public class AdminServiceImp implements AdminService {
 		
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		if(id==1) {
-			userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+			userRepository.getUserById(id).orElseThrow(() -> new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE));
 			}
 			else {
-				throw new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+				throw new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 						AdminConstants.NOT_FOUND_RESPONSE_CODE);
 			}
 		
 		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
 		
 		if(sellers.isEmpty()) {
-			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+			throw new AdminException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}
 		int size=sellers.size();
@@ -82,7 +83,7 @@ public class AdminServiceImp implements AdminService {
 			
 		}
 		if(sellers.isEmpty()) {
-			throw new UserNotFoundException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
+			throw new AdminException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}
 		return sellers;
@@ -101,11 +102,11 @@ public class AdminServiceImp implements AdminService {
 		
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		if(id==1) {
-		userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+		userRepository.getUserById(id).orElseThrow(() -> new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 				AdminConstants.NOT_FOUND_RESPONSE_CODE));
 		}
 		else {
-			throw new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+			throw new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					Constant.NOT_FOUND_RESPONSE_CODE);
 		}
 		User seller = userRepository.findByUserId(sellerId);		
@@ -113,14 +114,14 @@ public class AdminServiceImp implements AdminService {
 	
 		if(books.isEmpty()) {
 			
-			throw new UserNotFoundException(AdminConstants.BOOK_NOT_FOUND,
+			throw new AdminException(AdminConstants.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}		
 
 		List<Book> book = books.stream().filter(b->b.isApprovalSent()).collect(Collectors.toList());
 		
 		if(book.isEmpty()) {
-			throw new UserNotFoundException(Constant.BOOK_NOT_FOUND,
+			throw new AdminException(Constant.BOOK_NOT_FOUND,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE);
 		}	
 		return book;
@@ -141,15 +142,15 @@ public class AdminServiceImp implements AdminService {
 		
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		if(id==1) {
-			userRepository.getUserById(id).orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+			userRepository.getUserById(id).orElseThrow(() -> new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE));
 			}
 			else {
-				throw new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
+				throw new AdminException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 						AdminConstants.NOT_FOUND_RESPONSE_CODE);
 			}
 		Book book = bookRepository.getBookById(bookId)
-				.orElseThrow(() -> new BookException(AdminConstants.BOOK_NOT_FOUND, AdminConstants.NOT_FOUND_RESPONSE_CODE));
+				.orElseThrow(() -> new AdminException(AdminConstants.BOOK_NOT_FOUND, AdminConstants.NOT_FOUND_RESPONSE_CODE));
 
 		User seller = userRepository.findByUserId(sellerId);
 		Role role = roleRepository.getRoleByName("SELLER");

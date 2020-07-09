@@ -98,7 +98,7 @@ class AdminServiceImpTest {
 			user1.orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE));
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
+			
 			System.out.println(e+":trace");
 			e.printStackTrace();
 		}
@@ -146,7 +146,7 @@ class AdminServiceImpTest {
 			user1.orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE));
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
+	
 			System.out.println(e+":trace");
 			e.printStackTrace();
 		}
@@ -195,7 +195,7 @@ class AdminServiceImpTest {
 			user1.orElseThrow(() -> new UserNotFoundException(AdminConstants.ADMIN_CREDENTIALS_MISMATCH,
 					AdminConstants.NOT_FOUND_RESPONSE_CODE));
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
+		
 			System.out.println(e+":trace");
 			e.printStackTrace();
 		}
