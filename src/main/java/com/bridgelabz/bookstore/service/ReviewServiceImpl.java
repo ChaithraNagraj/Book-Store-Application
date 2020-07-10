@@ -34,8 +34,15 @@ public class ReviewServiceImpl implements ReviewService {
 	@Autowired
 	private OrderRepo orderRepository;
 
-	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
-
+	/**
+	 * Method to add rating for a particular book
+	 * 
+	 * @param token, reviewDTO, bookId
+	 * @return Review 
+	 * @throws - UserNotFound => if user credentials mismatch 
+	 *           BookNotFound => if book is not present
+	 */
+	public Review addRating(String token, long bookId, ReviewDTO reviewDTO,long myorderid) {
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
@@ -49,18 +56,26 @@ public class ReviewServiceImpl implements ReviewService {
 			userRepository.addUser(user);
 			book.getReview().add(review);
 			bookRepository.save(book);
-			orderRepository.addReview(bookId, reviewDTO.getRating());
+			orderRepository.addReview(myorderid,reviewDTO.getRating());
 			return review;
 		} else {
 			Review review = getReview(token, bookId);
 			BeanUtils.copyProperties(reviewDTO, review);
 			reviewRepository.update(review);
 
-			orderRepository.addReview(bookId, reviewDTO.getRating());
+			orderRepository.addReview(myorderid,reviewDTO.getRating());
 			return review;
 		}
 	}
 
+	/**
+	 * Method to get rating for a particular book from a particular user
+	 * 
+	 * @param token, bookId
+	 * @return Review 
+	 * @throws - UserNotFound => if user credentials mismatch 
+	 *           BookNotFound => if book is not present
+	 */
 	@Override
 	public Review getReview(String token, long bookId) {
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
@@ -80,6 +95,15 @@ public class ReviewServiceImpl implements ReviewService {
 		return null;
 	}
 
+	/**
+	 * Method to add rating for this application
+	 * 
+	 * @param token, reviewDTO
+	 * @return Review 
+	 * @throws - UserNotFound => if user credentials mismatch 
+	 *           
+	 */
+	
 	@Override
 	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
 

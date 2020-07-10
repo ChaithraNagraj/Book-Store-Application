@@ -1,46 +1,47 @@
 package com.bridgelabz.bookstore.service;
 
+
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.bridgelabz.bookstore.exception.UserException;
 import com.bridgelabz.bookstore.exception.UserNotFoundException;
-import com.bridgelabz.bookstore.model.Role;
+import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.User;
-import com.bridgelabz.bookstore.repo.RoleRepositoryImp;
+import com.bridgelabz.bookstore.model.dto.RegistrationDTO;
 import com.bridgelabz.bookstore.repo.UserRepo;
-import com.bridgelabz.bookstore.utils.JwtValidate;
-import com.bridgelabz.bookstore.utils.MailTempletService;
 
 class UserServiceImpTest {
 
 	@InjectMocks
-
 	UserServiceImp service;
 
 	@Mock
 	UserRepo repo;
 	User user = new User();
+//
+//	@Mock
+//	RoleRepositoryImp roleRepository;
+	
 
-	@Mock
-	RoleRepositoryImp roleRepository;
 
 
 
@@ -54,7 +55,23 @@ class UserServiceImpTest {
 		user.setId(1l);
 		user.setImageUrl("imageUrl");
 		user.setMobileNumber("1234567890");
+		user.setSellerBooks(book());
 
+	}
+	public List<Book> book(){
+		Book books=new Book();
+		books.setBookId(1l);
+		books.setApprovalSent(true);
+		books.setBookName("my love");
+		Book book2= new Book();
+		book2.setBookId(2l);
+		book2.setApprovalSent(false);
+		book2.setBookName("high priority");
+		List<Book> booklist=new ArrayList<> ();
+		booklist.add(books);
+		booklist.add(book2);
+		return booklist;	
+		
 	}
 
 
@@ -62,6 +79,7 @@ class UserServiceImpTest {
 	final void testFindById() {
 		when(repo.findByUserId(1l)).thenReturn(user);
 		service.findById(1l);
+		System.out.println(user.getSellerBooks().get(0).getBookName());
 
 		 assertEquals("pallavi", user.getName());
 	}
@@ -71,6 +89,7 @@ class UserServiceImpTest {
 		List<User> userlist=new ArrayList<> ();
 		userlist.add(user);
 		when(repo.getUser()).thenReturn(userlist);
+		
 		service.getUser();
 		assertEquals("pallavi", user.getName());
 	}
@@ -85,44 +104,16 @@ class UserServiceImpTest {
 		  service.getUser();
 	  });
 		}
-	}
-	
-
-//	@Test
-//	  void VerifyTest() throws UserException {
-//		Role role=new Role();
-//		role.setRole("seller");
-//		role.setRoleId(2l);
-//		List<User> userlist=new ArrayList<> ();
-//		userlist.add(user);
-//		role.setUser(userlist);
-////		long id=1;
-////		int rid=2;
-//		
-//		//when(roleRepository.getRoleById((int) rid)).thenReturn(role);
-//		// role=roleRepository.getRoleById((int) rid);
-//		// when(repo.findByUserId(1l)).thenReturn(user);
-//		//User idAvailable=repo.findByUserId(1l);
-//		//System.out.println("rolename"+idAvailable.getName());
-//		
-//		//idAvailable.setVerify(false);
-//		//System.out.println("idAvailable"+idAvailable.isVerify());
-//		//perform call
-//		
-//	//when(service.verify("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVJZCI6MiwiaWF0IjoxNTkzNDU3ODQwLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlzcyI6IkJyaWRnZWxhYnoiLCJleHAiOjI0NTc0NTc4NDB9.HMHnoMRXV-cMnoZch2lDxofHOn9jVrgO9So9-12vVQw")).thenReturn(true);
-//		service.verify("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVJZCI6MiwiaWF0IjoxNTkzNDU3ODQwLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlzcyI6IkJyaWRnZWxhYnoiLCJleHAiOjI0NTc0NTc4NDB9.HMHnoMRXV-cMnoZch2lDxofHOn9jVrgO9So9-12vVQw");
-//		Long Id = Long.valueOf((Integer) JwtValidate.decodeJWT("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVJZCI6MiwiaWF0IjoxNTkzNDU3ODQwLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlzcyI6IkJyaWRnZWxhYnoiLCJleHAiOjI0NTc0NTc4NDB9.HMHnoMRXV-cMnoZch2lDxofHOn9jVrgO9So9-12vVQw").get("userId"));
-//		long roleId = Long.valueOf((Integer) JwtValidate.decodeJWT("eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjEsInJvbGVJZCI6MiwiaWF0IjoxNTkzNDU3ODQwLCJzdWIiOiJhdXRoZW50aWNhdGlvbiIsImlzcyI6IkJyaWRnZWxhYnoiLCJleHAiOjI0NTc0NTc4NDB9.HMHnoMRXV-cMnoZch2lDxofHOn9jVrgO9So9-12vVQw").get("roleId"));
-//		when(roleRepository.getRoleById((int) roleId)).thenReturn(role);
-//		User idAvailable=repo.findByUserId(Id);
-//		System.out.println("rolename"+idAvailable.getName());
-//		idAvailable.setVerify(false);
-//		
-//		verify(repo, times(1)).verify(idAvailable.getId());
-//		when(repo.findByUserId(1l)).thenReturn(user);
-//		
-//	}
-  
+	}	
+	@Test
+	void RegisterUserTest() throws UserException {
+		UserServiceImp Urepo= mock(UserServiceImp.class);
+	    ArgumentCaptor<RegistrationDTO> argumentCaptor = ArgumentCaptor.forClass(RegistrationDTO.class); 
+	    RegistrationDTO reg= (new RegistrationDTO("Pallavi Kumari","S_1tringa","pallavikumari2207@gmail.com","A_1tring","2", "9122449097"));
+		Urepo.registerUser(reg);
+		verify(Urepo).registerUser(argumentCaptor.capture());
+		 assertEquals("Pallavi Kumari",argumentCaptor.getValue().getName());
+	}	
 	@Test
 	void deleteUserByIdTest() {
 		long doseId = 42;

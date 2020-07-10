@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "book")
 public class Book {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id")
@@ -69,7 +68,7 @@ public class Book {
 	private boolean isApprovalSent;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "seller_id")
 	private User seller;
 
@@ -90,133 +89,145 @@ public class Book {
 	private List<Order> orders;
 
 	public List<Review> getReview() {
-		return review;
+	return review;
 	}
 
 	public void setReview(List<Review> review) {
-		this.review = review;
+	this.review = review;
 	}
 
 	public Long getBookId() {
-		return bookId;
+	return bookId;
 	}
 
 	public void setBookId(Long bookId) {
-		this.bookId = bookId;
+	this.bookId = bookId;
 	}
 
 	public String getBookName() {
-		return bookName;
+	return bookName;
 	}
 
 	public void setBookName(String bookName) {
-		this.bookName = bookName;
+	this.bookName = bookName;
 	}
 
 	public int getQuantity() {
-		return quantity;
+	return quantity;
 	}
 
 	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	this.quantity = quantity;
 	}
 
 	public Double getPrice() {
-		return price;
+	return price;
 	}
 
 	public void setPrice(Double price) {
-		this.price = price;
+	this.price = price;
 	}
 
 	public String getAuthorName() {
-		return authorName;
+	return authorName;
 	}
 
 	public void setAuthorName(String authorName) {
-		this.authorName = authorName;
+	this.authorName = authorName;
 	}
 
 	public LocalDateTime getCreatedDateAndTime() {
-		return createdDateAndTime;
+	return createdDateAndTime;
 	}
 
 	public void setCreatedDateAndTime(LocalDateTime createdDateAndTime) {
-		this.createdDateAndTime = createdDateAndTime;
+	this.createdDateAndTime = createdDateAndTime;
 	}
 
 	public LocalDateTime getLastUpdatedDateAndTime() {
-		return lastUpdatedDateAndTime;
+	return lastUpdatedDateAndTime;
 	}
 
 	public void setLastUpdatedDateAndTime(LocalDateTime lastUpdatedDateAndTime) {
-		this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
+	this.lastUpdatedDateAndTime = lastUpdatedDateAndTime;
 	}
 
 	public LocalDateTime getVerifiedDateAndTime() {
-		return verifiedDateAndTime;
+	return verifiedDateAndTime;
 	}
 
 	public void setVerifiedDateAndTime(LocalDateTime verifiedDateAndTime) {
-		this.verifiedDateAndTime = verifiedDateAndTime;
+	this.verifiedDateAndTime = verifiedDateAndTime;
 	}
 
 	public int getRejectionCounts() {
-		return rejectionCounts;
+	return rejectionCounts;
 	}
 
 	public void setRejectionCounts(int rejectionCounts) {
-		this.rejectionCounts = rejectionCounts;
+	this.rejectionCounts = rejectionCounts;
 	}
 
 	public String getImageURL() {
-		return imageURL;
+	return imageURL;
 	}
 
 	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
+	this.imageURL = imageURL;
 	}
 
 	public String getDescription() {
-		return description;
+	return description;
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+	this.description = description;
 	}
 
 	public boolean isApproved() {
-		return isApproved;
+	return isApproved;
 	}
 
 	public void setApproved(boolean isApproved) {
-		this.isApproved = isApproved;
+	this.isApproved = isApproved;
 	}
 
 	public boolean isApprovalSent() {
-		return isApprovalSent;
+	return isApprovalSent;
 	}
 
 	public void setApprovalSent(boolean isApprovalSent) {
-		this.isApprovalSent = isApprovalSent;
+	this.isApprovalSent = isApprovalSent;
 	}
 
 	public User getSeller() {
-		return seller;
+	return seller;
 	}
 
 	public void setSeller(User seller) {
-		this.seller = seller;
+	this.seller = seller;
 	}
 
 	public List<CartBooks> getCartBooks() {
-		return cartBooks;
+	return cartBooks;
 	}
 
 	public void setCartBooks(List<CartBooks> cartBooks) {
-		this.cartBooks = cartBooks;
+	this.cartBooks = cartBooks;
 	}
 
+
+
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", quantity=" + quantity + ", price=" + price
+				+ ", authorName=" + authorName + ", createdDateAndTime=" + createdDateAndTime
+				+ ", lastUpdatedDateAndTime=" + lastUpdatedDateAndTime + ", verifiedDateAndTime=" + verifiedDateAndTime
+				+ ", rejectionCounts=" + rejectionCounts + ", imageURL=" + imageURL + ", description=" + description
+				+ ", isApproved=" + isApproved + ", isApprovalSent=" + isApprovalSent + ", seller=" + seller
+				+ ", review=" + review + ", cartBooks=" + cartBooks + ", orders=" + orders + "]";
+	}
+	
 	public List<Order> getOrders() {
 		return orders;
 	}
