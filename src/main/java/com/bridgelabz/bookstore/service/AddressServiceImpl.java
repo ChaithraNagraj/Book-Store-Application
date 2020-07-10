@@ -43,9 +43,6 @@ public class AddressServiceImpl implements AddressService {
 		Address add = new Address();
             if(address.getaddressType()!=null)
             { 	
-            	System.out.println("addressType is not null at first time");
-            	System.out.println(type);
-            	System.out.println( address.getaddressType());
 			BeanUtils.copyProperties(address, add);
 			add.setUser(user);
 			user.getAddress().add(add);
@@ -55,8 +52,7 @@ public class AddressServiceImpl implements AddressService {
             	throw new AddressTypeExistsException("select anyOne addressType mandatorily");
             	}
 	}
-
-
+	
 	@Override
 	public Address getAddressByType(String addressType, String token) {
 		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
