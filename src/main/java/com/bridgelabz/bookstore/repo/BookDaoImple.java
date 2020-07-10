@@ -81,13 +81,13 @@ public class BookDaoImple implements BookRepo {
 
 	@Override
 	public List<Book> sortBookAsc() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price ASC;")
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book  where is_approved=\"1\"  ORDER BY price ASC ;")
 				.addEntity(Book.class).list();
 	}
 
 	@Override
 	public List<Book> sortBookDesc() {
-		return sessionFactory.getCurrentSession().createSQLQuery("select * from book ORDER BY price DESC;")
+		return sessionFactory.getCurrentSession().createSQLQuery("select * from book  where is_approved=\"1\" ORDER BY price DESC;")
 				.addEntity(Book.class).list();
 	}
 
