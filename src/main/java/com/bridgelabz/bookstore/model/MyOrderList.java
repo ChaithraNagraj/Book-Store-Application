@@ -68,14 +68,6 @@ public class MyOrderList {
 		this.myOrderId = myOrderId;
 	}
 
-	public User getUser() {
-		return buyer;
-	}
-
-	public void setUser(User buyer) {
-		this.buyer = buyer;
-	}
-
 	public int getQunatity() {
 		return qunatity;
 	}

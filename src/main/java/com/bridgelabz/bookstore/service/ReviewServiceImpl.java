@@ -34,7 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Autowired
 	private OrderRepo orderRepository;
 
-	public Review addRating(String token, long bookId, ReviewDTO reviewDTO) {
+	public Review addRating(String token, long bookId, ReviewDTO reviewDTO,long myorderid) {
 
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -49,14 +49,14 @@ public class ReviewServiceImpl implements ReviewService {
 			userRepository.addUser(user);
 			book.getReview().add(review);
 			bookRepository.save(book);
-			orderRepository.addReview(bookId, reviewDTO.getRating());
+			orderRepository.addReview(myorderid,reviewDTO.getRating());
 			return review;
 		} else {
 			Review review = getReview(token, bookId);
 			BeanUtils.copyProperties(reviewDTO, review);
 			reviewRepository.update(review);
 
-			orderRepository.addReview(bookId, reviewDTO.getRating());
+			orderRepository.addReview(myorderid,reviewDTO.getRating());
 			return review;
 		}
 	}

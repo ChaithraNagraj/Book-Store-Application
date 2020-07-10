@@ -13,7 +13,7 @@ public class AddressDTO {
 	private String pincode;
 	private String addressType;
 	private String phoneNumber;
-	
+	 
 	public String getAddress() {
 		return address;
 	}
@@ -55,7 +55,7 @@ public class AddressDTO {
 	public String getaddressType() {
 		return addressType;
 	}
-	public void setType(String addressType) {
+	public void setaddressType(String addressType) {
 		this.addressType = addressType;
 	}
 	public String getPhoneNumber() {
