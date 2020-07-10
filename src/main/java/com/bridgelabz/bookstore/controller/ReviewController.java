@@ -21,9 +21,9 @@ public class ReviewController {
 	@Autowired 
 	private ReviewService reviewService;
 	
-	@PostMapping("/review/{bookId}")
-	public ResponseEntity<Response> addReview(@PathVariable("bookId") long bookId,@RequestHeader("token") String token, @RequestBody ReviewDTO reviewDTO) {
-		reviewService.addRating(token,bookId, reviewDTO);
+	@PostMapping("/review/{bookId}/{myOrderId}")
+	public ResponseEntity<Response> addReview(@PathVariable("bookId") long bookId,@PathVariable("myOrderId") long myOrderId,@RequestHeader("token") String token, @RequestBody ReviewDTO reviewDTO) {
+		reviewService.addRating(token,bookId, reviewDTO,myOrderId);
 		return ResponseEntity.status(HttpStatus.OK).body(new Response(ReviewConstants.REVIEW_ADDED_SUCCESSFULLY, HttpStatus.OK.value(), reviewDTO));
 	}
 	
