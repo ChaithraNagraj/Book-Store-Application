@@ -6,7 +6,7 @@ import com.bridgelabz.bookstore.model.dto.ReviewDTO;
 
 public interface ReviewService {
 
-	public Review addRating(String token, long bookId, ReviewDTO reviewDTO);
+	public Review addRating(String token, long bookId, ReviewDTO reviewDTO,long myorderid);
 
 	public Review getReview(String token, long bookId);
 
