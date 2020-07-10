@@ -15,17 +15,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-/*
- * @SuppressWarnings("deprecation")
- * 
- * @Configuration
- * 
- * @EnableWebMvc public class WebConfig extends WebMvcConfigurerAdapter {
- * 
- * @Override public void addCorsMappings(CorsRegistry registry) {
- * registry.addMapping("/**"); } }
- */
-
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class WebConfig implements Filter {
@@ -43,7 +32,6 @@ public class WebConfig implements Filter {
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE,PUT");
 		response.setHeader("Access-Control-Max-Age", "3600");
-//    response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
 		response.setHeader("Access-Control-Allow-Headers",
 				"x-requested-with, Content-Type, Accept, X-Requested-With, Authorization, token, email, TimeZoneOffset");
 

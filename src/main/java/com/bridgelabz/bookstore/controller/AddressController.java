@@ -1,7 +1,5 @@
 package com.bridgelabz.bookstore.controller;
 
-
-
 import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,20 +21,14 @@ import com.bridgelabz.bookstore.service.AddressService;
 @RequestMapping(value = { "/address" })
 
 public class AddressController {
-	
+
 	@Autowired
 	AddressService addressService;
 
-	public AddressController() {
-		System.out.println("addresscontroller working");
-	}
+	
+	@PostMapping(value = "/addAddress", headers = "Accept=application/json")
+	public ResponseEntity<Response> addAddress(@RequestBody AddressDTO address, @RequestHeader("token") String token) {
 
-
-	@PostMapping(value="/addAddress", headers = "Accept=application/json")
-	public ResponseEntity<Response> addAddress(@RequestBody AddressDTO address,@RequestHeader("token") String token)
-		 {
-		System.out.println("address data is cmng to adrees controller api");
-		System.out.println("address values recieved from frontend is"+ address);
 		Address addresss = addressService.addAddress(address, token);
 
 		if (addresss != null) {
@@ -46,17 +38,19 @@ public class AddressController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ADDRESS_DETAILS_FAIL, Constant.BAD_REQUEST_RESPONSE_CODE));
 
-	}	
-	@GetMapping( "/getAddressByType") 
-	public ResponseEntity<Response> getAddressByType(@RequestParam("addressType") String addressType,@RequestHeader("token") String token) {
-		Address address = addressService.getAddressByType(addressType,token);
-		System.out.println("-----address"+address);
+	}
+
+	@GetMapping("/getAddressByType")
+	public ResponseEntity<Response> getAddressByType(@RequestParam("addressType") String addressType,
+			@RequestHeader("token") String token) {
+		Address address = addressService.getAddressByType(addressType, token);
+
 		if (address != null) {
-			return  ResponseEntity.status(HttpStatus.OK).body(new Response(Constant.ADDRESS_DETAILS_FOUND, Constant.OK_RESPONSE_CODE, address));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.ADDRESS_DETAILS_FOUND, Constant.OK_RESPONSE_CODE, address));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new Response(Constant.ADDRESS_DETAILS_NOT_fOUND, Constant.BAD_REQUEST_RESPONSE_CODE));
 	}
 
 }
-

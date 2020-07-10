@@ -95,7 +95,6 @@ public class User {
 	@JoinColumn(name = "wishlist_id")
 	private Wishlist userWishlist;
 
-
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -105,6 +104,24 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "buyer")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<MyOrderList> myOrderList;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<Review> review;
+
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@JoinColumn(name = "user_id")
+	private List<ReviewApp> reviewApp;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<Address> address;
 
 	public List<MyOrderList> getMyOrderList() {
 		return myOrderList;
@@ -137,18 +154,6 @@ public class User {
 	public void setReview(List<Review> review) {
 		this.review = review;
 	}
-
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<Review> review;
-
-	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@JoinColumn(name = "user_id")
-	private List<ReviewApp> reviewApp;
 
 	public List<ReviewApp> getReviewApp() {
 		return reviewApp;
@@ -275,12 +280,6 @@ public class User {
 		this.sellerBooks = sellerBooks;
 	}
 
-	@JsonIgnore
-	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-			CascadeType.REFRESH })
-	@LazyCollection(LazyCollectionOption.FALSE)
-
-private List<Address> address;
 
 	public List<Address> getAddress() {
 		return address;

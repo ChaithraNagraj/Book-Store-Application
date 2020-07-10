@@ -12,7 +12,7 @@ public class AddressDTO {
 	private String pincode;
 	private String addressType;
 	private String phoneNumber;
-	
+	 
 	public String getAddress() {
 		return address;
 	}
