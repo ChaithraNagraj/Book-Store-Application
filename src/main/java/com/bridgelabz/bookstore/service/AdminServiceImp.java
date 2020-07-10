@@ -12,16 +12,15 @@ import com.bridgelabz.bookstore.constants.AdminConstants;
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.AdminException;
 import com.bridgelabz.bookstore.exception.BookException;
-import com.bridgelabz.bookstore.exception.UserNotFoundException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.RoleRepository;
 import com.bridgelabz.bookstore.repo.UserRepo;
+import com.bridgelabz.bookstore.utils.AdminTemplateService;
 import com.bridgelabz.bookstore.utils.DateUtility;
 import com.bridgelabz.bookstore.utils.JwtValidate;
-import com.bridgelabz.bookstore.utils.MailTempletService;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -37,7 +36,7 @@ public class AdminServiceImp implements AdminService {
 	private UserRepo userRepository;
 
 	@Autowired
-	private MailTempletService mailTempletService;
+	private AdminTemplateService mailTempletService;
 
 	@Autowired
 	private Environment environment;
@@ -160,16 +159,16 @@ public class AdminServiceImp implements AdminService {
 		if (verify) {
 			book.setApproved(verify); 
 			bookRepository.save(book);
-			registerMail(seller, role, environment.getProperty("book-approval-template-path"));
+			registerMail(seller, role, environment.getProperty("book-approval-template-path"), book);
 		} else {
 			book.setApproved(verify); 
 			book.setRejectionCounts(book.getRejectionCounts() + 1);
 			if (book.getRejectionCounts() > 2) {
 				bookRepository.deleteBook(book);
-				registerMail(seller, role, environment.getProperty("book-deletion-template-path"));
+				registerMail(seller, role, environment.getProperty("book-deletion-template-path"), book);
 			} else {
 				bookRepository.save(book);
-				registerMail(seller, role, environment.getProperty("book-rejection-template-path"));
+				registerMail(seller, role, environment.getProperty("book-rejection-template-path"), book);
 			}
 		}
 
@@ -182,9 +181,9 @@ public class AdminServiceImp implements AdminService {
 	 * @return void
 	 * 
 	 */
-	public void registerMail(User user, Role role, String templet) {
+	public void registerMail(User user, Role role, String templet, Book book) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
-		sendMail(user, token, templet);
+		sendMail(user, token, templet, book);
 	}
 	/**
 	 * Method to send mail for informing seller about verification status
@@ -193,9 +192,9 @@ public class AdminServiceImp implements AdminService {
 	 * @return void
 	 * 
 	 */
-	public void sendMail(User user, String token, String templet) {
+	public void sendMail(User user, String token, String templet, Book book) {
 		try {
-			mailTempletService.getTemplate(user, token, templet);
+			mailTempletService.getTemplate(user, token, templet, book);
 		} catch (IOException e) {
 
 		}
