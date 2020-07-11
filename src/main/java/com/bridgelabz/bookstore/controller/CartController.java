@@ -59,10 +59,10 @@ public class CartController {
 	@PutMapping("/addQuantity/{cartBookId}")
 	public ResponseEntity<Response> addQuantity(@RequestHeader("token") String token,
 			@PathVariable("cartBookId") long cartBookId) {
-		CartBooks cartBook = cartService.addQuantity(cartBookId, token);
-		if (cartBook != null) {
+		Cart cart = cartService.addQuantity(cartBookId, token);
+		if (cart != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
-					new Response(Constant.QUANTITY_INCREASED_SUCCESS_MESSAGE, Constant.OK_RESPONSE_CODE, cartBook));
+					new Response(Constant.QUANTITY_INCREASED_SUCCESS_MESSAGE, Constant.OK_RESPONSE_CODE, cart));
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new Response(Constant.QUANTITY_INCREASED_FAILED_MESSAGE, Constant.OK_RESPONSE_CODE));
@@ -71,10 +71,10 @@ public class CartController {
 	@PutMapping("/removeQuantity/{cartBookId}")
 	public ResponseEntity<Response> removeQuantity(@RequestHeader("token") String token,
 			@PathVariable("cartBookId") long cartBookId) {
-		CartBooks cartBook = cartService.removeQuantity(cartBookId, token);
-		if (cartBook != null) {
+		Cart cart = cartService.removeQuantity(cartBookId, token);
+		if (cart != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(
-					new Response(Constant.QUANTITY_DECREASED_SUCCESS_MESSAGE, Constant.OK_RESPONSE_CODE, cartBook));
+					new Response(Constant.QUANTITY_DECREASED_SUCCESS_MESSAGE, Constant.OK_RESPONSE_CODE, cart));
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new Response(Constant.QUANTITY_DECREASED_FAILED_MESSAGE, Constant.OK_RESPONSE_CODE));
@@ -82,13 +82,14 @@ public class CartController {
 
 	@DeleteMapping("/removeFromCart/{cartBookId}")
 	public ResponseEntity<Response> removeFromCart(@RequestHeader String token, @PathVariable long cartBookId) {
-		boolean status = cartService.removeBookFromCart(token, cartBookId);
-		if (status) {
+		Cart cart = cartService.removeBookFromCart(token, cartBookId);
+		if (cart!=null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new Response(Constant.BOOK_REMOVED_FROM_CART, Constant.OK_RESPONSE_CODE));
-		} else
+					.body(new Response(Constant.BOOK_REMOVED_FROM_CART, Constant.OK_RESPONSE_CODE,cart));
+		} else {
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
 					.body(new Response(Constant.BOOK_REMOVAL_FROM_CART_FAILED, Constant.BAD_REQUEST_RESPONSE_CODE));
+		}
 	}
 	
 	@PostMapping("/placeOrder")
