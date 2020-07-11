@@ -35,13 +35,14 @@ public class AddressServiceImpl implements AddressService {
 
 	@Override
 	public Address addAddress(AddressDTO address, String token) {
-		User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		 User user = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		long userId = user.getId();
-		String type = address.getaddressType();
+		 String type = address.getaddressType();
 		System.out.println(address);
 //		Address add2 = addressRepo.findAddressByType(type, user.getId());
 		Address add = new Address();
-            if(address.getaddressType()!=null)
+//            if(!address.getaddressType().isEmpty())
+if(address.getAddress()!=null)
             { 	
 			BeanUtils.copyProperties(address, add);
 			add.setUser(user);

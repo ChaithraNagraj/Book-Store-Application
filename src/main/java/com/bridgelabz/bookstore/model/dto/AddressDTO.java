@@ -15,7 +15,7 @@ public class AddressDTO {
 	private String landmark;
 	private String pincode;
 	
-	@NotBlank(message = "addressType can not be empty")
+	@NotEmpty(message = "addressType can not be empty")
 	private String addressType;
 	
 	private String phoneNumber;
