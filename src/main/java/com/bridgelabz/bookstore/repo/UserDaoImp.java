@@ -142,7 +142,7 @@ public class UserDaoImp implements UserRepo {
 	public User getusersByLoginId(String loginId) {
 		Session session = sessionFactory.getCurrentSession();
 		Query<?> q = session.createQuery(
-				"from User where email=:loginId or username=:loginId or mobile_number=:loginId and password=:password  ");
+				"from User where email=:loginId or username=:loginId or mobile_number=:loginId");
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
 	}
