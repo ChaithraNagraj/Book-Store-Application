@@ -72,5 +72,5 @@ public class Cart {
 	public void setCartBooks(List<CartBooks> cartBooks) {
 		this.cartBooks = cartBooks;
 	}
-
+	
 }

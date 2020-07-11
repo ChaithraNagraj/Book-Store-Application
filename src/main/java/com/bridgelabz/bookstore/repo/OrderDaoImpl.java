@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
-import com.bridgelabz.bookstore.model.User;
-import com.bridgelabz.bookstore.utils.DateUtility;
 
 @Repository
 public class OrderDaoImpl implements OrderRepo {
