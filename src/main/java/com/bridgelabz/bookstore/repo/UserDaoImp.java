@@ -141,8 +141,8 @@ public class UserDaoImp implements UserRepo {
 	@Override
 	public User getusersByLoginId(String loginId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<?> q = session
-				.createQuery("from User where email=:loginId or username=:loginId or mobile_number=:loginId ");
+		Query<?> q = session.createQuery(
+				"from User where email=:loginId or username=:loginId or mobile_number=:loginId and password=:password  ");
 		q.setParameter("loginId", loginId);
 		return (User) q.uniqueResult();
 	}

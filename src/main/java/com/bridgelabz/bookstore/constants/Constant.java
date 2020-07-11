@@ -119,7 +119,7 @@ public class Constant {
 	public static final String LIST_OF_ORDERS = "List of orders";
 	public static final String ORDER_EMPTY = "Order Empty";
 
-	public static final String USER_NOT_EXIST_PLEASE_REGISTER = "User not Exist,Plaese Register";
+	public static final String USER_NOT_EXIST_PLEASE_REGISTER = "We cannot find an account with that Login credentials";
 
 	public static final String PLEASE_GIVE_CORRECT_PASSWORD = "Please Check Your Password";
 
