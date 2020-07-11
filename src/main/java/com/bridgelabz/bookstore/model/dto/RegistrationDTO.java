@@ -1,7 +1,5 @@
 package com.bridgelabz.bookstore.model.dto;
 
-
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -9,17 +7,14 @@ import javax.validation.constraints.Size;
 public class RegistrationDTO {
 
 	@NotEmpty(message = "Enter First Name - Registration DTO")
-	@Size(min = 3)
-	@Pattern(regexp = "^[A-Z][a-z]+\\s?[A-Z][a-z]+$", message = "Please Enter Valid FirstName")
+	@Pattern(regexp = "^[a-zA-z]+([\\s][a-zA-Z]+)*$", message = "Please Enter Valid Name")
 	private String name;
 
 	@Size(min = 3)
 	@Pattern(regexp = "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}", message = "UserName Should be One Special Character,Numbers and One UpperCase")
 	private String userName;
 
-	@Email
-
-	@Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", message = "Please Enter Valid Email")
+	@Pattern(regexp = "[a-zA-Z0-9][a-zA-Z0-9_.]*@[a-zA-Z0-9]+([.][a-zA-Z]+)+", message = "Please Enter Valid Email")
 	private String email;
 
 	@Size(min = 8)
