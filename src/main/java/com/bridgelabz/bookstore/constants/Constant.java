@@ -119,4 +119,12 @@ public class Constant {
 	public static final String LIST_OF_ORDERS = "List of orders";
 	public static final String ORDER_EMPTY = "Order Empty";
 
+	public static final String USER_NOT_EXIST_PLEASE_REGISTER = "User not Exist,Plaese Register";
+
+	public static final String PLEASE_GIVE_CORRECT_PASSWORD = "Please Check Your Password";
+
+	public static final String YOUR_EMAIL_NOT_VERIFIED = "Your Email Not Verified";
+
+	public static final String USER_NOT_FOUND_WITH_ROLE = "User Not Exist With Corresponding Role";
+
 }
