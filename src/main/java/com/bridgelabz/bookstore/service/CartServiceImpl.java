@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,6 +110,30 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	public Cart updateQuantity(long cartBookId, int quantity, String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		CartBooks bookToBeUpdateQuantity = buyer.getUserCart().getCartBooks().stream()
+				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
+				.orElseThrow(() -> new BookNotFoundInCartException(Constant.BOOK_NOT_FOUND_IN_CART_MESSAGE));
+		if(quantity == 0)
+			throw new CartItemsLimitException(Constant.CART_ITEM_LOW_LIMIT_MESSAGE);
+		buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart()-bookToBeUpdateQuantity.getBookQuantity());
+		if((buyer.getUserCart().getTotalBooksInCart()+quantity)<6) {
+			if (bookToBeUpdateQuantity.getBook().getQuantity() < quantity) {
+				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
+			}
+			bookToBeUpdateQuantity.setBookQuantity(quantity);
+			bookToBeUpdateQuantity.setTotalBookPrice(
+					bookToBeUpdateQuantity.getBook().getPrice() * bookToBeUpdateQuantity.getBookQuantity());
+			cartRepo.saveToCartBooks(bookToBeUpdateQuantity);
+			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() + quantity);
+			cartRepo.saveToCart(buyer.getUserCart());
+			return buyer.getUserCart();
+		}
+		throw new CartItemsLimitException(Constant.CART_ITEMS_LIMIT_EXCEEDED_MESSAGE);
+	}
+	
+	@Override
 	public Cart removeQuantity(long cartBookId, String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		CartBooks bookToBeRemoveQuantity = buyer.getUserCart().getCartBooks().stream()
@@ -160,5 +183,15 @@ public class CartServiceImpl implements CartService {
 		});
 		return true;
 	}
+
+	@Override
+	public int getCartCount(String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
+		return cart.getTotalBooksInCart();
+	}
+
+	
+	
 
 }
