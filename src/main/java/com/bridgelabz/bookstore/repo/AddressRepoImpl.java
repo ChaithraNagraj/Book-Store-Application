@@ -32,14 +32,21 @@ public class AddressRepoImpl implements AddressRepo {
 		sessionFactory.getCurrentSession().saveOrUpdate(user);
 		return true;
 	}
+	 
 
 	@Override
-	public Address findAddressByType(String addressType, long userId) {
+	public Object findAddressByType(String addressType, long userId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Address> query = session.createQuery("From Address where user_id=:userId and address_type=:addressType");
+		Query query = session.createQuery("From Address where user_id=:userId and address_type=:addressType "
+				+ "ORDER BY created_date_time DESC  ");
 		query.setParameter("userId", userId);
 		query.setParameter("addressType", addressType);
-		return query.uniqueResult();
+		query.setMaxResults(1);
+		return  query.uniqueResult();
+//		return  query.setMaxResults(1);
 	}
+
+	
+	
 
 }

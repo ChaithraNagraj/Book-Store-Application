@@ -18,6 +18,7 @@ public class AddressDTO {
 	@NotEmpty(message = "addressType can not be empty")
 	private String addressType;
 	
+	
 	private String phoneNumber;
 	 
 	public String getAddress() {
