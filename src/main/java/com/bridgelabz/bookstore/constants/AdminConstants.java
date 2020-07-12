@@ -6,6 +6,7 @@ public class AdminConstants {
 	}
 	public static final int NOT_FOUND_RESPONSE_CODE = 404;
 	
+	public static final String ROLE_AS_ADMIN = "ADMIN";
 	public static final String ADMIN_CREDENTIALS_MISMATCH = "Admin Credentials Mismatch";
 	public static final String USER_FOUND = "User Found";
 	public static final String BOOK_VERIFIED_SUCCESSFULLY_MEAASGE = "Book Verified Successfully";

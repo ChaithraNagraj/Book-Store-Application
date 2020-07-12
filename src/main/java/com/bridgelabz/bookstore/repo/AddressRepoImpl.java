@@ -43,7 +43,6 @@ public class AddressRepoImpl implements AddressRepo {
 		query.setParameter("addressType", addressType);
 		query.setMaxResults(1);
 		return  query.uniqueResult();
-//		return  query.setMaxResults(1);
 	}
 
 	

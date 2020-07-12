@@ -15,6 +15,8 @@ public class Constant {
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
 	public static final String VERIFY_ADDRESS = "http://localhost:8080/users/verify?token=";
+	// public static final String VERIFY_ADDRESS =
+	// "http://localhost:8080/users/verify?token=";
 //	public static final String VERIFY_ADDRESS = "http://localhost:4200/verificationSuccess/";
 	public static final String ISSUER = "Bridgelabz";
 	public static final String SUBJECT = "authentication";
@@ -135,5 +137,7 @@ public class Constant {
 	public static final String CART_SIZE_FETCHED_SUCCESSFULLY = "Cart size fetched successfully";
 
 	public static final String CART_SIZE_FETCHING_FAILED = "Cart size fetched failed";
+
+	public static final int COUNT = 3;
 
 }
