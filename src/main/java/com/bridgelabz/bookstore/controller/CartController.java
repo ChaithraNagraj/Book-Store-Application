@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Cart;
-import com.bridgelabz.bookstore.model.CartBooks;
 import com.bridgelabz.bookstore.model.dto.CartDto;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.CartService;
@@ -106,5 +105,29 @@ public class CartController {
 		}
 		return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
 				.body(new Response(Constant.PLACE_ORDER_FAILED_MESSAGE, Constant.EXPECTATION_FAILED_RESPONSE_CODE));
+	}
+	
+	@PutMapping("/updateQuantity/{cartBookId}/{quantity}")
+	public ResponseEntity<Response> updateQuantity(@RequestHeader("token") String token,@PathVariable long cartBookId,@PathVariable int quantity){
+		Cart cart = cartService.updateQuantity(cartBookId,quantity,token);
+		if (cart!=null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.QUANTITY_UPDATION_SUCCESS_MESSAGE, Constant.OK_RESPONSE_CODE,cart));
+		} else {
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+					.body(new Response(Constant.QUANTITY_UPDATION_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE));
+		}
+	}
+	
+	@GetMapping("/cartSize")
+	public ResponseEntity<Response> getCartSize(@RequestHeader String token){
+		int cartSize = cartService.getCartCount(token);
+		if(cartSize>=0) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.CART_SIZE_FETCHED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE,cartSize));
+		}else {
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+					.body(new Response(Constant.CART_SIZE_FETCHING_FAILED, Constant.EXPECTATION_FAILED_RESPONSE_CODE));
+		}
 	}
 }
