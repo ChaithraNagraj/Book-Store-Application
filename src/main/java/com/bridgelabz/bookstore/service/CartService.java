@@ -19,4 +19,8 @@ public interface CartService {
 
 	boolean placeOrder(@Valid CartDto cart, String token);
 
+	Cart updateQuantity(long cartBookId,int quantity,String token);
+
+	int getCartCount(String token);
+
 }
