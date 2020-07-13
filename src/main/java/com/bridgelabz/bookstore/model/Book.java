@@ -68,7 +68,7 @@ public class Book {
 	private boolean isApprovalSent;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "seller_id")
 	private User seller;
 

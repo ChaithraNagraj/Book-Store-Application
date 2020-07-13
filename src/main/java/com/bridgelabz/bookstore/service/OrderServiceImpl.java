@@ -46,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
 			booksToBeOrdered.add(cartBook.getBook());
 			Book book = bookRepository.findByBookId(cartBook.getBook().getBookId());
 			book.setQuantity(cartBook.getBook().getQuantity() - cartBook.getBookQuantity());
+			
 		});
 		order.setBooks(booksToBeOrdered);
 		order.setBuyer(buyer);
@@ -64,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 			items.setVenderName(book.getSeller().getName());
 			orderRepository.addOrder(items);
 		}
-      cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
+        cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
 		return order;
 	}
 

@@ -48,6 +48,8 @@ public class Address {
 	@JoinColumn(name="user_id")
 	private User user;
 
+	
+
 	public long getAddressId() {
 		return addressId;
 	}
