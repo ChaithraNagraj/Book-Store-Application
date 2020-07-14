@@ -281,6 +281,16 @@ public class User {
 	}
 
 
+
+@Override
+	public String toString() {
+		return "User [id=" + id + ", name=" + name + ", userName=" + userName + ", email=" + email + ", password="
+			+ password + ", mobileNumber=" + mobileNumber + ", isVerify=" + isVerify + ", registrationDateTime="
+			+ registrationDateTime + ", updateDateTime=" + updateDateTime + ", userStatus=" + userStatus
+			+ ", imageUrl=" + imageUrl + ", roleList=" + roleList + ", sellerBooks=" + sellerBooks + ", userCart="
+			+ userCart + ", userWishlist=" + userWishlist + ", review=" + review + "]";
+		}
+
 	public List<Address> getAddress() {
 		return address;
 	}
@@ -296,5 +306,6 @@ public class User {
 	public void setOrders(List<Order> orders) {
 		this.orders = orders;
 	}
+
 
 }
