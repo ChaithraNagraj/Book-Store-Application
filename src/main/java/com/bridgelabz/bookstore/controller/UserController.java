@@ -63,11 +63,11 @@ public class UserController {
 	@GetMapping(value = "/verify", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Response> userVerification(@RequestParam("token") String token) throws UserException {
 		if (userService.verify(token)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_VERIFIED_SUCCESSFULLY_MEAASGE, Constant.OK_RESPONSE_CODE));
 		} else {
-			return ResponseEntity.status(HttpStatus.OK).body(new Response(
-					Constant.USER_VERIFIED_FAILD_MEAASGE, Constant.BAD_REQUEST_RESPONSE_CODE));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response(Constant.USER_VERIFIED_FAILD_MEAASGE, Constant.BAD_REQUEST_RESPONSE_CODE));
 		}
 	}
 
@@ -105,14 +105,6 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new Response(Constant.VALID_INPUT_MESSAGE, Constant.USER_AUTHENTICATION_EXCEPTION_STATUS));
 		}
-	}
-
-	@PostMapping(value = "/roles", headers = "Accept=application/json")
-	public ResponseEntity<Void> addRole(@RequestBody RoleDTO request) {
-		HttpHeaders headers = new HttpHeaders();
-		if (userService.addRole(request))
-			return new ResponseEntity<>(headers, HttpStatus.CREATED);
-		return new ResponseEntity<>(headers, HttpStatus.ALREADY_REPORTED);
 	}
 
 	@PutMapping("/logout")

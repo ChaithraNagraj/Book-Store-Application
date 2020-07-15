@@ -144,7 +144,7 @@ public class UserServiceImp implements UserService {
 
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
-		if (user != null ) {
+		if (user != null) {
 			User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
 			if (roleWithUser != null) {
 				if (!encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())) {
@@ -166,12 +166,6 @@ public class UserServiceImp implements UserService {
 		} else {
 			throw new UserException(Constant.USER_NOT_EXIST_PLEASE_REGISTER, Constant.BAD_REQUEST_RESPONSE_CODE);
 		}
-	}
-
-	public boolean addRole(RoleDTO request) {
-		request.setRole(request.getRole().toUpperCase());
-		userRepository.saveRoles(new Role(request));
-		return true;
 	}
 
 	public boolean forgetPassword(String email) throws UserException {
