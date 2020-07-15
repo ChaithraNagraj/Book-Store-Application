@@ -78,4 +78,19 @@ public class BookController {
 				.body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
 
 	}
+	
+	
+
+	@GetMapping(value = "/getBookByPage")
+	public ResponseEntity<Response> getBookByPage(@RequestParam(defaultValue = "0") Integer pageNo) {
+		System.out.println(pageNo);
+		List<Book> getAllBooks = bookservice.findBookByPage(pageNo);
+		if (!getAllBooks.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response("Books Found", HttpStatus.OK.value(), getAllBooks));
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new Response("No Books Found", HttpStatus.NOT_FOUND.value()));
+	}
+
 }

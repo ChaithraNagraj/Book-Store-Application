@@ -30,4 +30,7 @@ public interface BookRepo {
 	public Book findByBookId(Long bookId);
 
 	public List<Book> findBookCount();
+	
+	
+	public List<Book> findBookByPage(Integer pageNo);
 }

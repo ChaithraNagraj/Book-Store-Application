@@ -114,4 +114,14 @@ public class BookDaoImple implements BookRepo {
 		return q.getResultList();
 	}
 
+	
+	@Override
+	public List<Book> findBookByPage(Integer pageNo) {
+		Session session =  sessionFactory.getCurrentSession();
+		 Query<Book> nativeQuery =  session.createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class);
+	      int pageSize=8;
+		 nativeQuery.setFirstResult(pageNo* pageSize);
+		 nativeQuery.setMaxResults(pageSize);
+		 return  nativeQuery.getResultList();
+}
 }
