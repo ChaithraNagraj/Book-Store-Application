@@ -67,6 +67,12 @@ public class Role {
 		this.users = users;
 	}
 
+	public Role(Long roleId, String role) {
+		super();
+		this.roleId = roleId;
+		this.role = role;
+	}
+
 	@Override
 	public String toString() {
 		return "Role [roleId=" + roleId +", role=" + role + "]";
