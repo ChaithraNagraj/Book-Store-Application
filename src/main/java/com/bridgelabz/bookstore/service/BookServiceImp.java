@@ -110,4 +110,8 @@ public class BookServiceImp implements BookService {
 		return bookRepository.findBookCount();
 	}
 
+	@Override
+	public List<Book> findBookByPage(Integer pageNo) {
+		return bookRepository.findBookByPage(pageNo);
+	}
 }

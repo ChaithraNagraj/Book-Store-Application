@@ -34,6 +34,10 @@ public class ReviewServiceImpl implements ReviewService {
 	@Autowired
 	private OrderRepo orderRepository;
 
+
+	
+
+
 	/**
 	 * Method to add rating for a particular book
 	 * 
@@ -43,6 +47,7 @@ public class ReviewServiceImpl implements ReviewService {
 	 *           BookNotFound => if book is not present
 	 */
 	public Review addRating(String token, long bookId, ReviewDTO reviewDTO,long myorderid) {
+
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
 				.orElseThrow(() -> new UserNotFoundException(ReviewConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
 						ReviewConstants.NOT_FOUND_RESPONSE_CODE));
@@ -68,14 +73,6 @@ public class ReviewServiceImpl implements ReviewService {
 		}
 	}
 
-	/**
-	 * Method to get rating for a particular book from a particular user
-	 * 
-	 * @param token, bookId
-	 * @return Review 
-	 * @throws - UserNotFound => if user credentials mismatch 
-	 *           BookNotFound => if book is not present
-	 */
 	@Override
 	public Review getReview(String token, long bookId) {
 		User user = userRepository.getUserById(Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId")))
@@ -95,15 +92,6 @@ public class ReviewServiceImpl implements ReviewService {
 		return null;
 	}
 
-	/**
-	 * Method to add rating for this application
-	 * 
-	 * @param token, reviewDTO
-	 * @return Review 
-	 * @throws - UserNotFound => if user credentials mismatch 
-	 *           
-	 */
-	
 	@Override
 	public ReviewApp addRatingApp(String token, ReviewDTO reviewDTO) {
 

@@ -14,6 +14,7 @@ public class Constant {
 	public static final String EMAIL_ID = "rameshaanji535@gmail.com";
 	public static final String SECRET_KEY = "secret";
 	public static final String EMAIL = "email";
+// 	public static final String VERIFY_ADDRESS = "http://localhost:8080/users/verify?token=";
 	// public static final String VERIFY_ADDRESS =
 	// "http://localhost:8080/users/verify?token=";
 	public static final String VERIFY_ADDRESS = "http://localhost:4200/verificationSuccess/";

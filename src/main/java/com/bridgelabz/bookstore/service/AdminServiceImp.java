@@ -63,7 +63,7 @@ public class AdminServiceImp implements AdminService {
 						AdminConstants.NOT_FOUND_RESPONSE_CODE);
 			}
 		
-		List<User> sellers = roleRepository.getRoleByName("seller").getUser();
+		List<User> sellers = roleRepository.getRoleByName(Constant.ROLE_AS_SELLER).getUser();
 		
 		if(sellers.isEmpty()) {
 			throw new AdminException(AdminConstants.USER_NOT_FOUND_EXCEPTION_MESSAGE,
@@ -152,7 +152,7 @@ public class AdminServiceImp implements AdminService {
 				.orElseThrow(() -> new AdminException(AdminConstants.BOOK_NOT_FOUND, AdminConstants.NOT_FOUND_RESPONSE_CODE));
 
 		User seller = userRepository.findByUserId(sellerId);
-		Role role = roleRepository.getRoleByName("SELLER");
+		Role role = roleRepository.getRoleByName(Constant.ROLE_AS_SELLER);
 
 		book.setApprovalSent(false);
 		book.setVerifiedDateAndTime(DateUtility.today());
