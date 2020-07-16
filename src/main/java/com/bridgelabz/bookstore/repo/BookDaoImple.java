@@ -29,13 +29,14 @@ public class BookDaoImple implements BookRepo {
 	public List<Book> findAllBooks() {
 //		return sessionFactory.getCurrentSession().createSQLQuery("select * from book where is_approved=\"1\" ")
 //				.addEntity(Book.class).list();
-		Session session =  sessionFactory.getCurrentSession();
-		Query<Book> nativeQuery =  session.createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class);
-        int pageSize=8;
-        int pageNo=0;
-		nativeQuery.setFirstResult(pageNo* pageSize);
+		Session session = sessionFactory.getCurrentSession();
+		Query<Book> nativeQuery = session.createSQLQuery("select * from book where is_approved=\"1\" ")
+				.addEntity(Book.class);
+		int pageSize = 8;
+		int pageNo = 0;
+		nativeQuery.setFirstResult(pageNo * pageSize);
 		nativeQuery.setMaxResults(pageSize);
-		return  nativeQuery.getResultList();
+		return nativeQuery.getResultList();
 	}
 
 	@Override
