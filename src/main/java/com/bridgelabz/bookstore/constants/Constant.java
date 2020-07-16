@@ -96,6 +96,7 @@ public class Constant {
 	public static final String CART_ITEM_LOW_LIMIT_MESSAGE = "Books In cart can't be less than one";
 	public static final String CART_EMPTY_MESSAGE = "No Books In cart To remove quantity";
 	public static final String BOOK_ADD_TO_WISHLIST = "book is succesfully added to the wishlist";
+	public static final String BOOK_REMOVED_FROM_WISHLIST = "book is sucessfully removed from wishlist";
 	public static final String BOOK_ADD_TO_WISHLIST_FAILED = "failed to add to the wishlist";
 	public static final String BOOK_REMOVAL_FROM_WISHLIST_FAILED = "failed to remove book from wishlist";
 	public static final String BOOKS_DISPLAY_MESSAGE = "Displaying items in wishlist";
