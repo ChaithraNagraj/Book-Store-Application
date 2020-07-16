@@ -16,32 +16,26 @@ public class BookStoreApplication {
 
 	@Autowired
 	private UserRepo userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
 
-	private Role role;
-
-	private final String[] ROLE_TYPE = new String[Constant.COUNT];
+	protected static final String[] ROLE_TYPE = new String[Constant.COUNT];
 	{
-		ROLE_TYPE[0] = "ADMIN";
-		ROLE_TYPE[1] = "SELLER";
-		ROLE_TYPE[2] = "BUYER";
+		ROLE_TYPE[0] = Constant.ROLE_AS_ADMIN;
+		ROLE_TYPE[1] = Constant.ROLE_AS_SELLER;
+		ROLE_TYPE[2] = Constant.ROLE_AS_BUYER;
 	}
-	
-	
 
 	@Bean
 	public void setRole() {
 		Role userRole = roleRepository.getRoleById(3);
-		if(userRole==null) {
-		for (int counter = 0; counter < Constant.COUNT; counter++) {
-			System.out.println("setRole");
-			role = new Role((long) 1, ROLE_TYPE[counter]);
-			System.out.println(ROLE_TYPE[counter]);
-			userRepository.saveRoles(role);
-			System.out.println("main End");
-		}}
+		if (userRole == null) {
+			for (int counter = 0; counter < Constant.COUNT; counter++) {
+				Role role = new Role((long) 1, ROLE_TYPE[counter]);
+				userRepository.saveRoles(role);
+			}
+		}
 	}
 
 	public static void main(String[] args) {
