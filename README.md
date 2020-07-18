@@ -8,19 +8,17 @@
 The **business-to-customer** aspect of **electronic commerce (_e-commerce_)** is the most visible business use of the ***World Wide Web***. The primary goal of an e-commerce site is to ***sell books*** and ***services online*** and the project deals with developing an e-commerce website for **Online Book Store**. It provides the user with a catalog of different books available for purchase in the store. In order to facilitate online purchase a shopping cart is provided to the user.
 
 
-
-
-
 ### Development Team
 
 1. Arjun Chakraborty
-2. C Sai Kavya
-3. Chaithra BN
-4. Hemanth kumar r
+2. Chaithra BN
+3. Hemanth kumar r
+4. Karthik Kante
 5. Pallavi Kumari
 6. Ramesh A
-7. Venkata Ganapathi k
-8. Vinod Kumar
+7. Sai Datta
+8. Venkata Ganapathi k
+9. Vinod Kumar
 
 
 ### Overview of Online Book Store Application:
@@ -67,18 +65,21 @@ If an item is not in stock, then we provide information that is **"Out of Stock"
 #### Frontend Tools:
 
 ```
-- Angular - Version ()
-- ReactJS - Version ()
+- Angular - Version (8.3.26)
+- ReactJS - Version (16.13.1)
 ```
 
 #### Backend Tools:
 ```
 - Java - Version (1.8)
+- RabbitMQ - Version (3.7.22)
+- Elasticsearch - Version (7.8.1)
+- Redis - Version (6.0.5)
 ```
 
 #### Database:
 ```
-- Mysql - version ()
+- Mysql - version (8.0.21)
 ```
 
 
@@ -86,17 +87,17 @@ If an item is not in stock, then we provide information that is **"Out of Stock"
 
 - Home
 - Admin
-- Vendor
+- Seller
 - User
 - Shopping Cart
+- Wish List
 
 #### 1. Home:
- - Search
- - Most popular Subjects
+ - Search by author name and book name
+ - Sort by price
  - Top Authors
  - Top New Releases
  - Complete Collections
- - Customer Reviews
 
 #### 2. Admin:
   - Login Form
@@ -109,10 +110,12 @@ If an item is not in stock, then we provide information that is **"Out of Stock"
   - Manage price
 
 #### 4. User:
-  - Login FormBooks in my wish list
+  - Login Form
+  - Books in my wish list
   - Items in my shopping cart
   - My Order
-
+  - Review of each book
+  
 #### 5. Shipping Cart
   - Number of items
   - List of books with price
