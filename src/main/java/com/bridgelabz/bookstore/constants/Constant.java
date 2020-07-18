@@ -120,6 +120,7 @@ public class Constant {
 	public static final String CART_SIZE_FETCHED_SUCCESSFULLY = "Cart size fetched successfully";
 	public static final String CART_SIZE_FETCHING_FAILED = "Cart size fetched failed";
 	public static final int COUNT = 3;
+	public static final Integer MAX_PAGE_SIZE = 8;
 	
 
 }
