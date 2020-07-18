@@ -133,7 +133,7 @@ public List<Review> review(){
 		bookRepository.save(books);
 		System.out.println("book review:"+ bookie.getReview());
 		//orderRepository.addReview(books.getBookId(), review.getRating());
-		service.addRating(token, books.getBookId(), DTO);
+		service.addRating(token, books.getBookId(), DTO, 1l);
 		assertEquals("very good",review.getReview());
 	}
 

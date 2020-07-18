@@ -137,7 +137,7 @@ public class AdminServiceImp implements AdminService {
 	
 
 	@Override
-	public void bookVerification(Long bookId, Long sellerId, boolean verify, String token) throws BookException {
+	public void bookVerification(Long bookId, Long sellerId, boolean verify, String token,String feedback) throws BookException {
 		
 		Long id = Long.valueOf((Integer) JwtValidate.decodeJWT(token).get("userId"));
 		if(id==1) {
@@ -159,16 +159,16 @@ public class AdminServiceImp implements AdminService {
 		if (verify) {
 			book.setApproved(verify); 
 			bookRepository.save(book);
-			registerMail(seller, role, environment.getProperty("book-approval-template-path"), book);
+			registerMail(seller, role, environment.getProperty("book-approval-template-path"), book,feedback);
 		} else {
 			book.setApproved(verify); 
 			book.setRejectionCounts(book.getRejectionCounts() + 1);
 			if (book.getRejectionCounts() > 2) {
 				bookRepository.deleteBook(book);
-				registerMail(seller, role, environment.getProperty("book-deletion-template-path"), book);
+				registerMail(seller, role, environment.getProperty("book-deletion-template-path"), book, feedback);
 			} else {
 				bookRepository.save(book);
-				registerMail(seller, role, environment.getProperty("book-rejection-template-path"), book);
+				registerMail(seller, role, environment.getProperty("book-rejection-template-path"), book, feedback);
 			}
 		}
 
@@ -176,14 +176,15 @@ public class AdminServiceImp implements AdminService {
 
 	/**
 	 * Method to register mail in rabbitmq for informing seller about verification status
+	 * @param rejectionDesc 
 	 * 
 	 * @param User, Role, Template
 	 * @return void
 	 * 
 	 */
-	public void registerMail(User user, Role role, String templet, Book book) {
+	public void registerMail(User user, Role role, String templet, Book book, String feedback) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
-		sendMail(user, token, templet, book);
+		sendMail(user, token, templet, book,feedback);
 	}
 	/**
 	 * Method to send mail for informing seller about verification status
@@ -192,9 +193,9 @@ public class AdminServiceImp implements AdminService {
 	 * @return void
 	 * 
 	 */
-	public void sendMail(User user, String token, String templet, Book book) {
+	public void sendMail(User user, String token, String templet, Book book,String rejectionDesc) {
 		try {
-			mailTempletService.getTemplate(user, token, templet, book);
+			mailTempletService.getTemplate(user, token, templet, book,rejectionDesc);
 		} catch (IOException e) {
 
 		}
