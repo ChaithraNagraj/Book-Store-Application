@@ -13,12 +13,14 @@ public interface SellerService {
 
 	Book updateBook(UpdateBookDto updatedBookInfo, long bookId, String token);
 
-	List<Book> getAllBooks(String token);
+	List<Book> getAllBooks(String token,Integer pageNo);
 
 	boolean removeBook(long bookId, String token);
 
 	List<Book> searchBook(String token, String input) throws IOException;
 
 	boolean sentForApproval(long bookId, String token);
+
+	long booksCount(String token);
 
 }

@@ -25,7 +25,7 @@ public interface BookRepo {
 
 	public List<Book> sortBookDesc();
 
-	public List<Book> findBySellerId(Long id);
+	public List<Book> findBySellerId(Long id,Integer pageNo);
 
 	public Book findByBookId(Long bookId);
 
@@ -33,4 +33,6 @@ public interface BookRepo {
 	
 	
 	public List<Book> findBookByPage(Integer pageNo);
+
+	public long findBookCount(Long id);
 }

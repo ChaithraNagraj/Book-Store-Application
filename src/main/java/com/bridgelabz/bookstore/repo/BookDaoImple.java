@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.Book;
 
 @Repository
@@ -74,9 +75,10 @@ public class BookDaoImple implements BookRepo {
 
 	@Override
 	public void deleteBook(Book book) {
-		Session session = entityManager.unwrap(Session.class);
+		Session session = sessionFactory.getCurrentSession();
 		Query<Book> query = session.createQuery("DELETE FROM Book where book_id=:bookId");
 		query.setParameter("bookId", book.getBookId());
+//		session.remove(book);
 		query.executeUpdate();
 	}
 
@@ -100,10 +102,12 @@ public class BookDaoImple implements BookRepo {
 	}
 
 	@Override
-	public List<Book> findBySellerId(Long id) {
+	public List<Book> findBySellerId(Long id,Integer pageNo) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<Book> query = session.createQuery("From Book where seller_id=:id");
+		Query<Book> query = session.createQuery("From Book where seller_id=:id ORDER BY book_id DESC");
 		query.setParameter("id", id);
+		query.setFirstResult((pageNo-1)*Constant.MAX_PAGE_SIZE);
+		query.setMaxResults(Constant.MAX_PAGE_SIZE);
 		return query.getResultList();
 	}
 
@@ -127,9 +131,17 @@ public class BookDaoImple implements BookRepo {
 	public List<Book> findBookByPage(Integer pageNo) {
 		Session session =  sessionFactory.getCurrentSession();
 		 Query<Book> nativeQuery =  session.createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class);
-	      int pageSize=8;
+	      int pageSize=Constant.MAX_PAGE_SIZE;
 		 nativeQuery.setFirstResult(pageNo* pageSize);
 		 nativeQuery.setMaxResults(pageSize);
 		 return  nativeQuery.getResultList();
 }
+
+	@Override
+	public long findBookCount(Long sellerId) {
+		Session session = sessionFactory.getCurrentSession();
+		Query query = session.createQuery("select count(*) from Book where seller_id =: sellerId");
+		query.setParameter("sellerId", sellerId);
+		return (long) query.uniqueResult();
+	}
 }
