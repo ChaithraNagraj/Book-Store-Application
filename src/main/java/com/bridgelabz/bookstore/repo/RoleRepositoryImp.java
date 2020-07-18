@@ -37,7 +37,7 @@ public class RoleRepositoryImp implements RoleRepository {
 		Session currentSession = sessionFactory.getCurrentSession();
 		Query<Role> q = currentSession.createQuery("From Role where role_id=:id");
 		q.setParameter("id", rid);
-		return (Role) q.uniqueResult();
+		return q.uniqueResult();
 	}
 
 }

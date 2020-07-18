@@ -144,26 +144,28 @@ public class UserServiceImp implements UserService {
 
 	public boolean login(LoginDTO loginDto) throws UserException {
 		User user = userRepository.getusersByLoginId(loginDto.getloginId());
-		User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
-		if (roleWithUser != null) {
-			if (encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())
-					&& roleWithUser.isVerify()) {
-				String token = JwtValidate.createJWT(user.getId(), loginDto.getRole(), Constant.LOGIN_EXP);
-				userRepository.updateDateTime(user.getId());
-				user.setUpdateDateTime(DateUtility.today());
-				userRepository.updateUserStatus(Boolean.TRUE, user.getId());
-				redis.putMap(redisKey, user.getEmail(), token);
-				return true;
+		if (user != null) {
+			User roleWithUser = userRepository.findByUserIdAndRoleId(user.getId(), loginDto.getRole());
+			if (roleWithUser != null) {
+				if (!encrypt.bCryptPasswordEncoder().matches(loginDto.getPassword(), roleWithUser.getPassword())) {
+					throw new UserNotFoundException(Constant.PLEASE_GIVE_CORRECT_PASSWORD,
+							Constant.NOT_FOUND_RESPONSE_CODE);
+				} else if (!roleWithUser.isVerify()) {
+					throw new UserNotFoundException(Constant.YOUR_EMAIL_NOT_VERIFIED, Constant.NOT_FOUND_RESPONSE_CODE);
+				} else {
+					String token = JwtValidate.createJWT(user.getId(), loginDto.getRole(), Constant.LOGIN_EXP);
+					userRepository.updateDateTime(user.getId());
+					user.setUpdateDateTime(DateUtility.today());
+					userRepository.updateUserStatus(Boolean.TRUE, user.getId());
+					redis.putMap(redisKey, user.getEmail(), token);
+					return true;
+				}
+			} else {
+				throw new UserNotFoundException(Constant.USER_NOT_FOUND_WITH_ROLE, Constant.NOT_FOUND_RESPONSE_CODE);
 			}
-			throw new UserException(Constant.LOGIN_FAILED_MESSAGE, Constant.BAD_REQUEST_RESPONSE_CODE);
+		} else {
+			throw new UserException(Constant.USER_NOT_EXIST_PLEASE_REGISTER, Constant.BAD_REQUEST_RESPONSE_CODE);
 		}
-		throw new UserNotFoundException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
-	}
-
-	public boolean addRole(RoleDTO request) {
-		request.setRole(request.getRole().toUpperCase());
-		userRepository.saveRoles(new Role(request));
-		return true;
 	}
 
 	public boolean forgetPassword(String email) throws UserException {
@@ -229,12 +231,13 @@ public class UserServiceImp implements UserService {
 			}
 			if (!updateDTO.getPassword().equals("string")) {
 				updateDTO.setPassword(encrypt.bCryptPasswordEncoder().encode(updateDTO.getPassword()));
-			} else
+			} else {
 				updateDTO.setPassword(isUserExist.getPassword());
-			isUserExist.setUpdateDateTime(DateUtility.today());
-			BeanUtils.copyProperties(updateDTO, isUserExist);
-			userRepository.addUser(isUserExist);
-			return true;
+				isUserExist.setUpdateDateTime(DateUtility.today());
+				BeanUtils.copyProperties(updateDTO, isUserExist);
+				userRepository.addUser(isUserExist);
+				return true;
+			}
 		}
 		throw new UserException(Constant.USER_NOT_FOUND_EXCEPTION_MESSAGE, Constant.NOT_FOUND_RESPONSE_CODE);
 	}

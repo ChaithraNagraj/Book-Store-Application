@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +69,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public boolean removeBookFromCart(String token, long cartBookId) {
+	public Cart removeBookFromCart(String token, long cartBookId) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		CartBooks bookToBeRemoved = buyer.getUserCart().getCartBooks().stream()
 				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
@@ -79,9 +78,8 @@ public class CartServiceImpl implements CartService {
 			buyer.getUserCart()
 					.setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() - bookToBeRemoved.getBookQuantity());
 			cartRepo.saveToCart(buyer.getUserCart());
-			return true;
 		}
-		return false;
+		return buyer.getUserCart();
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
-	public CartBooks addQuantity(long cartBookId, String token) {
+	public Cart addQuantity(long cartBookId, String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		CartBooks bookToBeAddQuantity = buyer.getUserCart().getCartBooks().stream()
 				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
@@ -106,13 +104,37 @@ public class CartServiceImpl implements CartService {
 			cartRepo.saveToCartBooks(bookToBeAddQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() + 1);
 			cartRepo.saveToCart(buyer.getUserCart());
-			return bookToBeAddQuantity;
+			return buyer.getUserCart();
 		}
 		throw new CartItemsLimitException(Constant.CART_ITEMS_LIMIT_EXCEEDED_MESSAGE);
 	}
 
 	@Override
-	public CartBooks removeQuantity(long cartBookId, String token) {
+	public Cart updateQuantity(long cartBookId, int quantity, String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		CartBooks bookToBeUpdateQuantity = buyer.getUserCart().getCartBooks().stream()
+				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
+				.orElseThrow(() -> new BookNotFoundInCartException(Constant.BOOK_NOT_FOUND_IN_CART_MESSAGE));
+		if(quantity == 0)
+			throw new CartItemsLimitException(Constant.CART_ITEM_LOW_LIMIT_MESSAGE);
+		buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart()-bookToBeUpdateQuantity.getBookQuantity());
+		if((buyer.getUserCart().getTotalBooksInCart()+quantity)<6) {
+			if (bookToBeUpdateQuantity.getBook().getQuantity() < quantity) {
+				throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
+			}
+			bookToBeUpdateQuantity.setBookQuantity(quantity);
+			bookToBeUpdateQuantity.setTotalBookPrice(
+					bookToBeUpdateQuantity.getBook().getPrice() * bookToBeUpdateQuantity.getBookQuantity());
+			cartRepo.saveToCartBooks(bookToBeUpdateQuantity);
+			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() + quantity);
+			cartRepo.saveToCart(buyer.getUserCart());
+			return buyer.getUserCart();
+		}
+		throw new CartItemsLimitException(Constant.CART_ITEMS_LIMIT_EXCEEDED_MESSAGE);
+	}
+	
+	@Override
+	public Cart removeQuantity(long cartBookId, String token) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		CartBooks bookToBeRemoveQuantity = buyer.getUserCart().getCartBooks().stream()
 				.filter(cartBooks -> cartBooks.getCartBookId() == cartBookId).findAny()
@@ -127,7 +149,7 @@ public class CartServiceImpl implements CartService {
 			cartRepo.saveToCartBooks(bookToBeRemoveQuantity);
 			buyer.getUserCart().setTotalBooksInCart(buyer.getUserCart().getTotalBooksInCart() - 1);
 			cartRepo.saveToCart(buyer.getUserCart());
-			return bookToBeRemoveQuantity;
+			return buyer.getUserCart();
 		}
 		throw new CartItemsLimitException(Constant.CART_EMPTY_MESSAGE);
 	}
@@ -146,9 +168,9 @@ public class CartServiceImpl implements CartService {
 		booksToCart.forEach(cartBookToBeChecked -> {
 			if (cart.getTotalBooksInCart() < 5) {
 				CartBooks bookToBeAdded = new CartBooks();
-				BeanUtils.copyProperties(cartBookToBeChecked, bookToBeAdded);
-				bookToBeAdded.setCart(cart);
+				bookToBeAdded.setBook(bookRepo.findByBookId(cartBookToBeChecked.getBook().getBookId()));
 				bookToBeAdded.setBookQuantity(1);
+				bookToBeAdded.setCart(cart);
 				bookToBeAdded
 						.setTotalBookPrice(cartBookToBeChecked.getBook().getPrice() * bookToBeAdded.getBookQuantity());
 				cartRepo.saveToCartBooks(bookToBeAdded);
@@ -161,5 +183,15 @@ public class CartServiceImpl implements CartService {
 		});
 		return true;
 	}
+
+	@Override
+	public int getCartCount(String token) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		Cart cart = Optional.ofNullable(buyer.getUserCart()).orElse(new Cart());
+		return cart.getTotalBooksInCart();
+	}
+
+	
+	
 
 }

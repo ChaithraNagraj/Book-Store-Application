@@ -18,5 +18,7 @@ public interface BookService {
 	public List<Book> sortBookByDesc();
 
 	public List<Book> findBookCount();
+	
+	public List<Book> findBookByPage( Integer pageNo);
 
 }

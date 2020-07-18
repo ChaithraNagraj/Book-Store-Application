@@ -78,5 +78,5 @@ public class CartBooks {
 	public void setTotalBookPrice(Double totalBookPrice) {
 		this.totalBookPrice = totalBookPrice;
 	}
-
+	
 }
