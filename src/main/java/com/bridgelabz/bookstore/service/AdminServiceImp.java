@@ -184,7 +184,7 @@ public class AdminServiceImp implements AdminService {
 	 */
 	public void registerMail(User user, Role role, String templet, Book book, String feedback) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
-		sendMail(user, token, templet, book,feedback);
+		sendMail(user, token, templet, book, feedback);
 	}
 	/**
 	 * Method to send mail for informing seller about verification status
@@ -195,7 +195,7 @@ public class AdminServiceImp implements AdminService {
 	 */
 	public void sendMail(User user, String token, String templet, Book book,String rejectionDesc) {
 		try {
-			mailTempletService.getTemplate(user, token, templet, book,rejectionDesc);
+			mailTempletService.getTemplate(user, token, templet, book, rejectionDesc);
 		} catch (IOException e) {
 
 		}
