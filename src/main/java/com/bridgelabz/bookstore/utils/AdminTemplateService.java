@@ -22,7 +22,7 @@ public class AdminTemplateService {
 
 	private String templateMSG = "";
 
-	public void getTemplate(User request, String token, String path, Book book) throws IOException {
+	public void getTemplate(User request, String token, String path, Book book, String feedback) throws IOException {
 
 		if (templateMSG.equals("")) {
 			templateMSG = Template.readContentFromTemplet(path);
@@ -32,6 +32,8 @@ public class AdminTemplateService {
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%token%"), token);
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%book%"), book.getBookName());
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%rejection%"), String.valueOf( book.getRejectionCounts()));
+		templateMSG = templateMSG.replaceAll(Pattern.quote("$%description%"),feedback);
+		
 		
 		mail.setTo(request.getEmail());
 		mail.setFrom(EmailService.SENDER_EMAIL_ID);
