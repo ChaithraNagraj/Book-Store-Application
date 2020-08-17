@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 
 @Entity
 @Table(name = "orders")
@@ -33,6 +34,30 @@ public class Order {
 	@Column(name = "purchase_date_time",nullable = false)
 	private LocalDateTime purchaseDateTime;
 	
+	@Column(name = "order_price", nullable = false)
+	@Min(value = 0)
+	private Double orderPrice;
+	
+	@Column(name = "discount", nullable = false)
+	@Min(value = 0)
+	private Double discount;
+	
+	public Double getOrderPrice() {
+		return orderPrice;
+	}
+
+	public void setOrderPrice(Double orderPrice) {
+		this.orderPrice = orderPrice;
+	}
+
+	public Double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Double discount) {
+		this.discount = discount;
+	}
+
 	public Long getOrderId() {
 		return orderId;
 	}

@@ -15,6 +15,7 @@ import com.bridgelabz.bookstore.model.CartBooks;
 import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.OrderDTO;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.CartRepo;
 import com.bridgelabz.bookstore.repo.OrderRepo;
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	@Transactional
-	public Order checkOut(String token) {
+	public Order checkOut(String token, OrderDTO orderDTO) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		List<CartBooks> booksFromCart = Optional.ofNullable(buyer.getUserCart().getCartBooks())
 				.orElseThrow(() -> new CartException("You don't have any items in cart"));
@@ -51,6 +52,8 @@ public class OrderServiceImpl implements OrderService {
 		order.setBooks(booksToBeOrdered);
 		order.setBuyer(buyer);
 		order.setPurchaseDateTime(DateUtility.today());
+		order.setDiscount(orderDTO.getDiscount());
+		order.setOrderPrice(orderDTO.getOrderPrice());
 		orders.add(order);
 		buyer.getUserCart().setTotalBooksInCart(0);
 		orderRepository.addOrder(order);
