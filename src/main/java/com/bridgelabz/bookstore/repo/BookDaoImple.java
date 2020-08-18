@@ -129,10 +129,11 @@ public class BookDaoImple implements BookRepo {
 	
 	@Override
 	public List<Book> findBookByPage(Integer pageNo) {
+		int nextPageNo=pageNo-1;
 		Session session =  sessionFactory.getCurrentSession();
 		 Query<Book> nativeQuery =  session.createSQLQuery("select * from book where is_approved=\"1\" ").addEntity(Book.class);
 	      int pageSize=Constant.MAX_PAGE_SIZE;
-		 nativeQuery.setFirstResult(pageNo* pageSize);
+	      nativeQuery.setFirstResult(nextPageNo* pageSize);
 		 nativeQuery.setMaxResults(pageSize);
 		 return  nativeQuery.getResultList();
 }
