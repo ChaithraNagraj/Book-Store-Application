@@ -35,11 +35,9 @@ public class Order {
 	private LocalDateTime purchaseDateTime;
 	
 	@Column(name = "order_price", nullable = false)
-	@Min(value = 0)
 	private Double orderPrice;
 	
 	@Column(name = "discount", nullable = false)
-	@Min(value = 0)
 	private Double discount;
 	
 	public Double getOrderPrice() {

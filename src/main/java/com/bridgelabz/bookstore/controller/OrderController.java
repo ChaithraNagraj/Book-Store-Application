@@ -32,6 +32,7 @@ public class OrderController {
 
 	@PostMapping(value = "/checkOut")
 	public ResponseEntity<Response> checkOut(@RequestHeader("token") String token, @RequestBody OrderDTO orderDTO) {
+		System.out.println(orderDTO.getDiscount()+" "+orderDTO.getAmount());
 		Order order = orderService.checkOut(token, orderDTO);
 		if (order != null) {
 			return ResponseEntity.status(HttpStatus.OK)

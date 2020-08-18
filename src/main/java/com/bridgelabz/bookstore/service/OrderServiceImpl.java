@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setBuyer(buyer);
 		order.setPurchaseDateTime(DateUtility.today());
 		order.setDiscount(orderDTO.getDiscount());
-		order.setOrderPrice(orderDTO.getOrderPrice());
+		order.setOrderPrice(orderDTO.getAmount());
 		orders.add(order);
 		buyer.getUserCart().setTotalBooksInCart(0);
 		orderRepository.addOrder(order);

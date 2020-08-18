@@ -2,22 +2,26 @@ package com.bridgelabz.bookstore.model.dto;
 
 public class OrderDTO {
 
-	private Double orderPrice;		
+	private Double amount;		
 	public OrderDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public OrderDTO(Double orderPrice, Double discount) {
+	
+	public OrderDTO(Double amount, Double discount) {
 		super();
-		this.orderPrice = orderPrice;
+		this.amount = amount;
 		this.discount = discount;
 	}
-	public Double getOrderPrice() {
-		return orderPrice;
+
+	public Double getAmount() {
+		return amount;
 	}
-	public void setOrderPrice(Double orderPrice) {
-		this.orderPrice = orderPrice;
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
 	}
+
 	public Double getDiscount() {
 		return discount;
 	}
