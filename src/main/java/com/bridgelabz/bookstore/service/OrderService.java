@@ -12,4 +12,6 @@ public interface OrderService {
 
 	List<MyOrderList> getOrders(String token);
 
+	public void sendOrderSuccessMail(String token, Order order);
+
 }

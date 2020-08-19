@@ -35,6 +35,7 @@ public class OrderController {
 		System.out.println(orderDTO.getDiscount()+" "+orderDTO.getAmount());
 		Order order = orderService.checkOut(token, orderDTO);
 		if (order != null) {
+			orderService.sendOrderSuccessMail(token,order);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.ORDER_PLACED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, order));
 		}

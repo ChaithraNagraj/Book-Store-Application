@@ -37,7 +37,7 @@ public class Order {
 	@Column(name = "order_price", nullable = false)
 	private Double orderPrice;
 	
-	@Column(name = "discount", nullable = false)
+	@Column(name = "discount")
 	private Double discount;
 	
 	public Double getOrderPrice() {
