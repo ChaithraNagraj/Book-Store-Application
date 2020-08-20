@@ -70,7 +70,6 @@ public class BookServiceImp implements BookService {
 
 	@Override
 	public void addBook(BookDto details, Long userId) {
-
 		Book bookEntity = new Book();
 		BeanUtils.copyProperties(details, bookEntity);
 		bookEntity.setCreatedDateAndTime(LocalDateTime.now());

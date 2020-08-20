@@ -1,5 +1,6 @@
 package com.bridgelabz.bookstore.model.dto;
 
+import javax.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,7 +11,10 @@ public class AddressDTO {
 	private String city;
 	private String landmark;
 	private String pincode;
+	
+	@NotBlank(message = "addressType can not be empty")
 	private String addressType;
+	
 	private String phoneNumber;
 	 
 	public String getAddress() {
@@ -63,5 +67,12 @@ public class AddressDTO {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+	@Override
+	public String toString() {
+		return "AddressDTO [address=" + address + ", locality=" + locality + ", name=" + name + ", city=" + city
+				+ ", landmark=" + landmark + ", pincode=" + pincode + ", addressType=" + addressType + ", phoneNumber="
+				+ phoneNumber + "]";
+	}
+	
 	
 }
