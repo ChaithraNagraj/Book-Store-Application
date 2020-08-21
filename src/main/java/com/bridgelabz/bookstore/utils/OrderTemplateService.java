@@ -37,12 +37,6 @@ public class OrderTemplateService {
 		
 
 		
-//		String orders = "";
-//		for(int i=0; i<myOrder.size(); i++) {
-//			orders = "Book: "+myOrder.get(i).getBookName()+ "Quantity: "+myOrder.get(i).getQunatity();
-//		}
-//		System.out.println(myOrder.size()+"<----My Order in template---------->"+orders);
-		
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%name%$"), request.getName());
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%token%$"), token);
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%address%$"), userAddress);
