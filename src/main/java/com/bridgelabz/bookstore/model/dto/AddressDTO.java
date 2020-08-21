@@ -1,6 +1,9 @@
 package com.bridgelabz.bookstore.model.dto;
 
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,8 +15,9 @@ public class AddressDTO {
 	private String landmark;
 	private String pincode;
 	
-	@NotBlank(message = "addressType can not be empty")
+	@NotEmpty(message = "addressType can not be empty")
 	private String addressType;
+	
 	
 	private String phoneNumber;
 	 

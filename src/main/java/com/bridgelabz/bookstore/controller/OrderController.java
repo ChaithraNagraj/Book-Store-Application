@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.model.MyOrderList;
 //import com.bridgelabz.bookstore.model.MyOrder;
 import com.bridgelabz.bookstore.model.Order;
+import com.bridgelabz.bookstore.model.dto.OrderDTO;
 import com.bridgelabz.bookstore.response.Response;
 import com.bridgelabz.bookstore.service.OrderService;
 
@@ -29,9 +31,11 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PostMapping(value = "/checkOut")
-	public ResponseEntity<Response> checkOut(@RequestHeader("token") String token) {
-		Order order = orderService.checkOut(token);
+	public ResponseEntity<Response> checkOut(@RequestHeader("token") String token, @RequestBody OrderDTO orderDTO) {
+		System.out.println(orderDTO.getDiscount()+" "+orderDTO.getAmount());
+		Order order = orderService.checkOut(token, orderDTO);
 		if (order != null) {
+			orderService.sendOrderSuccessMail(token,order);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.ORDER_PLACED_SUCCESSFULLY, Constant.OK_RESPONSE_CODE, order));
 		}

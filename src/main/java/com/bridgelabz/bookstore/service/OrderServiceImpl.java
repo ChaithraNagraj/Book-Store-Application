@@ -1,24 +1,33 @@
 package com.bridgelabz.bookstore.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.CartException;
+import com.bridgelabz.bookstore.model.Address;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.CartBooks;
 import com.bridgelabz.bookstore.model.MyOrderList;
 import com.bridgelabz.bookstore.model.Order;
+import com.bridgelabz.bookstore.model.Role;
 import com.bridgelabz.bookstore.model.User;
+import com.bridgelabz.bookstore.model.dto.OrderDTO;
+import com.bridgelabz.bookstore.repo.AddressRepo;
 import com.bridgelabz.bookstore.repo.BookRepo;
 import com.bridgelabz.bookstore.repo.CartRepo;
 import com.bridgelabz.bookstore.repo.OrderRepo;
+import com.bridgelabz.bookstore.repo.RoleRepository;
+import com.bridgelabz.bookstore.utils.AdminTemplateService;
 import com.bridgelabz.bookstore.utils.DateUtility;
+import com.bridgelabz.bookstore.utils.OrderTemplateService;
 import com.bridgelabz.bookstore.utils.TokenUtility;
 
 @Service
@@ -32,10 +41,20 @@ public class OrderServiceImpl implements OrderService {
 	private CartRepo cartRepository;
 	@Autowired
 	private TokenUtility tokenUtility;
+	
+	@Autowired
+	private OrderTemplateService mailTempletService;
+	
+	@Autowired
+	private AddressRepo addressRepository;
+	@Autowired
+	private RoleRepository roleRepository;
+	@Autowired
+	private Environment environment;
 
 	@Override
 	@Transactional
-	public Order checkOut(String token) {
+	public Order checkOut(String token, OrderDTO orderDTO) {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		List<CartBooks> booksFromCart = Optional.ofNullable(buyer.getUserCart().getCartBooks())
 				.orElseThrow(() -> new CartException("You don't have any items in cart"));
@@ -51,6 +70,8 @@ public class OrderServiceImpl implements OrderService {
 		order.setBooks(booksToBeOrdered);
 		order.setBuyer(buyer);
 		order.setPurchaseDateTime(DateUtility.today());
+		order.setDiscount(orderDTO.getDiscount());
+		order.setOrderPrice(orderDTO.getAmount());
 		orders.add(order);
 		buyer.getUserCart().setTotalBooksInCart(0);
 		orderRepository.addOrder(order);
@@ -65,7 +86,8 @@ public class OrderServiceImpl implements OrderService {
 			items.setVenderName(book.getSeller().getName());
 			orderRepository.addOrder(items);
 		}
-        cartRepository.deleteByCartId(buyer.getUserCart().getCartId());
+        cartRepository.deleteByCartId(buyer.getUserCart().getCartId());              
+        
 		return order;
 	}
 
@@ -76,4 +98,31 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.findOrderByUserId(userId);
 	}
 
+	public void registerMail(User user, Role role, String templet, Address address) {
+		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
+		sendMail(user, token, templet, address);
+	}
+	/**
+	 * Method to send mail for informing seller about verification status
+	 * 
+	 * @param User, Role, Template
+	 * @return void
+	 * 
+	 */
+	public void sendMail(User user, String token, String templet, Address address) {
+		try {
+			mailTempletService.getTemplate(user, token, templet, address);
+		} catch (IOException e) {
+
+		}
+	}
+
+	@Override
+	public void sendOrderSuccessMail(String token, Order order) {
+		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
+		Address address = addressRepository.findAddressById(order.getOrderId());
+        Role role = roleRepository.getRoleByName(Constant.ROLE_AS_BUYER);
+        registerMail(buyer,role,environment.getProperty("order-checkout-template-path"),address);
+		
+	}
 }

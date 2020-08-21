@@ -73,13 +73,13 @@ public class Book {
 	private User seller;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval=true)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@JoinColumn(name = "book_id")
 	private List<Review> review;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "book")
+	@OneToMany(mappedBy = "book",orphanRemoval=true)
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<CartBooks> cartBooks;
 

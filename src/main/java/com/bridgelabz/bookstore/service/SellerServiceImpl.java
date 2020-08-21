@@ -108,9 +108,9 @@ public class SellerServiceImpl implements SellerService {
 	 * @return List<Book>
 	 */
 	@Override
-	public List<Book> getAllBooks(String token) {
+	public List<Book> getAllBooks(String token,Integer pageNo) {
 		User seller = tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
-		return bookRepository.findBySellerId(seller.getId());
+		return bookRepository.findBySellerId(seller.getId(),pageNo);
 	}
 
 	/**
@@ -122,9 +122,10 @@ public class SellerServiceImpl implements SellerService {
 	 */
 	@Override
 	public boolean removeBook(long bookId, String token) {
-		tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
+		User seller = tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
 		Book bookTobeDeleted = bookRepository.getBookById(bookId)
 				.orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
+//		seller.getSellerBooks().remove(bookTobeDeleted);
 		bookRepository.deleteBook(bookTobeDeleted);
 		deleteBookInElaticSearch(bookId);
 		return true;
@@ -172,6 +173,12 @@ public class SellerServiceImpl implements SellerService {
 		return false;
 	}
 
+	@Override
+	public long booksCount(String token) {
+		User seller = tokenUtility.authentication(token, Constant.ROLE_AS_SELLER);
+		return bookRepository.findBookCount(seller.getId());
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void addBookInElasticsearch(Book book) {
 		Map<String, Object> documentMapper = objectMapper.convertValue(book, Map.class);
@@ -204,4 +211,5 @@ public class SellerServiceImpl implements SellerService {
 			e.printStackTrace();
 		}
 	}
+
 }

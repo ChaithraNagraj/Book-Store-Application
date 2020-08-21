@@ -29,7 +29,7 @@ public class CartBooks {
 	@Column(name = "total_price", nullable = false)
 	@Min(value = 0)
 	private Double totalBookPrice;
-
+	
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")

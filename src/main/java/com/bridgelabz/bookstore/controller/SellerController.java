@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.bookstore.constants.Constant;
@@ -75,8 +76,8 @@ public class SellerController {
 	}
 
 	@GetMapping(value = "/displayBooks")
-	public ResponseEntity<Response> displayBooks(@RequestHeader("token") String token) {
-		List<Book> sellerBooks = sellerService.getAllBooks(token);
+	public ResponseEntity<Response> displayBooks(@RequestHeader("token") String token,@RequestParam("pageNo") Integer pageNo) {
+		List<Book> sellerBooks = sellerService.getAllBooks(token,pageNo);
 		if (!sellerBooks.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new Response(Constant.DISPLAYING_BOOKS, Constant.OK_RESPONSE_CODE, sellerBooks));
@@ -119,4 +120,15 @@ public class SellerController {
 		return new ResponseEntity<>(new Response("Book sent For Approval Failed", HttpStatus.ALREADY_REPORTED.value()),
 				HttpStatus.ALREADY_REPORTED);
 	}
+	
+	@GetMapping("/booksCount")
+	public ResponseEntity<Response> booksCount(@RequestHeader("token") String token) {
+		long booksCount = sellerService.booksCount(token);
+		if (booksCount>=0) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Response("Books Count fetched succesfully", Constant.OK_RESPONSE_CODE, booksCount));
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new Response("Books Count fetched failed", Constant.NOT_FOUND_RESPONSE_CODE));
+	} 
 }

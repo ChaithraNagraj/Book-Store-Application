@@ -80,7 +80,7 @@ public class User {
 	public List<Role> roleList;
 
 	@JsonIgnore
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "seller")
+	@OneToMany(mappedBy = "seller")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<Book> sellerBooks;
 

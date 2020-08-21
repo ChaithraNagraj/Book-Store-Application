@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bridgelabz.bookstore.constants.Constant;
 import com.bridgelabz.bookstore.exception.BookNotFoundException;
+import com.bridgelabz.bookstore.exception.BookOutOfStockException;
+import com.bridgelabz.bookstore.exception.ItemAlreadyExistsInCartException;
 import com.bridgelabz.bookstore.model.Book;
 import com.bridgelabz.bookstore.model.User;
 import com.bridgelabz.bookstore.model.Wishlist;
@@ -34,6 +36,13 @@ public class WishlistServiceImp implements WishlistService {
 		Book book = bookRepo.getBookById(bookId).orElseThrow(() -> new BookNotFoundException(Constant.BOOK_NOT_FOUND));
 		Wishlist wishlist = Optional.ofNullable(buyer.getUserWishlist()).orElse(new Wishlist());
 		List<Book> booksInWishlist = Optional.ofNullable(wishlist.getBooks()).orElse(new ArrayList<>());
+		booksInWishlist.stream().filter(wishlistBook -> wishlistBook.getBookId() == bookId).findAny()
+		.ifPresent(action -> {
+			throw new ItemAlreadyExistsInCartException(Constant.BOOK_ALREADY_ADD_TO_WISHLIST );
+		});
+          if (book.getQuantity() <= 0) {
+	     throw new BookOutOfStockException(Constant.BOOK_OUT_OF_STOCK_MESSAGE);
+         }
 		wishlist.setUser(buyer);
 		booksInWishlist.add(book);
 		wishlist.setBooks(booksInWishlist);

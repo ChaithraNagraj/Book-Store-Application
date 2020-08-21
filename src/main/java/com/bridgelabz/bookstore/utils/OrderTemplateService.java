@@ -8,12 +8,13 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.bridgelabz.bookstore.model.Book;
+import com.bridgelabz.bookstore.model.Address;
 import com.bridgelabz.bookstore.model.Mail;
 import com.bridgelabz.bookstore.model.User;
-
 @Component
-public class AdminTemplateService {
+
+public class OrderTemplateService {
+
 	@Autowired
 	private RabbitMQSender rabbitMQSender;
 
@@ -22,17 +23,16 @@ public class AdminTemplateService {
 
 	private String templateMSG = "";
 
-	public void getTemplate(User request, String token, String path, Book book, String feedback) throws IOException {
+	public void getTemplate(User request, String token, String path, Address address) throws IOException {
 
 		if (templateMSG.equals("")) {
 			templateMSG = Template.readContentFromTemplet(path);
 		}
 
+		String userAddress = address.getAddress() + address.getLocality() + address.getCity() + address.getPincode();
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%name%"), request.getName());
 		templateMSG = templateMSG.replaceAll(Pattern.quote("$%token%"), token);
-		templateMSG = templateMSG.replaceAll(Pattern.quote("$%book%"), book.getBookName());
-		templateMSG = templateMSG.replaceAll(Pattern.quote("$%rejection%"), String.valueOf( book.getRejectionCounts()));
-		templateMSG = templateMSG.replaceAll(Pattern.quote("$%description%"),feedback);
+		templateMSG = templateMSG.replaceAll(Pattern.quote("$%address%"), userAddress);
 		
 		
 		mail.setTo(request.getEmail());

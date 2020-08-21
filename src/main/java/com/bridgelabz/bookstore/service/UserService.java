@@ -23,8 +23,6 @@ public interface UserService {
 
 	public boolean registerUser(RegistrationDTO user) throws IOException, UserException;
 
-	public boolean addRole(RoleDTO request);
-
 	public boolean logOut(String token) throws UserException;
 
 	public boolean isSessionActive(String token);
