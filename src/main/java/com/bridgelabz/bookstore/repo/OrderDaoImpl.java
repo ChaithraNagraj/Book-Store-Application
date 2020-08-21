@@ -44,6 +44,15 @@ public class OrderDaoImpl implements OrderRepo {
 	
 	@Override
 	@Transactional
+	public List<MyOrderList> findOrderByOrderId(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Query<MyOrderList> query = session.createQuery("From MyOrderList where user_id=:id");
+		query.setParameter("id", id);
+		return query.getResultList();
+	}
+	
+	@Override
+	@Transactional
 	public void addReview(Long id,int rating) 
 	{
 		Session session = sessionFactory.getCurrentSession();
