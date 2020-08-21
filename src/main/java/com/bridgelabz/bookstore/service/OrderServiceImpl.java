@@ -82,7 +82,8 @@ public class OrderServiceImpl implements OrderService {
 			items.setTotelPrice(booksFromCart.get(i).getBookQuantity() * book.getPrice());
 			items.setBuyer(buyer);
 			items.setVenderName(book.getSeller().getName());
-			orderRepository.addOrder(items);
+			items.setOrder(order);
+			orderRepository.addOrder(items);			
 		}
         cartRepository.deleteByCartId(buyer.getUserCart().getCartId());              
         
@@ -96,9 +97,10 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.findOrderByUserId(userId);
 	}
 
-	public void registerMail(User user, Role role, String templet, Address address) {
+	public void registerMail(User user, Role role, String templet, Address address, Order order) {
 		String token = TokenUtility.verifyResponse(user.getId(), role.getRoleId());
-		sendMail(user, token, templet, address);
+		List<MyOrderList> myOrder = orderRepository.findOrderByOrderId(order.getOrderId());
+		sendMail(user, token, templet, address, order, myOrder);
 	}
 	/**
 	 * Method to send mail for informing seller about verification status
@@ -107,9 +109,18 @@ public class OrderServiceImpl implements OrderService {
 	 * @return void
 	 * 
 	 */
-	public void sendMail(User user, String token, String templet, Address address) {
+	public void sendMail(User user, String token, String templet, Object address, Order order, List<MyOrderList> myOrder) {
 		try {
-			mailTempletService.getTemplate(user, token, templet, address);
+			String orders = null;
+			StringBuilder sb = new StringBuilder();
+			for(int i=0; i<myOrder.size(); i++) {
+				orders =" "+myOrder.get(i).getBookName()+ "(Quantity "+myOrder.get(i).getQunatity()+")";
+				sb.append(orders);
+			}
+			System.out.println(sb);
+			System.out.println(myOrder.size()+"<----My Order in template---------->"+sb);
+			System.out.println("check");
+			mailTempletService.getTemplate(user, token, templet, (Address) address, order, orders);
 		} catch (IOException e) {
 
 		}
@@ -120,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
 		User buyer = tokenUtility.authentication(token, Constant.ROLE_AS_BUYER);
 		Address address = addressRepository.findAddressById(order.getOrderId());
         Role role = roleRepository.getRoleByName(Constant.ROLE_AS_BUYER);
-        registerMail(buyer,role,environment.getProperty("order-checkout-template-path"),address);
+        registerMail(buyer,role,environment.getProperty("order-checkout-template-path"),(Address) address, order);
 		
 	}
 }

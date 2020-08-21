@@ -13,7 +13,7 @@ public interface AddressRepo {
 	boolean save(User user);
 	Object findAddressByType(String addressType, long userId);
 	
-	Address findAddressById(long addressId);
+	public Address findAddressById(long addressId);
 
 //	Address findAddressByTypee(String addressType, long userId);
 

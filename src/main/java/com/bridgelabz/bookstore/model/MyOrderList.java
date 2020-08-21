@@ -59,6 +59,20 @@ public class MyOrderList {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User buyer;
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
+	
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
 
 	public long getMyOrderId() {
 		return myOrderId;

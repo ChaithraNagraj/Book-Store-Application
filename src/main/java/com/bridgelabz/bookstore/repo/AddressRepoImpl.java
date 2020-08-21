@@ -48,9 +48,9 @@ public class AddressRepoImpl implements AddressRepo {
 	@Override
 	public Address findAddressById(long addressId) {
 		Session session = sessionFactory.getCurrentSession();
-		Query query = session.createQuery("From Address where user_id=:userId");
-		query.setParameter("userId", addressId);
-		return  (Address) query.uniqueResult();
+		Query query = session.createQuery("From Address where address_id=:addressId");
+		query.setParameter("addressId", addressId);
+		return  (Address)query.uniqueResult();
 	}
 
 	

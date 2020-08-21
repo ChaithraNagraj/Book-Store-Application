@@ -16,4 +16,6 @@ public interface OrderRepo {
 
 	void addReview(Long id,int rating);
 
+	List<MyOrderList> findOrderByOrderId(Long id);
+
 }
