@@ -16,7 +16,7 @@ import com.bridgelabz.bookstore.model.Order;
 import com.bridgelabz.bookstore.model.User;
 @Component
 
-@Component
+
 public class OrderTemplateService {
 
 	@Autowired
