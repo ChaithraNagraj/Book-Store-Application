@@ -113,15 +113,13 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	public void sendMail(User user, String token, String templet, Object address, Order order, List<MyOrderList> myOrder) {
 		try {
-			String orders = null;
-			StringBuilder sb = new StringBuilder();
+			String orders = new String();
+			System.out.println("check------>"+myOrder.size());
 			for(int i=0; i<myOrder.size(); i++) {
-				orders =" "+myOrder.get(i).getBookName()+ "(Quantity "+myOrder.get(i).getQunatity()+")";
-				sb.append(orders);
+				
+				orders =orders+" "+myOrder.get(i).getBookName()+ "(Quantity "+myOrder.get(i).getQunatity()+")";
 			}
-			System.out.println(sb);
-			System.out.println(myOrder.size()+"<----My Order in template---------->"+sb);
-			System.out.println("check");
+			
 			mailTempletService.getTemplate(user, token, templet, (Address) address, order, orders);
 		} catch (IOException e) {
 
