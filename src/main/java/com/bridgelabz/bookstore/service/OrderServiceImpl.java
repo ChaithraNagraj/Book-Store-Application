@@ -117,7 +117,11 @@ public class OrderServiceImpl implements OrderService {
 			System.out.println("check------>"+myOrder.size());
 			for(int i=0; i<myOrder.size(); i++) {
 				
-				orders =orders+" "+myOrder.get(i).getBookName()+ "(Quantity "+myOrder.get(i).getQunatity()+")";
+				orders =orders+" "+myOrder.get(i).getBookName()+ " (Quantity "+myOrder.get(i).getQunatity()+")";
+				if(i+1!=myOrder.size()) {
+					orders=orders+",";
+					
+				}
 			}
 			
 			mailTempletService.getTemplate(user, token, templet, (Address) address, order, orders);

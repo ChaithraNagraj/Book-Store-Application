@@ -46,7 +46,7 @@ public class OrderDaoImpl implements OrderRepo {
 	@Transactional
 	public List<MyOrderList> findOrderByOrderId(Long id) {
 		Session session = sessionFactory.getCurrentSession();
-		Query<MyOrderList> query = session.createQuery("From MyOrderList where user_id=:id");
+		Query<MyOrderList> query = session.createQuery("From MyOrderList where order_id=:id");
 		query.setParameter("id", id);
 		return query.getResultList();
 	}
